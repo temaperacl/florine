@@ -1,0 +1,63 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DebugType>pdbonly</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Data\Foods.csv" />
+    <None Remove="Data\Img\Avatar\Char_Hair.png" />
+    <None Remove="Data\Img\Avatar\Char_Pants.png" />
+    <None Remove="Data\Img\Avatar\Char_Shirt.png" />
+    <None Remove="Data\Img\Avatar\Char_Shoes.png" />
+    <None Remove="Data\Img\Avatar\Char_Skin.png" />
+    <None Remove="Data\Img\Avatar\Char_Wings.png" />
+    <None Remove="Data\Img\Avatar\Zoom\Char_Hair.png" />
+    <None Remove="Data\Img\Avatar\Zoom\Char_Pants.png" />
+    <None Remove="Data\Img\Avatar\Zoom\Char_Shirt.png" />
+    <None Remove="Data\Img\Avatar\Zoom\Char_Shoes.png" />
+    <None Remove="Data\Img\Avatar\Zoom\Char_Skin.png" />
+    <None Remove="Data\Img\Avatar\Zoom\Char_Wings.png" />
+    <None Remove="Data\Img\Breakfast_Cereal.png" />
+    <None Remove="Data\Img\Breakfast_Eggs.png" />
+    <None Remove="Data\Img\Breakfast_Fruit.png" />
+    <None Remove="Data\Img\Breakfast_Pancakes.png" />
+    <None Remove="Data\Img\Breakfast_Poptarts.png" />
+    <None Remove="Data\Img\Breakfast_Toast.png" />
+    <None Remove="Data\Img\Frame.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Data\Foods.csv" />
+    <EmbeddedResource Include="Data\Img\Avatar\Char_Hair.png" />
+    <EmbeddedResource Include="Data\Img\Avatar\Char_Pants.png" />
+    <EmbeddedResource Include="Data\Img\Avatar\Char_Shirt.png" />
+    <EmbeddedResource Include="Data\Img\Avatar\Char_Shoes.png" />
+    <EmbeddedResource Include="Data\Img\Avatar\Char_Skin.png" />
+    <EmbeddedResource Include="Data\Img\Avatar\Char_Wings.png" />
+    <EmbeddedResource Include="Data\Img\Avatar\Zoom\Char_Hair.png" />
+    <EmbeddedResource Include="Data\Img\Avatar\Zoom\Char_Pants.png" />
+    <EmbeddedResource Include="Data\Img\Avatar\Zoom\Char_Shirt.png" />
+    <EmbeddedResource Include="Data\Img\Avatar\Zoom\Char_Shoes.png" />
+    <EmbeddedResource Include="Data\Img\Avatar\Zoom\Char_Skin.png" />
+    <EmbeddedResource Include="Data\Img\Avatar\Zoom\Char_Wings.png" />
+    <EmbeddedResource Include="Data\Img\Breakfast_Cereal.png" />
+    <EmbeddedResource Include="Data\Img\Breakfast_Eggs.png" />
+    <EmbeddedResource Include="Data\Img\Breakfast_Fruit.png" />
+    <EmbeddedResource Include="Data\Img\Breakfast_Pancakes.png" />
+    <EmbeddedResource Include="Data\Img\Breakfast_Poptarts.png" />
+    <EmbeddedResource Include="Data\Img\Breakfast_Toast.png" />
+    <EmbeddedResource Include="Data\Img\Frame.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="SkiaSharp" Version="1.68.0" />
+    <PackageReference Include="SkiaSharp.Views.Forms" Version="1.68.0" />
+    <PackageReference Include="Xamarin.Forms" Version="4.1.0.581479" />
+  </ItemGroup>
+</Project>
