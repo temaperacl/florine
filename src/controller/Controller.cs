@@ -16,6 +16,7 @@ namespace Florine
         // Void Init
         public IPage Init() {
             // Setup - what should it return?
+            return null;
         }
 
         public IPage GetCurrentPage() {
@@ -26,10 +27,18 @@ namespace Florine
             return _nextPage(opt);
         }
 
+        public Controller(IPlatformFoundry foundry)
+        {
+            _foundry = foundry;
+            _context = _foundry.LoadGameState();
+        }
+
+        private IPlatformFoundry _foundry;
         private GameState _context;
 
         private IPage _getPage(GameState.PageType mainType, GameState.PageSubType subType) {
             //Get Page from Interface Factory
+            return _foundry.GetPage(mainType, subType, _context);
         }
 
         // Dumb Hardcoded Implementation - most options don't matter for the flow
@@ -52,18 +61,21 @@ namespace Florine
                     return _getPage(GameState.PageType.Select_Meal, GameState.PageSubType.Breakfast);
                     break;
                 case GameState.PageType.Select_Meal:
-                    return _getPage(GameState.PageType.Summarize_Meal, _context.CurrentPage.Subtype);
+                    return _getPage(GameState.PageType.Summarize_Meal, _context.CurrentPage.SubType);
                     break;
                 case GameState.PageType.Summarize_Meal:
                     GameState.PageType nextType = GameState.PageType.Select_Meal;
-                    GameState.PageSubType nextSubType = GameState.PageType.Daily;
+                    GameState.PageSubType nextSubType = GameState.PageSubType.Daily;
                     switch(_context.CurrentPage.SubType) {
                         case GameState.PageSubType.Breakfast:
                             nextSubType = GameState.PageSubType.Lunch;
+                            break;
                         case GameState.PageSubType.Lunch:
-                            nextType = GameState.PageType.SelectActivity;
+                            nextType = GameState.PageType.Select_Activity;
+                            break;
                         case GameState.PageSubType.Dinner:
                             nextType = GameState.PageType.Summarize_Day;
+                            break;
                     }
                     return _getPage(nextType, nextSubType);
                     break;
