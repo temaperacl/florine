@@ -29,7 +29,8 @@ namespace Florine
 
         public IPage SetPage(PageType newMainType, PageSubType newSubType) {
             _currentPage.MainType = newMainType;
-            _currentPage.newSubType = newMainType;
+            _currentPage.SubType = newSubType;
+            return _currentPage;
         }
 
         // Support
@@ -55,7 +56,15 @@ namespace Florine
         
         private class DataPage : IPage {
             public PageType MainType { get; set; }
-            public PageSubType { get; set; }
+            public PageSubType SubType { get; set; }
+
+
+            public IImage Background { get { return null; } }
+            public IGameOptionSet PrimaryOptions { get { return null; } }
+            public String Title { get { return MainType.ToString(); } }
+            public String Message { get { return null; } }
+            public NutrientSet NutrientState { get { return null; } }
+            public NutrientSet NutrientDelta { get { return null; } }
         };
 
     }

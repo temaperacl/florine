@@ -13,7 +13,10 @@ namespace FlorineWeb
             _controller = new Florine.Controller(_foundry);
         }
 
-
+        public System.Web.UI.Control PageRequest(bool debugInfo)
+        {
+            return _foundry.RenderPage(_controller.GetCurrentPage(), debugInfo);
+        }
 
     }
 }

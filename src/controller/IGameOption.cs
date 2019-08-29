@@ -4,6 +4,11 @@ namespace Florine
     // Primary game bottleneck/controller
     public interface IGameOption
     {
-        String name { get; } 
+        String OptionName { get; }
+        void AdjustNutrients(NutrientSet target);
+    }
+
+    public interface IGameOptionSet
+    {        
     }
 }
