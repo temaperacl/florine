@@ -5,11 +5,15 @@ namespace FlorineWeb
 {
     public class Launcher
     {
+        private WebFoundry _foundry;
         private Florine.Controller _controller;
         public Launcher()
         {
-            _controller = new Florine.Controller(new FlorineWeb.WebFoundry());
+            _foundry = new FlorineWeb.WebFoundry();
+            _controller = new Florine.Controller(_foundry);
         }
+
+
 
     }
 }

@@ -10,9 +10,9 @@ namespace FlorineWeb
             return new GameState();
         }
 
-        public IPage GetPage(GameState.PageType mainType, GameState.PageSubType subType, GameState context)
+        public IPage GetPage(IPage GenericPage)
         {
-            return null;
+            return GenericPage;
         }
     }
 }

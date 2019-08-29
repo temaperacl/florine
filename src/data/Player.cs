@@ -11,5 +11,11 @@ namespace Florine
         public String Name { get; set; }
         public Avatar Avatar { get; set; }
         public NutrientSet Nutrients { get; set; }
+
+
+        public void ApplyOption(IGameOption option)
+        {
+            option.AdjustNutrients(this.Nutrients);
+        }
     }
 }
