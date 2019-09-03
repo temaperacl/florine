@@ -1,15 +1,19 @@
 ﻿using System;
+using System.Collections.Generic;
+
 namespace Florine
 {
     public class GameState
     {
         // Data
-        public Florine.Player Player { get; set; }
+        public Florine.Player Player { get; set; }  
+
         private GameState.DataPage _currentPage { get; set; }
 
         public GameState()
         {
             _currentPage = new GameState.DataPage();
+
         }
 
 

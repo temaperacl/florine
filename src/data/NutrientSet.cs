@@ -9,5 +9,9 @@ namespace Florine
         public NutrientSet() {
             Nutrients = new Dictionary<Nutrient, int>();
         }
+        public NutrientSet(Dictionary<Nutrient, int> _d)
+        {
+            Nutrients = _d;
+        }
     }
 }

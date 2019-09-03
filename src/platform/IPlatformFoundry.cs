@@ -4,7 +4,9 @@ namespace Florine
 {
     public interface IPlatformFoundry
     {
-        GameState LoadGameState();
         IPage GetPage(IPage GenericPage);
+        GameState LoadGameState();
+        List<Food> LoadFood();
+        List<Nutrient> LoadNutrients();
     }
 }

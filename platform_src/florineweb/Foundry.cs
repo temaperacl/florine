@@ -1,20 +1,12 @@
 using System;
+using System.Collections.Generic;
 using Florine;
 
 namespace FlorineWeb
 {
-    public class WebFoundry : IPlatformFoundry
+    public class WebFoundry : FlorineHardCodedData // : IPlatformFoundry
     {
-        /* IPlatformFoundry */
-        public GameState LoadGameState()
-        {
-            return new GameState();
-        }
-
-        public IPage GetPage(IPage GenericPage)
-        {
-            return GenericPage;
-        }
+        // Web Overrides
 
         /* WebFoundry */
         public System.Web.UI.Control RenderPage(IPage Source) { return RenderPage(Source, false); }

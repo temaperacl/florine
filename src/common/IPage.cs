@@ -14,4 +14,15 @@ namespace Florine
         NutrientSet NutrientDelta { get; }
 
     }
+/*    public interface IPagePrototype
+    {
+        GameState.PageType MainType { get; }
+        GameState.PageSubType SubType { get; }
+
+        IImage Background { get; }
+        IGameOptionSet PrimaryOptions { get; }
+        String Title { get; }
+        String Message { get; }        
+    }
+    */
 }
