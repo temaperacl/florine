@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace Florine
 {
@@ -6,7 +7,8 @@ namespace Florine
     {
         IPage GetPage(IPage GenericPage);
         GameState LoadGameState();
-        List<Food> LoadFood();
-        List<Nutrient> LoadNutrients();
+        bool SaveGameState(GameState CurrentState);
+        IList<Food> LoadFood();
+        IList<Nutrient> LoadNutrients();
     }
 }

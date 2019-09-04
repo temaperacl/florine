@@ -5,7 +5,7 @@ namespace Florine
     public class Nutrient
     {
         public string Name { get; set; }
-        public string Class { get; set; }
+        public NutrientType Class { get; set; }
         public enum NutrientType
         {
             Macro,

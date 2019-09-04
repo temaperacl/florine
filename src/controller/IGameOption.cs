@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+
 namespace Florine
 {
     // Primary game bottleneck/controller
@@ -8,7 +10,9 @@ namespace Florine
         void AdjustNutrients(NutrientSet target);
     }
 
-    public interface IGameOptionSet
-    {        
+    public interface IGameOptionSet : IList<IGameOption>
+    {
+        int SelectionLimit { get; }
+        IGameOption Finalizer { get; }
     }
 }

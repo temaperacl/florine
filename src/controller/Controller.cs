@@ -27,6 +27,8 @@ namespace Florine
             return GetCurrentPage();
         }
 
+        public GameState CurrentState { get { return _context; } }
+
         public IPage GetCurrentPage() {
             return _foundry.GetPage(_context.CurrentPage);
         }

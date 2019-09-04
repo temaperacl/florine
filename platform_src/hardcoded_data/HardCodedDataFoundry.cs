@@ -15,22 +15,22 @@ namespace FlorineHardCodedData
         }
 
         /* IPlatformFoundry */
-        public GameState LoadGameState() { return _state; }
-        public List<Food> LoadFood() { return _foodstuffs; }
-        public List<Nutrient> LoadNutrients() { return _nutrients; }
-        public IPage GetPage(IPage GenericPage) { return HardCodedPageFromIPage(GenericPage); }
-
+        public virtual GameState LoadGameState() { return _state; }
+        public virtual IList<Food> LoadFood() { return _foodstuffs; }
+        public virtual IList<Nutrient> LoadNutrients() { return _nutrients; }
+        public virtual IPage GetPage(IPage GenericPage) { return HardCodedPageFromIPage(GenericPage); }
+        public virtual bool SaveGameState(GameState _unused) { return false; }
         /* Data Dumps */
 
-        Nutrient Carbs = new Nutrient() { Name = "Carbohydrates", Class = Nutrient.NutrientType.Macro };
-        Nutrient Proteins = new Nutrient() { Name = "Proteins", Class = Nutrient.NutrientType.Macro};
-        Nutrient Fats = new Nutrient() { Name = "Fats", Class = Nutrient.NutrientType.Macro };
-        Nutrient Vitamin_A = new Nutrient() { Name = "A", Class = Nutrient.NutrientType.Vitamin };
-        Nutrient Vitamin_B12 =new Nutrient() { Name = "B12", Class = Nutrient.NutrientType.Vitamin };
-        Nutrient Vitamin_C = new Nutrient() { Name = "C", Class = Nutrient.NutrientType.Vitamin };
+        static Nutrient Carbs = new Nutrient() { Name = "Carbohydrates", Class = Nutrient.NutrientType.Macro };
+        static Nutrient Proteins = new Nutrient() { Name = "Proteins", Class = Nutrient.NutrientType.Macro};
+        static Nutrient Fats = new Nutrient() { Name = "Fats", Class = Nutrient.NutrientType.Macro };
+        static Nutrient Vitamin_A = new Nutrient() { Name = "A", Class = Nutrient.NutrientType.Vitamin };
+        static Nutrient Vitamin_B12 =new Nutrient() { Name = "B12", Class = Nutrient.NutrientType.Vitamin };
+        static Nutrient Vitamin_C = new Nutrient() { Name = "C", Class = Nutrient.NutrientType.Vitamin };
 
 
-        List<Nutrients> _nutrients = new List<Nutrients>()
+        List<Nutrient> _nutrients = new List<Nutrient>()
         {
             Carbs,
             Proteins,
@@ -41,73 +41,199 @@ namespace FlorineHardCodedData
 
         };
 
-        List<Food> _foodstuffs = new List<Food>()
+        static List<Food> _foodstuffs = new List<Food>()
         {
             new Food() {
                 Name = "Yummy Food",
                 Nutrients = new NutrientSet() {
-                    new Tuple<Nutrient, int> ( Carbs, 100 ),
-                    new Tuple<Nutrient, int> ( Protiens, 50),
+                    { Carbs, 100 },
+                    {  Proteins, 50 },
                 }
             },
             new Food() {
                 Name = "Tasty Fodo",
                 Nutrients = new NutrientSet() {
-                    new Tuple<Nutrient, int> ( Carbs, 200 ),
+                    { Carbs, 200 },
                 }
             },
             new Food() {
                 Name = "Healthy Food",
                 Nutrients = new NutrientSet() {
-                    new Tuple<Nutrient, int> ( Carbs, 150 ),
+                    { Carbs, 150 },
                 }
             },
             new Food() {
                 Name = "Other Food",
                 Nutrients = new NutrientSet() {
-                    new Tuple<Nutrient, int> ( Carbs, 50 ),
+                    { Carbs, 50 },
                 }
             },
-        };
+            new Food() {
+                Name = "More Food",
+                Nutrients = new NutrientSet() {
+                    { Carbs, 550 },
+                }
+            },
+            new Food() {
+                Name = "Milk And Honey",
+                Nutrients = new NutrientSet() {
+                    { Fats, 150 },
+                }
+            },
 
+        };
+        
         private class HardCodedPage : IPage
         {
-            public PageType MainType { get; set; }
-            public PageSubType SubType { get; set; }
+            public HardCodedPage(IPage source)            
+            {
+                MainType = source.MainType;
+                SubType = source.SubType;
+            }
+            public GameState.PageType MainType { get; set; }
+            public GameState.PageSubType SubType { get; set; }
 
 
-            public IImage Background { get { return null; } }
-            public IGameOptionSet PrimaryOptions { get { return null; } }
-            public String Title { get { return MainType.ToString(); } }
-            public String Message { get { return null; } }
+            public IImage Background { get; set; }
+            public IGameOptionSet PrimaryOptions { get; set; }
+            public String Title { get; set; }
+            public String Message { get; set; }
             public NutrientSet NutrientState { get { return null; } }
             public NutrientSet NutrientDelta { get { return null; } }
         };
+        private class HardCodedOptionSet : List<IGameOption>, IGameOptionSet
+        {
+            public int SelectionLimit { get; set; }
+            public IGameOption Finalizer { get; set; }
+        }
+
+        protected class HardcodedEmptyOption : IGameOption
+        {
+            public HardcodedEmptyOption(string name) { OptionName = name; }
+            public String OptionName { get; set; }
+            public void AdjustNutrients(NutrientSet target) { }
+        }
+        
+        private static HardcodedEmptyOption _emptyOption(string name)
+        {
+            return new HardcodedEmptyOption(name);
+        }
 
         public IPage HardCodedPageFromIPage(IPage generic)
         {
+            HardCodedPage hcPage = new HardCodedPage(generic);
             switch (generic.MainType) {
                 case GameState.PageType.Start:
-                    return generic;
+                    hcPage.Title = "Florine Game";
+                    hcPage.Message = "Welcome to Florine where you will guide a fairy through her daily life.";
+                    //hcPage.Background = "Start_Page";
+                    hcPage.PrimaryOptions = new HardCodedOptionSet()
+                    {
+                        Finalizer = _emptyOption("Start")
+                    };
+                    break;
                 case GameState.PageType.Char_Creation:
-                    return generic;
+                    // Cheat
+                    hcPage.Title = "Character Creation";                    
+                    //hcPage.Background = "Char_Creation";
+                    hcPage.PrimaryOptions = new HardCodedOptionSet()
+                    {
+                        Finalizer = _emptyOption("Continue")
+                    };
+                    break;
                 case GameState.PageType.Game_Loader:
-                    return generic;
+                    //hcPage.Title = "...";
+                    //hcPage.Message = "Choose up to 2";
+                    //hcPage.Background = "Start_Page";
+                    hcPage.PrimaryOptions = new HardCodedOptionSet()
+                    {
+                        Finalizer = _emptyOption("Continue")
+                    };
+                    break;
                 case GameState.PageType.Day_Intro:
-                    return generic;
+                    hcPage.Title = "A New Day!";
+                    hcPage.Message = "Welcome to a new day. Let's see what today holds!";
+                    //hcPage.Background = "Start_Page";
+                    hcPage.PrimaryOptions = new HardCodedOptionSet()
+                    {
+                        Finalizer = _emptyOption("Start Day")
+                    };
+                    break;
                 case GameState.PageType.Select_Meal:
-                    return generic;
+                    //hcPage.Title = "Load Game";
+                    hcPage.Message = "Choose Up To 2";
+                    HardCodedOptionSet PrimaryOptions = new HardCodedOptionSet()
+                    {
+                        Finalizer = _emptyOption("Done"),
+                        SelectionLimit = 2
+                    };
+                    //Background
+                    switch (generic.SubType) {
+                        case GameState.PageSubType.None:
+                            break;
+                        case GameState.PageSubType.Setup:
+                            break;
+                        case GameState.PageSubType.Daily:
+                            break;
+                        case GameState.PageSubType.Breakfast:
+                            PrimaryOptions.SelectionLimit = 2;
+                            break;
+                        case GameState.PageSubType.Lunch:
+                            PrimaryOptions.SelectionLimit = 3;
+                            break;
+                        case GameState.PageSubType.Dinner:
+                            PrimaryOptions.SelectionLimit = 3;
+                            break;
+                    }                    
+                    
+                    for (int idx = 0; idx < _foodstuffs.Count && idx < 6; ++idx) {
+                        PrimaryOptions.Add(_foodstuffs[idx].GetOption());
+                    }
+
+                    hcPage.PrimaryOptions = PrimaryOptions;
+                    break;
                 case GameState.PageType.Summarize_Meal:
-                    return generic;
+                    hcPage.Title = "Results [Day update TBD]";
+                    //hcPage.Message = "We shouldn't be seeing this.";
+                    //hcPage.Background = "Start_Page";
+                    hcPage.PrimaryOptions = new HardCodedOptionSet()
+                    {
+                        Finalizer = _emptyOption("")
+                    };                    
+                    break;
+                // TODO: Summarize Meal is actually 2 pages.
                 case GameState.PageType.Select_Activity:
-                    return generic;
+                    hcPage.Title = "Select Activity";
+                    hcPage.Message = "TBD";
+                    //hcPage.Background = "Start_Page";
+                    hcPage.PrimaryOptions = new HardCodedOptionSet()
+                    {
+                        Finalizer = _emptyOption("Continue")
+                    };
+                    break;
                 case GameState.PageType.Summarize_Activity:
-                    return generic;
+                    hcPage.Title = "Activity summary";
+                    hcPage.Message = "[TBD]";
+                    //hcPage.Background = "Start_Page";
+                    hcPage.PrimaryOptions = new HardCodedOptionSet()
+                    {
+                        Finalizer = _emptyOption("Continue")
+                    };
+                    break;
                 case GameState.PageType.Summarize_Day:
-                    return generic;
+                    hcPage.Title = "Daily Results";                    
+                    //hcPage.Background = "Start_Page";
+                    hcPage.PrimaryOptions = new HardCodedOptionSet()
+                    {
+                        Finalizer = _emptyOption("")
+                    };
+                    break;
                 default:
-                    return generic;
+                    hcPage.Title = "== Florine ==";
+                    hcPage.Message = "Unexpected Value " + generic.MainType.ToString();                                        
+                    break;
             }
+            return hcPage;
         }
     }
 }

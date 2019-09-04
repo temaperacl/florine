@@ -17,7 +17,7 @@ namespace Florine
             public String OptionName { get { return Parent.Name; } }
             public void AdjustNutrients(NutrientSet target) {
                 // Probably should change NutrientSet type to inherit directly or implement IEnumX
-                foreach( KeyValuePair<Nutrient, int> kvp in Parent.Nutrients.Nutrients ) {
+                foreach( KeyValuePair<Nutrient, int> kvp in Parent.Nutrients ) {
                     // Switch Dictionary Type to Concurrent?
                     int val = 0;
                     target.Nutrients.TryGetValue(kvp.Key, out val);
