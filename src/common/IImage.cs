@@ -5,6 +5,6 @@ namespace Florine
     {
         //The Image
         //Avatarpoint if any
-
+        int ImageKey { get; set; }
     }
 }

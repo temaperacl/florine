@@ -7,7 +7,7 @@ namespace Florine
     {
         public String Name { get; set; }
         public NutrientSet Nutrients { get; set; }
-
+        public IImage OptionPicture { get; set; }
         public IGameOption GetOption() {
             return new FoodOption() { Parent = this };
         }
@@ -15,6 +15,7 @@ namespace Florine
         private class FoodOption: IGameOption {
             public Food Parent;
             public String OptionName { get { return Parent.Name; } }
+            public IImage Picture { get { return Parent.OptionPicture; } }
             public void AdjustNutrients(NutrientSet target) {
                 // Probably should change NutrientSet type to inherit directly or implement IEnumX
                 foreach( KeyValuePair<Nutrient, int> kvp in Parent.Nutrients ) {

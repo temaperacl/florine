@@ -125,7 +125,7 @@ namespace FlorineWeb
             
             if (Source.Background != null)
             {
-                Body.Controls.Add(ImageFromObject(Source.Background));
+                Body.Controls.Add(ImageFromObject(Source.Background, "", false));
             }
             if (Source.Title != null) {
                 Body.Controls.Add(new System.Web.UI.HtmlControls.HtmlGenericControl("h3")
@@ -154,17 +154,26 @@ namespace FlorineWeb
                     Value = options.SelectionLimit.ToString()
                 });
             }
-            //int OptionCount = options.Count;            
+
+            int OptionCount = options.Count;            
             foreach (IGameOption opt in options)
-            {                
+            {
                 System.Web.UI.WebControls.Panel optionPanel = new System.Web.UI.WebControls.Panel()
                 {
+                    
                     Controls = {
-                        new System.Web.UI.HtmlControls.HtmlInputCheckBox() {
-                            Name = opt.OptionName,
-                            ID = (debugInfo?"dbg_":"") + opt.OptionName
+                        
+                        new System.Web.UI.HtmlControls.HtmlGenericControl("label") {
+                            ID = (debugInfo?"dbg_":"opt_") + "label_" + opt.OptionName,
+                            Controls = {
+                                new System.Web.UI.HtmlControls.HtmlInputCheckBox() {
+                                    Name = opt.OptionName,
+                                    ID = (debugInfo?"dbg_":"opt_") + opt.OptionName
+                                },
+                                ImageFromObject(opt.Picture, "", !debugInfo)
+                            }
                         },
-                        new System.Web.UI.WebControls.Label() { Text = opt.OptionName }
+                        
                     }
                 };
                 form.Add(optionPanel);
@@ -202,7 +211,7 @@ namespace FlorineWeb
             }
             return Body;
         }
-        public IGameOption GetChosenOption()
+        public IGameOptionSet GetChosenOption()
         {
             if (_newGame) {
                 
@@ -212,8 +221,44 @@ namespace FlorineWeb
             return new HardcodedEmptyOption("---");
         }
 
-        public System.Web.UI.WebControls.Image ImageFromObject(IImage Source) {
-            return new System.Web.UI.WebControls.Image();
+
+        private class _WebImage : IImage
+        {
+            public int ImageKey { get; set; }
+            public string URI;
+        }
+        public override IImage LoadImageFromFood(Food Parent)
+        {
+            if (null != Parent.OptionPicture) {
+                return Parent.OptionPicture;
+            }
+            string PreMapUrl = "Images/Food/" + Parent.Name.Replace(' ', '_') + ".png";
+            //if (System.IO.File.Exists(System.Web.HttpContext.Current.Server.MapPath(PreMapUrl))) {
+                return new _WebImage()
+                {
+                    ImageKey = 12345,
+                    URI = PreMapUrl
+                };
+            //}
+            return null;
+        }
+
+        public System.Web.UI.Control ImageFromObject(IImage Source, string ID, bool AsButton) {
+            if (null == Source)
+            {
+                return new System.Web.UI.WebControls.Literal() { Text = "" };
+            }
+            if (Source is _WebImage)
+            {
+                _WebImage PlatformImage = (_WebImage)Source;
+                if (AsButton)
+                {
+                    //return new System.Web.UI.WebControls.ImageButton() { ImageUrl = PlatformImage.URI, ID = ID };
+                }
+                return new System.Web.UI.WebControls.Image() { ImageUrl = PlatformImage.URI };
+            }
+            return new System.Web.UI.WebControls.Literal() { Text = Source.ToString() };
+            
         }
 
 

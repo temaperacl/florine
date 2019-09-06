@@ -11,6 +11,8 @@ namespace FlorineWeb
         {            
             _foundry = new FlorineWeb.WebFoundry(page);
             _controller = new Florine.Controller(_foundry);
+            _controller.Init();
+
             IGameOption opt = _foundry.GetChosenOption();
             if (null != opt)
             {

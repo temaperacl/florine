@@ -10,7 +10,7 @@ namespace Florine
 
         public Controller(IPlatformFoundry foundry)
         {
-            _foundry = foundry;
+            _foundry = foundry;            
             _context = _foundry.LoadGameState();
         }
         // Loaded from Platform/ Init
@@ -24,6 +24,7 @@ namespace Florine
         // Void Init
         public IPage Init() {
             // Setup - what should it return?
+            _foundry.LoadFood();
             return GetCurrentPage();
         }
 

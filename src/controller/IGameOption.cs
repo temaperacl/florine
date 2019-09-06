@@ -7,6 +7,7 @@ namespace Florine
     public interface IGameOption
     {
         String OptionName { get; }
+        IImage Picture { get; }
         void AdjustNutrients(NutrientSet target);
     }
 

@@ -15,11 +15,25 @@ namespace FlorineHardCodedData
         }
 
         /* IPlatformFoundry */
+        
         public virtual GameState LoadGameState() { return _state; }
-        public virtual IList<Food> LoadFood() { return _foodstuffs; }
+
+        public virtual IList<Food> LoadFood() {
+            foreach (Food f in _foodstuffs)
+            {
+                f.OptionPicture = LoadImageFromFood(f);
+            }
+            return _foodstuffs;
+        }
         public virtual IList<Nutrient> LoadNutrients() { return _nutrients; }
         public virtual IPage GetPage(IPage GenericPage) { return HardCodedPageFromIPage(GenericPage); }
         public virtual bool SaveGameState(GameState _unused) { return false; }
+        /* */
+        public virtual IImage LoadImageFromFood(Food Parent)
+        {
+            return null;
+        }
+                
         /* Data Dumps */
 
         static Nutrient Carbs = new Nutrient() { Name = "Carbohydrates", Class = Nutrient.NutrientType.Macro };
@@ -44,43 +58,42 @@ namespace FlorineHardCodedData
         static List<Food> _foodstuffs = new List<Food>()
         {
             new Food() {
-                Name = "Yummy Food",
+                Name = "Cereal",
                 Nutrients = new NutrientSet() {
                     { Carbs, 100 },
                     {  Proteins, 50 },
                 }
             },
             new Food() {
-                Name = "Tasty Fodo",
+                Name = "Eggs",
                 Nutrients = new NutrientSet() {
                     { Carbs, 200 },
                 }
             },
             new Food() {
-                Name = "Healthy Food",
+                Name = "Fruit",
                 Nutrients = new NutrientSet() {
                     { Carbs, 150 },
                 }
             },
             new Food() {
-                Name = "Other Food",
+                Name = "Pancakes",
                 Nutrients = new NutrientSet() {
                     { Carbs, 50 },
                 }
             },
             new Food() {
-                Name = "More Food",
+                Name = "Poptarts",
                 Nutrients = new NutrientSet() {
                     { Carbs, 550 },
                 }
             },
             new Food() {
-                Name = "Milk And Honey",
+                Name = "Toast",
                 Nutrients = new NutrientSet() {
                     { Fats, 150 },
                 }
             },
-
         };
         
         private class HardCodedPage : IPage
@@ -110,6 +123,7 @@ namespace FlorineHardCodedData
         protected class HardcodedEmptyOption : IGameOption
         {
             public HardcodedEmptyOption(string name) { OptionName = name; }
+            public IImage Picture { get { return null; } }
             public String OptionName { get; set; }
             public void AdjustNutrients(NutrientSet target) { }
         }
@@ -161,7 +175,7 @@ namespace FlorineHardCodedData
                     break;
                 case GameState.PageType.Select_Meal:
                     //hcPage.Title = "Load Game";
-                    hcPage.Message = "Choose Up To 2";
+                    
                     HardCodedOptionSet PrimaryOptions = new HardCodedOptionSet()
                     {
                         Finalizer = _emptyOption("Done"),
@@ -189,7 +203,7 @@ namespace FlorineHardCodedData
                     for (int idx = 0; idx < _foodstuffs.Count && idx < 6; ++idx) {
                         PrimaryOptions.Add(_foodstuffs[idx].GetOption());
                     }
-
+                    hcPage.Message = "Choose Up To " + PrimaryOptions.SelectionLimit.ToString();
                     hcPage.PrimaryOptions = PrimaryOptions;
                     break;
                 case GameState.PageType.Summarize_Meal:
