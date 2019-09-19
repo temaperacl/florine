@@ -38,17 +38,26 @@ namespace Florine
             return _nextPage(opt);
         }
 
-        private IPage _goToPage(GameState.PageType mainType, GameState.PageSubType subType) {
+        private IPage _goToPage(GameState.PageType mainType, GameState.PageSubType subType) {            
             //Get Page from Interface Factory
             _context.SetPage(mainType, subType);
+			Activity autoActivity = _foundry.AutomaticActivity(_context);
+			if(null != autoActivity) {
+			    _context.ApplyOption(autoActivity);
+			}
             return GetCurrentPage();
         }
 
         // Dumb Hardcoded Implementation - most options don't matter for the flow
         private IPage _nextPage(IGameOption opt) {
             // Meta Options
-            _context.ApplyOption(opt);
-
+            _context.ReadyNextPage();
+			if(null != opt) {
+            	_context.ApplyOption(opt);
+			}
+			GameState.PageType nextType;
+            GameState.PageSubType nextSubType;
+			
             switch(_context.CurrentPage.MainType) {
                 case GameState.PageType.Start:
                     // TODO: Actual Switch
@@ -68,30 +77,39 @@ namespace Florine
                     return _goToPage(GameState.PageType.Summarize_Meal, _context.CurrentPage.SubType);
                     break;
                 case GameState.PageType.Summarize_Meal:
-                    GameState.PageType nextType = GameState.PageType.Select_Meal;
-                    GameState.PageSubType nextSubType = GameState.PageSubType.Daily;
-                    switch(_context.CurrentPage.SubType) {
-                        case GameState.PageSubType.Breakfast:
-                            nextSubType = GameState.PageSubType.Lunch;
-                            break;
-                        case GameState.PageSubType.Lunch:
-                            nextType = GameState.PageType.Select_Activity;
-                            break;
-                        case GameState.PageSubType.Dinner:
-                            nextType = GameState.PageType.Summarize_Day;
-                            break;
-                    }
+                    nextType = GameState.PageType.Summarize_Activity;
+                    nextSubType = _context.CurrentPage.SubType;
                     return _goToPage(nextType, nextSubType);
                     break;
                 case GameState.PageType.Select_Activity:
                     return _goToPage(GameState.PageType.Summarize_Activity, GameState.PageSubType.Daily);
                     break;
                 case GameState.PageType.Summarize_Activity:
-                    return _goToPage(GameState.PageType.Select_Meal, GameState.PageSubType.Dinner);
+					nextType = GameState.PageType.Start;
+					nextSubType = GameState.PageSubType.Setup;
+					switch(_context.CurrentPage.SubType) {
+                        case GameState.PageSubType.Breakfast:
+							nextType = GameState.PageType.Select_Meal;
+                            nextSubType = GameState.PageSubType.Lunch;
+                            break;
+                        case GameState.PageSubType.Dinner:
+                            nextType = GameState.PageType.Select_Activity;
+							nextSubType = GameState.PageSubType.Daily;
+                            break;
+                        case GameState.PageSubType.Lunch:
+							nextType = GameState.PageType.Select_Meal;
+                            nextSubType = GameState.PageSubType.Dinner;
+                            break;							
+						case GameState.PageSubType.Daily:
+							nextType = GameState.PageType.Summarize_Day;
+							nextSubType = GameState.PageSubType.Daily;
+							break;
+                    }
+					return _goToPage(nextType, nextSubType);                    
                     break;
-                case GameState.PageType.Summarize_Day:
-                    return _goToPage(GameState.PageType.Day_Intro, GameState.PageSubType.Daily);
-                    break;
+				case GameState.PageType.Summarize_Day:
+					return _goToPage(GameState.PageType.Day_Intro, GameState.PageSubType.Daily);
+					break;
                 default:
                     return _goToPage(GameState.PageType.Start, GameState.PageSubType.Setup);
             }

@@ -8,7 +8,9 @@ namespace Florine
     {
         String OptionName { get; }
         IImage Picture { get; }
-        void AdjustNutrients(NutrientSet target);
+		void ImpactPlayer(Player p);
+		void AdjustNutrients(NutrientSet n);
+		IGameOptionSet SubOptions { get; }
     }
 
     public interface IGameOptionSet : IList<IGameOption>

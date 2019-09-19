@@ -3,40 +3,99 @@ using System.Collections.Generic;
 
 namespace Florine
 {
-    public class NutrientSet : IEnumerable<KeyValuePair<Nutrient, int>>
+	public class NutrientAmount {
+		private double _amount;
+		public NutrientAmount(double amount) { _amount = amount; }		
+		public static NutrientAmount operator +(NutrientAmount a) { return a; }
+		public static NutrientAmount operator +(NutrientAmount a, NutrientAmount b)
+		{ 
+			if(null == a) { return b; }
+			if(null == b) { return a; }
+			return new NutrientAmount(a._amount + b._amount); 
+		}
+		public static NutrientAmount operator -(NutrientAmount a)
+		{ return new NutrientAmount(-a._amount); }
+		public static NutrientAmount operator -(NutrientAmount a, NutrientAmount b)
+		{ return new NutrientAmount(a._amount - b._amount); }
+		public static NutrientAmount operator *(NutrientAmount a, NutrientAmount b)
+		{ return new NutrientAmount(a._amount * b._amount); }
+		public static NutrientAmount operator /(NutrientAmount a, NutrientAmount b)
+		{ return new NutrientAmount(a._amount / b._amount); }
+		
+		public static implicit operator double(NutrientAmount n)
+		{ return n._amount; }
+		public static implicit operator NutrientAmount(double d)
+		{ return new NutrientAmount(d); }
+        public override string ToString() 
+		{ return _amount.ToString(); }
+		public string ToString(string Spec) 
+		{ return _amount.ToString(Spec); }
+	}
+	
+    public class NutrientSet : IEnumerable<KeyValuePair<Nutrient, NutrientAmount>>
     {
         // Just Derive?
         
-        public IEnumerator<KeyValuePair<Nutrient, int>> GetEnumerator()
+        public IEnumerator<KeyValuePair<Nutrient, NutrientAmount>> GetEnumerator()
         {
-            foreach (KeyValuePair<Nutrient, int> kvp in Nutrients)
+            foreach (KeyValuePair<string, NutrientAmount> kvp in Nutrients)
             {
-                yield return kvp;
+                yield return new KeyValuePair<Nutrient, NutrientAmount>(_LastNutrients[kvp.Key], kvp.Value);
             }            
         }
         System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
         {
             return GetEnumerator();
         }
-        public void Add(Nutrient n, int amount)
-        {
-            Nutrients[n] = amount;
-        }
-        public int this[Nutrient n]
-        {
-            get { return Nutrients[n]; }
-            set { Nutrients[n] = value; }
-        }
 
-        // :P
+        public void Add(object o)
+        {
+        }
+        public bool TryGetValue(Florine.Nutrient n, out NutrientAmount amount)
+        {
+            return Nutrients.TryGetValue(n.Name, out amount);
+        }
+		public int Count { get { return Nutrients.Count; } }
+        public void Add(Nutrient n, NutrientAmount amount)
+        {
 
-        public Dictionary<Nutrient, int> Nutrients { get; private set; }
+            Nutrients[n.Name] = amount;
+            _LastNutrients[n.Name] = n;
+        }
+        public NutrientAmount this[Nutrient n]
+        {
+            get { return Nutrients[n.Name]; }
+            set { Nutrients[n.Name] = value; _LastNutrients[n.Name] = n; }
+        }
+		public NutrientAmount this[string n]
+        {
+            get 
+			{ 
+				if(Nutrients.ContainsKey(n)){ return Nutrients[n]; }
+				return 0.0; 
+			}
+			set
+			{
+				if(Nutrients.ContainsKey(n)){ Nutrients[n] = value; }
+			}
+        }
+		public void ApplyOption(IGameOption option) {
+			option.AdjustNutrients(this);
+		}
+        // :P        
+        private Dictionary<string, Nutrient> _LastNutrients = new Dictionary<string, Nutrient>();
+        private Dictionary<string, NutrientAmount> Nutrients { get; set; }
         public NutrientSet() {
-            Nutrients = new Dictionary<Nutrient, int>();
+            Nutrients = new Dictionary<string, NutrientAmount>();
         }
-        public NutrientSet(Dictionary<Nutrient, int> _d)
+        public NutrientSet(Dictionary<Nutrient, NutrientAmount> _d)
         {
-            Nutrients = _d;
+            foreach (KeyValuePair<Nutrient, NutrientAmount> kvp in _d)
+            {
+                _LastNutrients[kvp.Key.Name] = kvp.Key;
+                Nutrients[kvp.Key.Name] = kvp.Value;
+            }
+            
         }
     }
 }

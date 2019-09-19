@@ -10,5 +10,6 @@ namespace Florine
         bool SaveGameState(GameState CurrentState);
         IList<Food> LoadFood();
         IList<Nutrient> LoadNutrients();
+		Activity AutomaticActivity(GameState CurrentState);
     }
 }
