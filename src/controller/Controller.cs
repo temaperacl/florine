@@ -55,64 +55,11 @@ namespace Florine
 			if(null != opt) {
             	_context.ApplyOption(opt);
 			}
+						
 			GameState.PageType nextType;
             GameState.PageSubType nextSubType;
-			
-            switch(_context.CurrentPage.MainType) {
-                case GameState.PageType.Start:
-                    // TODO: Actual Switch
-                    return _goToPage(GameState.PageType.Char_Creation, GameState.PageSubType.Setup);
-                    break;
-                case GameState.PageType.Char_Creation:
-                    return _goToPage(GameState.PageType.Day_Intro, GameState.PageSubType.Daily);
-                    break;
-                case GameState.PageType.Game_Loader:
-                    // TODO: Actually Implement
-                    return _goToPage(GameState.PageType.Select_Meal, GameState.PageSubType.Breakfast);
-                    break;
-                case GameState.PageType.Day_Intro:
-                    return _goToPage(GameState.PageType.Select_Meal, GameState.PageSubType.Breakfast);
-                    break;
-                case GameState.PageType.Select_Meal:
-                    return _goToPage(GameState.PageType.Summarize_Meal, _context.CurrentPage.SubType);
-                    break;
-                case GameState.PageType.Summarize_Meal:
-                    nextType = GameState.PageType.Summarize_Activity;
-                    nextSubType = _context.CurrentPage.SubType;
-                    return _goToPage(nextType, nextSubType);
-                    break;
-                case GameState.PageType.Select_Activity:
-                    return _goToPage(GameState.PageType.Summarize_Activity, GameState.PageSubType.Daily);
-                    break;
-                case GameState.PageType.Summarize_Activity:
-					nextType = GameState.PageType.Start;
-					nextSubType = GameState.PageSubType.Setup;
-					switch(_context.CurrentPage.SubType) {
-                        case GameState.PageSubType.Breakfast:
-							nextType = GameState.PageType.Select_Meal;
-                            nextSubType = GameState.PageSubType.Lunch;
-                            break;
-                        case GameState.PageSubType.Dinner:
-                            nextType = GameState.PageType.Select_Activity;
-							nextSubType = GameState.PageSubType.Daily;
-                            break;
-                        case GameState.PageSubType.Lunch:
-							nextType = GameState.PageType.Select_Meal;
-                            nextSubType = GameState.PageSubType.Dinner;
-                            break;							
-						case GameState.PageSubType.Daily:
-							nextType = GameState.PageType.Summarize_Day;
-							nextSubType = GameState.PageSubType.Daily;
-							break;
-                    }
-					return _goToPage(nextType, nextSubType);                    
-                    break;
-				case GameState.PageType.Summarize_Day:
-					return _goToPage(GameState.PageType.Day_Intro, GameState.PageSubType.Daily);
-					break;
-                default:
-                    return _goToPage(GameState.PageType.Start, GameState.PageSubType.Setup);
-            }
+			_foundry.GetNextGameState(_context, out nextType, out nextSubType);
+			return _goToPage(nextType, nextSubType);
         }
     }
 }

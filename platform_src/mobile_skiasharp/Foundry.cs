@@ -3,11 +3,14 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using Florine;
 using SkiaSharp;
+using Xamarin.Forms;
+
 
 namespace FlorineSkiaSharpForms
 {
     public class SkiaSharpFormsFoundry : FlorineHardCodedData.HardCodedDataFoundry // : IPlatformFoundry
     {
+        public SkiaSharpFormsFoundry() { }
         // Web Overrides
         public override GameState LoadGameState() {
             // PageType, PageSubType
@@ -18,12 +21,9 @@ namespace FlorineSkiaSharpForms
             GameState.PageSubType subType;
 
             // Load Vars;
-            if(1)
-            {
-                return base.LoadGameState();
-            }
+            return base.LoadGameState();
             
-            oldGame.SetPage(mainType, subType);
+           // oldGame.SetPage(mainType, subType);
 
             // Player      
             return oldGame;
@@ -38,25 +38,10 @@ namespace FlorineSkiaSharpForms
             return true; ;
         }
         /* Misc Support */
-        private bool _tryEnum<T>(NameValueCollection SourceData, string Key, out T Destination)
-            where T: struct
-        {
-            Destination = default(T);
-            if (null == SourceData[Key])
-            {
-                warnings.Add("Key [" + Key + "] not found");                
-                return false;
-            }
-            if (!Enum.TryParse(SourceData[Key], out Destination))
-            {
-                warnings.Add("Value [" + SourceData[Key] + "] can not be parsed.");                
-                return false;
-            }
-            return true;
-        }
 
         /* SkiaSharpFormsFoundry */
         public ContentPage RenderPage(IPage Source) {
+            return null;
         }
         
 

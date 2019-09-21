@@ -29,6 +29,15 @@ namespace FlorineXmlData
         public virtual IPage GetPage(IPage GenericPage) { return HardCodedPageFromIPage(GenericPage); }
         public virtual bool SaveGameState(GameState _unused) { return false; }
         public virtual Activity AutomaticActivity(GameState gs) { return null; }
+		public virtual bool GetNextGameState(
+			Florine.GameState g,
+			out Florine.GameState.PageType p,
+			out Florine.GameState.PageSubType s) 
+		{
+			p = g.CurrentPage.MainType;
+			s = g.CurrentPage.SubType;
+			return false;
+		}
         /* */
         public virtual IImage LoadImageFromFood(Food Parent)
         {

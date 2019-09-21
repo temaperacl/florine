@@ -178,7 +178,65 @@ namespace FlorineHardCodedData
 		}
 
 		static HardCodedActivityPath _onlyPath = new HardCodedActivityPath();
-		
+		public bool GetNextGameState(GameState CurrentState,
+						  out GameState.PageType nextType,
+						  out GameState.PageSubType nextSubType
+						  ) {
+			nextType = CurrentState.CurrentPage.MainType;
+			nextSubType = CurrentState.CurrentPage.SubType;
+			
+			switch(CurrentState.CurrentPage.MainType) {
+                case GameState.PageType.Start:
+                    // TODO: Actual Switch
+					nextType = GameState.PageType.Char_Creation;
+					nextSubType = GameState.PageSubType.Setup;
+					return true;
+                case GameState.PageType.Char_Creation:
+					nextType = GameState.PageType.Day_Intro;
+					nextSubType = GameState.PageSubType.Daily;
+					return true;						                
+                case GameState.PageType.Day_Intro:
+					nextType = GameState.PageType.Select_Meal;
+					nextSubType = GameState.PageSubType.Breakfast;
+                    return true;
+                case GameState.PageType.Select_Meal:
+					nextType = GameState.PageType.Summarize_Meal;
+					return true;
+                    break;
+                case GameState.PageType.Summarize_Meal:
+                    nextType = GameState.PageType.Summarize_Activity;                    
+                    return true;
+                case GameState.PageType.Select_Activity:
+					nextType = GameState.PageType.Summarize_Activity;
+					nextSubType = GameState.PageSubType.Daily;
+                    return true;
+                case GameState.PageType.Summarize_Activity:					
+					switch(CurrentState.CurrentPage.SubType) {
+                        case GameState.PageSubType.Breakfast:
+							nextType = GameState.PageType.Select_Meal;
+                            nextSubType = GameState.PageSubType.Lunch;
+                            return true;
+                        case GameState.PageSubType.Dinner:
+                            nextType = GameState.PageType.Select_Activity;
+							nextSubType = GameState.PageSubType.Daily;
+                            return true;
+                        case GameState.PageSubType.Lunch:
+							nextType = GameState.PageType.Select_Meal;
+                            nextSubType = GameState.PageSubType.Dinner;
+                            return true;					
+						case GameState.PageSubType.Daily:
+							nextType = GameState.PageType.Summarize_Day;
+							nextSubType = GameState.PageSubType.Daily;
+							return true;
+                    }					
+                    break;
+				case GameState.PageType.Summarize_Day:
+					nextType = GameState.PageType.Day_Intro;
+					nextSubType = GameState.PageSubType.Daily;
+					return true;                
+            }
+			return false;
+		}
 
 		static Dictionary<string, List<NutrientAmount>> FoodTable =
 			new Dictionary<string, List<NutrientAmount>>()

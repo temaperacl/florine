@@ -11,5 +11,9 @@ namespace Florine
         IList<Food> LoadFood();
         IList<Nutrient> LoadNutrients();
 		Activity AutomaticActivity(GameState CurrentState);
+		bool GetNextGameState(GameState CurrentState,
+						  out GameState.PageType nextType,
+						  out GameState.PageSubType nextSubType
+						  );
     }
 }

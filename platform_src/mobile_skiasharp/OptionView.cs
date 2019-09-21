@@ -5,10 +5,12 @@ using Florine;
 using SkiaSharp;
 using Xamarin.Forms;
 
+
 namespace FlorineSkiaSharpForms
 {
     public abstract class OptionView
     {
+        /*
         public static OptionView FromOptionSet(IGameOptionSet Options) {
         }
 
@@ -17,7 +19,7 @@ namespace FlorineSkiaSharpForms
 
         virtual Xamarin.Forms.View AsView { get; set; }
 
-        /* Roots */
+        //==== Roots 
         private class _ToggleOptionView : OptionView {
             private IGameOption _option;
             public _ToggleOptionView(opt) {
@@ -49,7 +51,7 @@ namespace FlorineSkiaSharpForms
             }
         }
 
-        /* Util_f */    
+        //== Util_f ==
         private void MakeGrid(SKSize Dim, int[] Horizontal, int[] Vertical)
         {
             var grid = new Grid();
@@ -80,5 +82,6 @@ namespace FlorineSkiaSharpForms
             //grid.Children.Add(_displays["hairR"], 1 * col, 1 * row);
             return grid;
         }
+        */
     }
 }
