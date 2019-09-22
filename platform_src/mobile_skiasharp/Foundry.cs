@@ -38,10 +38,44 @@ namespace FlorineSkiaSharpForms
             return true; ;
         }
         /* Misc Support */
-
+        public Controller GameController { get; set; }
+        public ContentPage Page { get; set; }
         /* SkiaSharpFormsFoundry */
-        public ContentPage RenderPage(IPage Source) {
-            return null;
+        public View RenderPage(GameState CurrentState) {
+
+            /*
+            switch (CurrentState.CurrentPage.MainType)
+            {
+                case GameState.PageType.Start:
+                    // TODO: Actual Switch
+                    
+                case GameState.PageType.Char_Creation:
+                    
+                case GameState.PageType.Day_Intro:
+                    
+                case GameState.PageType.Select_Meal:
+                    
+                   
+                case GameState.PageType.Summarize_Meal:
+                   
+                case GameState.PageType.Select_Activity:
+                   
+                case GameState.PageType.Summarize_Activity:
+                   
+                case GameState.PageType.Summarize_Day:
+                   
+            }*/
+            return new StackLayout()
+            {
+                Children = {
+                    new Label() {
+                        Text = CurrentState.CurrentPage.MainType.ToString()
+                        + "("
+                        + CurrentState.CurrentPage.SubType.ToString()
+                        + ")"
+                    }
+                }
+            };
         }
         
 
