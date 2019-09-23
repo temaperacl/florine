@@ -39,7 +39,7 @@ namespace FlorineSkiaSharpForms
         }
         /* Misc Support */
         public Controller GameController { get; set; }
-        public ContentPage Page { get; set; }
+        public SkiaFlorinePage Page { get; set; }
         /* SkiaSharpFormsFoundry */
         public View RenderPage(GameState CurrentState) {
 
@@ -76,12 +76,6 @@ namespace FlorineSkiaSharpForms
                     }
                 }
             };
-        }
-        
-
-        private class _SkiaFlorinePage {
-            public _SkiaFlorinePage(IPage Source) {
-            }
         }
     }
 }

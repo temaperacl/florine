@@ -16,6 +16,23 @@ namespace FlorineSkiaSharpForms
         private AspectImage coreImage = new AspectImage();
         private float ringWidth = 10;
         private float ovalRatio = .5f;
+        public void DrawOval(SKCanvas canvas, SKRect info, SKPaint paint = null)
+        {
+
+            outerBounds = RatioBox(new SKRect(
+                                              info.Left + info.Width * .15f,
+                                              info.Top  + info.Height * .1f,
+                                              info.Left + info.Width * .85f,
+                                              info.Top  + info.Height * .9f));
+            innerBounds = RatioBox(new SKRect(
+                                              info.Left + info.Width * .15f + 12,
+                                              info.Top  + info.Height * .1f + 12,
+                                              info.Left + info.Width * .85f - 12,
+                                              info.Top  + info.Height * .9f - 12));
+
+            this.Paint(canvas);
+        }
+
         public void AutoPaint(object sender, SkiaSharp.Views.Forms.SKPaintSurfaceEventArgs args)
         {
             SKImageInfo info = args.Info;
@@ -28,6 +45,7 @@ namespace FlorineSkiaSharpForms
 
             this.Paint(canvas);
         }
+
         protected SKRect RatioBox(SKRect boundingBox)
         {
 

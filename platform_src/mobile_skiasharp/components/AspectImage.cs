@@ -29,6 +29,18 @@ namespace FlorineSkiaSharpForms
             Zoom,
             Stretch
         };
+
+        public virtual void ConnectCanvasView(SKCanvasView CV) {
+            CV.PaintSurface += (sender, e) => {
+                Draw(
+                    e.Surface.Canvas,
+                    new SKRect(
+                        0, 0, e.Info.Width, e.Info.Height
+                    )
+                );
+            };
+        }
+
         protected virtual void DrawImage(SKCanvas canvas, SKRect finalBoundingBox, SKPaint paint = null)
         {
             if (_image == null) { return; }
