@@ -10,7 +10,8 @@ namespace FlorineSkiaSharpForms
 {
     public class SkiaSharpFormsFoundry : FlorineHardCodedData.HardCodedDataFoundry // : IPlatformFoundry
     {
-        public SkiaSharpFormsFoundry() { }
+        public SkiaSharpFormsFoundry() {            
+        }
         // Web Overrides
         public override GameState LoadGameState() {
             // PageType, PageSubType
@@ -40,42 +41,35 @@ namespace FlorineSkiaSharpForms
         /* Misc Support */
         public Controller GameController { get; set; }
         public SkiaFlorinePage Page { get; set; }
+        public IPage PageFromIPage(IPage generic)
+        {
+            return new Florine_SkiaPage(generic, this, GameController);
+        }
         /* SkiaSharpFormsFoundry */
         public View RenderPage(GameState CurrentState) {
 
-            /*
+            IPage Source = PageFromIPage(
+                base.GetPage(
+                    CurrentState.CurrentPage
+                )
+            );
+
+            
             switch (CurrentState.CurrentPage.MainType)
             {
-                case GameState.PageType.Start:
-                    // TODO: Actual Switch
-                    
-                case GameState.PageType.Char_Creation:
-                    
-                case GameState.PageType.Day_Intro:
-                    
+             //   case GameState.PageType.Start:
+                    // TODO: Actual Switch                    
+//                case GameState.PageType.Char_Creation:                    
+//                case GameState.PageType.Day_Intro:                    
                 case GameState.PageType.Select_Meal:
-                    
+                    return Page.DefaultOptionLayout(Source, CurrentState);
+//                case GameState.PageType.Summarize_Meal:
+//                case GameState.PageType.Select_Activity:
+//                case GameState.PageType.Summarize_Activity:
+//                case GameState.PageType.Summarize_Day:
                    
-                case GameState.PageType.Summarize_Meal:
-                   
-                case GameState.PageType.Select_Activity:
-                   
-                case GameState.PageType.Summarize_Activity:
-                   
-                case GameState.PageType.Summarize_Day:
-                   
-            }*/
-            return new StackLayout()
-            {
-                Children = {
-                    new Label() {
-                        Text = CurrentState.CurrentPage.MainType.ToString()
-                        + "("
-                        + CurrentState.CurrentPage.SubType.ToString()
-                        + ")"
-                    }
-                }
-            };
+            }
+            return Page.UndefinedLayout(Source, CurrentState);
         }
     }
 }

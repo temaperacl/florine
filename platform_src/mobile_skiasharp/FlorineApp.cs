@@ -12,8 +12,10 @@ namespace FlorineSkiaSharpForms
         public FlorineApp(ISkiaSharpFlorineDataSource dataHolder) : base()
         {
             _data = dataHolder;
+            ResourceLoader.DataSource = _data;
             _foundry = new FlorineSkiaSharpForms.SkiaSharpFormsFoundry();
             _controller = new Florine.Controller(_foundry);
+            _controller.Init();
             MainPage = new SkiaFlorinePage(_controller, _foundry);
             
         }

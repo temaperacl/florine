@@ -13,15 +13,26 @@ namespace FlorineSkiaSharpForms
             if (null == DataSource) { return null; }
             SKBitmap cereal;
             System.Reflection.Assembly assembly = System.Reflection.Assembly.GetAssembly(typeof(ResourceLoader));
-            using (System.IO.Stream stream = assembly.GetManifestResourceStream(resourceID))
-            {
-                cereal = SKBitmap.Decode(DataSource.GetStream(resourceID));
+            byte [] data = DataSource.GetBytes(resourceID);
+            if(null != data && data.Length > 0 ) {                
+                cereal = SKBitmap.Decode(data);
+                //SKCodecResult result = codec.GetPixels(cereal.Info, cereal.GetPixels());
+                //if (result == SKCodecResult.Success)
+                //{
+                //    return cereal;
+                //}
+                
+                return cereal;
             }
-            return cereal;
+            return null;
         }
         public static SKImage LoadImage(string resourceID)
         {
-            return SKImage.FromBitmap(LoadBitmap(resourceID));
-        }
+
+            SKBitmap bmp = LoadBitmap(resourceID);
+            if (null == bmp) { bmp = LoadBitmap("Images/food/bagel.png"); }
+            if (null == bmp) { return null; }
+            return SKImage.FromBitmap(bmp);
+        }        
     }
 }

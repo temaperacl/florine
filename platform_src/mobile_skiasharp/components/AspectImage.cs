@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using System.Text;
 using SkiaSharp;
+using SkiaSharp.Views.Forms;
 
 namespace FlorineSkiaSharpForms
 {
-    public class AspectImage
+    public class AspectImage : IFlorineSkiaConnectable, Florine.IImage
     {
         public SKImage baseImage
         {
@@ -19,6 +20,8 @@ namespace FlorineSkiaSharpForms
                 }
             }
         }
+
+        public int ImageKey { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
         private SKImage _image = null;
         private float imageRatio = 1f;

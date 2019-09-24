@@ -2,12 +2,14 @@
 using System.Collections.Generic;
 using System.Text;
 using SkiaSharp;
+using SkiaSharp.Views.Forms;
 
 namespace FlorineSkiaSharpForms
 {
-    public class FlOval
+    public class FlOval : IFlorineSkiaConnectable, Florine.IImage
     {
-        public SKPaint backgroundColor = new SKPaint() { Color = new SKColor(0, 0, 200, 0) };
+        public int ImageKey { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public SKPaint backgroundColor = new SKPaint() { Color = new SKColor(0, 0, 200, 100) };
         public SKRect outerBounds = new SKRect();
         public SKRect innerBounds = new SKRect();
         public List<Tuple<float, SKColor>> innerRing = new List<Tuple<float, SKColor>>();
@@ -15,7 +17,7 @@ namespace FlorineSkiaSharpForms
         public SKImage mainImage { get { return coreImage.baseImage; } set { coreImage.baseImage = value; } }
         private AspectImage coreImage = new AspectImage();
         private float ringWidth = 10;
-        private float ovalRatio = .5f;
+        private float ovalRatio = .5f;        
         public void DrawOval(SKCanvas canvas, SKRect info, SKPaint paint = null)
         {
 
@@ -31,6 +33,11 @@ namespace FlorineSkiaSharpForms
                                               info.Top  + info.Height * .9f - 12));
 
             this.Paint(canvas);
+        }
+
+        public virtual void ConnectCanvasView(SKCanvasView CV)
+        {
+            CV.PaintSurface += AutoPaint;
         }
 
         public void AutoPaint(object sender, SkiaSharp.Views.Forms.SKPaintSurfaceEventArgs args)
@@ -76,7 +83,6 @@ namespace FlorineSkiaSharpForms
         {
             if (null != backgroundColor)
             {
-
                 canvas.DrawOval(innerBounds, backgroundColor);
             }
             SKRect innerRingBound = new SKRect(

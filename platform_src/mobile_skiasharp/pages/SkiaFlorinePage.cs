@@ -3,15 +3,21 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Florine;
-
+using SkiaSharp;
+using SkiaSharp.Views.Forms;
 using Xamarin.Forms;
 
 namespace FlorineSkiaSharpForms
 {
     public class SkiaFlorinePage : ContentPage
     {
+        private SkiaSharpFormsFoundry _foundry;
+        private Controller _controller;
+
         public SkiaFlorinePage(Controller GameController, SkiaSharpFormsFoundry Foundry) : base()
         {
+            _controller = GameController;
+            _foundry = Foundry;
             Foundry.Page = this;
             Foundry.GameController = GameController;
             Content = Foundry.RenderPage(GameController.CurrentState);
@@ -31,18 +37,50 @@ namespace FlorineSkiaSharpForms
                 PCView = pcView;
             }
         }
-        private List<PageComponent> _components = new List<PageComponent>();
 
-        public void DefaultOptionLayout(
+
+        private void Continue_Handler(object sender, EventArgs e)
+        {
+            IPage Next = _controller.UserOption(null);
+            Content = _foundry.RenderPage(_controller.CurrentState);
+        }
+
+
+        private List<PageComponent> _components = new List<PageComponent>();
+        public View UndefinedLayout(
+            IPage Source,
+            GameState State)
+        {
+            Button ContinueButton = new Button()
+            {
+                Text = "Continue",
+            };
+            ContinueButton.Clicked += Continue_Handler;
+
+            return new StackLayout()
+            {
+                Children = {
+                    new Label() {
+                        Text = Source.MainType.ToString()
+                        + "("
+                        + Source.SubType.ToString()
+                        + ")"
+                    },
+                    ContinueButton
+                }
+            };
+        }
+
+        public View DefaultOptionLayout(
                                   IPage Source,
-                                  GameState State,
+                                  GameState State
                                   )
         {
 	     var grid = new Grid();
              grid.SizeChanged += SizeChanged_Grid;
              _components.Clear();
              _readyIPage(Source);
-             this.Content = grid;
+            return grid;
         }
 
         private void _readyIPage(IPage Source)
@@ -63,10 +101,12 @@ namespace FlorineSkiaSharpForms
                 foreach(IGameOption opt in Opts) 
                 {
                     SKCanvasView Img = new SKCanvasView();
-                    if(null != opt.Picture
-                       && opt.Picture is AspectImage) {
-                        ((AspectImage)(opt.Picture)).ConnectCanvasView(Img);
+                    IFlorineSkiaConnectable conn = opt.Picture as IFlorineSkiaConnectable;
+
+                    if(null != conn) {
+                        conn.ConnectCanvasView(Img);
                     }
+
                      _components.Add(
                          new PageComponent(
                              PageComponentType.Option,
@@ -76,17 +116,17 @@ namespace FlorineSkiaSharpForms
                 }
                 if(null != Opts.Finalizer) {
                     SKCanvasView Img = new SKCanvasView();
-                    if(null != Opts.Finalizer.Picture
-                       && Opts.Finalizer.Picture is AspectImage) {
-                        ((AspectImage)(opt.Picture)).ConnectCanvasView(Img);
-                    } else {
-                        //?
+                    IFlorineSkiaConnectable conn = Opts.Finalizer.Picture as IFlorineSkiaConnectable;
+                    if (null != conn)
+                    {
+                        conn.ConnectCanvasView(Img);
                     }
-                     _components.Add(
-                         new PageComponent(
-                             PageComponentType.Footer,
-                             Img
-                         )
+                    _components.Add(
+                        new PageComponent(
+                            PageComponentType.Footer,
+                            Img
+                        )
+                    );
                 }
             }            
         }
@@ -103,11 +143,8 @@ namespace FlorineSkiaSharpForms
             Grid grid = Content as Grid;
             if (grid == null) return;
 
-	     float Height = Dim.Height;
-	     float Width = Dim.Width;
-
-             int Rows = 0;
-             int Cols = 0;
+	     int Rows = 0;
+         int Cols = 0;
 
 	     if (Height > Width)
 	     {
@@ -169,26 +206,26 @@ namespace FlorineSkiaSharpForms
                          case PageComponentType.Header:
                              grid.Children.Add( p.PCView,  0,  7,  0,  4 );
                              break;
-                         case PageComponentType.Footer
+                        case PageComponentType.Footer:
                              grid.Children.Add( p.PCView,  2,  5, 11, 12 );
                              break;
                          case PageComponentType.Option:
                              if(OptionCount < 4) {
                                  grid.Children.Add( p.PCView,  2,  5,  5+CurrentOption*2,  7+CurrentOption*2 );
                              } else {
-                                 if(CurrentOption > 3) {
+                                //Fix
+                                 if(CurrentOption == 4 && OptionCount == 5 ) {
                                      grid.Children.Add( p.PCView,  2,  5,  9,  11 );
                                  } else {
                                      grid.Children.Add( p.PCView,
-                                                        0 + (currentOption % 2) * 4,
-                                                        3 + (currentOption % 2) * 4,
-                                                        5 + int(CurrentOption / 2) * 2,
-                                                        7 + int(CurrentOption / 2) * 2 );
+                                                        0 + (CurrentOption % 2) * 4,
+                                                        3 + (CurrentOption % 2) * 4,
+                                                        4 + (int)(CurrentOption / 2) * 2,
+                                                        8 + (int)(CurrentOption / 2) * 2 );
                                  }
                              }
                              ++CurrentOption;
                              break;
-                         }
                      }
                  } else {
                      // 7x15 - "wide"
@@ -206,21 +243,22 @@ namespace FlorineSkiaSharpForms
                          case PageComponentType.Header:
                              grid.Children.Add( p.PCView,  0,  7,  0,  4 );
                              break;
-                         case PageComponentType.Footer
+                    case PageComponentType.Footer:
                              grid.Children.Add( p.PCView,  2,  5,  6, 7 );
                              break;
                          case PageComponentType.Option:
                              if(OptionCount < 4) {
                                  grid.Children.Add( p.PCView,  10,  13,  1+CurrentOption*2,  1+CurrentOption*2 );
                              } else {
-                                 if(CurrentOption > 3) {
-                                     grid.Children.Add( p.PCView,  5,  7,  10,  13 );
+                                if (CurrentOption == 4 && OptionCount == 5)
+                                {
+                                    grid.Children.Add( p.PCView,  5,  7,  10,  13 );
                                  } else {
                                      grid.Children.Add( p.PCView,
-                                                        8  + (currentOption % 2) * 4,
-                                                        11 + (currentOption % 2) * 4,
-                                                        1  + int(CurrentOption / 2) * 2,
-                                                        3  + int(CurrentOption / 2) * 2 );
+                                                        8  + (CurrentOption % 2) * 4,
+                                                        11 + (CurrentOption % 2) * 4,
+                                                        1  + (int)(CurrentOption / 2) * 2,
+                                                        3  + (int)(CurrentOption / 2) * 2 );
                                  }
                              }
                              ++CurrentOption;
@@ -228,10 +266,6 @@ namespace FlorineSkiaSharpForms
                      } 
                  }  // End Wide
              }  // End PageComponentLoop
-                     //grid.Children.Add(_displays["hairB"], 1 * col, 1 * row+1);
-                 //grid.Children.Add(_displays["hairR"], 1 * col, 1 * row);
-
-            return Container;
         }
     }    
 }

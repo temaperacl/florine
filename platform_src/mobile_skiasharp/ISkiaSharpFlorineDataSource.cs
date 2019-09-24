@@ -7,6 +7,7 @@ namespace FlorineSkiaSharpForms
 {
     public interface ISkiaSharpFlorineDataSource
     {
+        byte[] GetBytes(string Identifier);
         SKManagedStream GetStream(string Identifier);
         /*(
          * SKBitmap bitmap = null;

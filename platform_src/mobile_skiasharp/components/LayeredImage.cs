@@ -14,14 +14,13 @@ namespace FlorineSkiaSharpForms
 
         protected override void DrawImage(SKCanvas canvas, SKRect finalBoundingBox, SKPaint paint = null)
         {
-            if (_image != null) { 
-                canvas.DrawImage(_image, finalBoundingBox, paint);
+            base.DrawImage(canvas, finalBoundingBox, paint);            
+            for(int i = TopLayers.Count - 1; i > 0; --i) {                
+                TopLayers[i].Draw(canvas, finalBoundingBox, paint);
             }
-            foreach(AspectImage Img in TopLayers.Reverse()) {
-                Img.DrawImage(canvas, finalBoundingBox, paint);
-            }
-            foreach(FlOval Oval in Ovals) {
-                Ovals.DrawOval(canvas, finalBoundingBox, paint);
+            for (int i = Ovals.Count - 1; i > 0; --i)
+            {
+                Ovals[i].DrawOval(canvas, finalBoundingBox, paint);
             }
         }
     }

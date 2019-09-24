@@ -241,17 +241,17 @@ namespace FlorineHardCodedData
 		static Dictionary<string, List<NutrientAmount>> FoodTable =
 			new Dictionary<string, List<NutrientAmount>>()
 		{
-			{"Toast",
+			{"toast",
 			 	new List<NutrientAmount>() {2.25,13.6,1,0.725,72.4,26,0,29.8,0.832,32.8,0.005,0} },
-			{"Poptarts",
+			{"grilledcheese",
 			 	new List<NutrientAmount>() {5,71,9,2,385,0,0,0,1.8,0,0,0} },
-			{"Pancakes",
+			{"pancakes",
 			 	new List<NutrientAmount>() {2.09,68,2.796,.4,305.524,25.6,0,32.66,2.336,38.19,1.12,181} },
-			{"Fruit",
+			{"fruit",
 			 	new List<NutrientAmount>() {1.03,19.4,0.3,2.34,84.33,22.19,0,23.73,0.23,278.3,0,7.51} },
-			{"Eggs",
+			{"eggs",
 			 	new List<NutrientAmount>() {22,3.54,24.2,0,319.96,79.2,3.96,145,2.88,290,1.67,354} },
-			{"Cereal",
+			{"cereal",
 			 	new List<NutrientAmount>() {3.99,24.2,2.22,3.1,132.74,236,1.12,132,10.9,212,2.23,327} }	
 		};
 		
