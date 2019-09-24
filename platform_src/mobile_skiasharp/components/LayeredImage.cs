@@ -9,18 +9,13 @@ namespace FlorineSkiaSharpForms
     {
         // SKRect, AspectImage ----
         //
-        public List<FlOval>      Ovals = new List<FlOval>();
-        public List<AspectImage> TopLayers = new List<AspectImage>();
+        public List<IFlorineSkiaDrawable> Layers = new List<FlOval>();
 
         protected override void DrawImage(SKCanvas canvas, SKRect finalBoundingBox, SKPaint paint = null)
         {
             base.DrawImage(canvas, finalBoundingBox, paint);            
-            for(int i = TopLayers.Count - 1; i > 0; --i) {                
-                TopLayers[i].Draw(canvas, finalBoundingBox, paint);
-            }
-            for (int i = Ovals.Count - 1; i > 0; --i)
-            {
-                Ovals[i].DrawOval(canvas, finalBoundingBox, paint);
+            for(int i = Layers.Count - 1; i > 0; --i) {                
+                Layers[i].Draw(canvas, finalBoundingBox, paint);
             }
         }
     }

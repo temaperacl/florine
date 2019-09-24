@@ -101,7 +101,7 @@ namespace FlorineSkiaSharpForms
                 foreach(IGameOption opt in Opts) 
                 {
                     SKCanvasView Img = new SKCanvasView();
-                    IFlorineSkiaConnectable conn = opt.Picture as IFlorineSkiaConnectable;
+                    IFlorineSkiaConnectable conn = opt as IFlorineSkiaConnectable;
 
                     if(null != conn) {
                         conn.ConnectCanvasView(Img);
@@ -116,7 +116,7 @@ namespace FlorineSkiaSharpForms
                 }
                 if(null != Opts.Finalizer) {
                     SKCanvasView Img = new SKCanvasView();
-                    IFlorineSkiaConnectable conn = Opts.Finalizer.Picture as IFlorineSkiaConnectable;
+                    IFlorineSkiaConnectable conn = Opts.Finalizer as IFlorineSkiaConnectable;
                     if (null != conn)
                     {
                         conn.ConnectCanvasView(Img);

@@ -6,7 +6,7 @@ using SkiaSharp.Views.Forms;
 
 namespace FlorineSkiaSharpForms
 {
-    public class FlOval : IFlorineSkiaConnectable, Florine.IImage
+    public class FlOval : IFlorineSkiaConnectable, IFlorineSkiaDrawable, Florine.IImage
     {
         public int ImageKey { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public SKPaint backgroundColor = new SKPaint() { Color = new SKColor(0, 0, 200, 100) };
@@ -18,6 +18,8 @@ namespace FlorineSkiaSharpForms
         private AspectImage coreImage = new AspectImage();
         private float ringWidth = 10;
         private float ovalRatio = .5f;        
+        public void Draw(SKCanvas canvas, SKRect info, SKPaint paint = null)
+        { DrawOval(canvas, info, paint); }
         public void DrawOval(SKCanvas canvas, SKRect info, SKPaint paint = null)
         {
 

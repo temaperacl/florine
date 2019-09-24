@@ -6,7 +6,7 @@ using SkiaSharp.Views.Forms;
 
 namespace FlorineSkiaSharpForms
 {
-    public class AspectImage : IFlorineSkiaConnectable, Florine.IImage
+    public class AspectImage : IFlorineSkiaConnectable, IFlorineSkiaDrawable, Florine.IImage
     {
         public SKImage baseImage
         {

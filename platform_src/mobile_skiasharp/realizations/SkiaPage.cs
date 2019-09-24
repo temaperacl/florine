@@ -42,24 +42,35 @@ namespace FlorineSkiaSharpForms
             FlorineSkiaOptionSet newSet = new FlorineSkiaOptionSet()
             {
                 SelectionLimit = opts.SelectionLimit,
-                Finalizer = _renderOption(opts.Finalizer)
             };
+            newSet.Finalizer = _renderOption(opts.Finalizer, newSet)
             foreach (IGameOption opt in opts)
             {
-                newSet.Add(_renderOption(opt));
+                newSet.Add(_renderOption(opt, newSet));
             }
             return newSet;
         }
-        private IGameOption _renderOption(IGameOption opt)
+        private IGameOption _renderOption(IGameOption opt, FlorineSkiaOptionSet Container)
         {
-            FlorineSkiaOption newOpt = new FlorineSkiaOption(opt);
+            FlorineSkiaOption newOpt = new FlorineSkiaOption(opt, Container);
             newOpt.SubOptions = _renderOptionSet(opt.SubOptions);
-            /* Image time ! */            
-            newOpt.Picture = new FlOval()
-            {
-                mainImage = ResourceLoader.LoadImage("Images/food/" + opt.OptionName + ".png"),
-            };            
 
+            // Absurdly Hackity
+            String pathType = "food";
+            if(opt is Activity) { 
+                //Activity
+                pathType="Activity";
+                opt.Picture = new AspectImage() {                    
+                    baseImage = ResourceLoader.LoadImage("Images/" + pathType + "/" + opt.OptionName + ".png")
+                };
+            } else {
+                // Food
+                opt.Picture = new FoodOptionImage() {
+                    FoodImage = new FlOval() {
+                        mainImage = ResourceLoader.LoadImage("Images/" + pathType + "/" + opt.OptionName + ".png")
+                    }
+                };
+            }
 
             return newOpt;
         }        
