@@ -25,16 +25,16 @@ namespace FlorineSkiaSharpForms
 
         public void Draw(SKCanvas canvas, SKRect boundingBox, SKPaint paint = null)
         {
-            if (_image == null) { return; }
             // Figure out paint
             if(paint == null) 
             {
-                paint = new SKPaint() {
+                paint = new SKPaint()
+                {
                     TextSize = 24.0f,
                     IsAntialias = true,
-                    Color = new SKColor(0,0,0),
+                    Color = new SKColor(0, 0, 0),
                     TextAlign = SKTextAlign.Left
-                }
+                };
             }
             // Draw
             canvas.DrawText(

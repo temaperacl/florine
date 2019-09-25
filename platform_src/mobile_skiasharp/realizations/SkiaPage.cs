@@ -43,7 +43,7 @@ namespace FlorineSkiaSharpForms
             {
                 SelectionLimit = opts.SelectionLimit,
             };
-            newSet.Finalizer = _renderOption(opts.Finalizer, newSet)
+            newSet.Finalizer = _renderOption(opts.Finalizer, newSet);
             foreach (IGameOption opt in opts)
             {
                 newSet.Add(_renderOption(opt, newSet));
@@ -60,12 +60,12 @@ namespace FlorineSkiaSharpForms
             if(opt is Activity) { 
                 //Activity
                 pathType="Activity";
-                opt.Picture = new AspectImage() {                    
+                newOpt.Picture = new AspectImage() {                    
                     baseImage = ResourceLoader.LoadImage("Images/" + pathType + "/" + opt.OptionName + ".png")
                 };
             } else {
                 // Food
-                opt.Picture = new FoodOptionImage() {
+                newOpt.Picture = new FoodOptionImage() {
                     FoodImage = new FlOval() {
                         mainImage = ResourceLoader.LoadImage("Images/" + pathType + "/" + opt.OptionName + ".png")
                     }

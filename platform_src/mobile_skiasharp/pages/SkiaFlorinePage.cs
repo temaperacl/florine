@@ -221,7 +221,7 @@ namespace FlorineSkiaSharpForms
                                                         0 + (CurrentOption % 2) * 4,
                                                         3 + (CurrentOption % 2) * 4,
                                                         4 + (int)(CurrentOption / 2) * 2,
-                                                        8 + (int)(CurrentOption / 2) * 2 );
+                                                        6 + (int)(CurrentOption / 2) * 2 );
                                  }
                              }
                              ++CurrentOption;

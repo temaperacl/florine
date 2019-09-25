@@ -2,19 +2,21 @@
 using System.Collections.Generic;
 using System.Text;
 using SkiaSharp;
+using SkiaSharp.Views.Forms;
 
 namespace FlorineSkiaSharpForms
 {
-    public class FoodOptionImage : IFlorineSkiaDrawable, IImage, IFlorineSkiaConnectable
+    public class FoodOptionImage : IFlorineSkiaDrawable, Florine.IImage, IFlorineSkiaConnectable
     {
         public int ImageKey { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public bool Enabled { get; set; }
-        public bool IFlorineSkiaDrawable FoodImage { get; set; }
+        public IFlorineSkiaDrawable FoodImage { get; set; }
 
         private FlOval _Highlight = new FlOval() {
             innerRing = {
                 new Tuple<float, SKColor>(360f, new SKColor(0,0,230))
-            }
+            },
+            backgroundColor = new SKPaint() { Color = new SKColor(0, 0, 0, 0) }
         };
    
         public void ConnectCanvasView(SKCanvasView CV)
@@ -31,7 +33,8 @@ namespace FlorineSkiaSharpForms
 
         public void Draw(SKCanvas canvas, SKRect boundingBox, SKPaint paint = null)
         {
-            if(null != FoodImage) { FoodImage.Draw(canvas, boundingBox, paint); }
+            canvas.Clear();
+            if(null != FoodImage) { FoodImage.Draw(canvas, boundingBox,  paint); }
             if(Enabled) { _Highlight.Draw(canvas, boundingBox, paint); }
         }
     }

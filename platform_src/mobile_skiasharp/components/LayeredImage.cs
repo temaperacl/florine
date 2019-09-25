@@ -9,7 +9,7 @@ namespace FlorineSkiaSharpForms
     {
         // SKRect, AspectImage ----
         //
-        public List<IFlorineSkiaDrawable> Layers = new List<FlOval>();
+        public List<IFlorineSkiaDrawable> Layers = new List<IFlorineSkiaDrawable>();
 
         protected override void DrawImage(SKCanvas canvas, SKRect finalBoundingBox, SKPaint paint = null)
         {

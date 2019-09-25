@@ -2,7 +2,10 @@
 using System.Collections.Generic;
 using System.Text;
 using Florine;
-
+using Xamarin.Forms;
+using SkiaSharp;
+using SkiaSharp.Views.Forms;
+using System.ComponentModel;
 
 namespace FlorineSkiaSharpForms
 {
@@ -15,24 +18,26 @@ namespace FlorineSkiaSharpForms
             get {
                 FlorineSkiaOptionSet resultSet = new FlorineSkiaOptionSet();
                 foreach(IGameOption opt in _selected) {
-                    resultsSet.Add(opt);
+                    resultSet.Add(opt);
                 }
                 return resultSet;
             }
         }
         public bool ToggleOption(IGameOption opt) {
-            if (_selected.Count >= SelectionLimit) { return false; }
+            
             if (_selected.Contains(opt)) 
             {
                 _selected.Remove(opt);
                 return false;
             }
-            foreach(nopt in this) {
+            if (_selected.Count >= SelectionLimit) { return false; }
+            foreach (IGameOption nopt in this) {
                 if(nopt == opt) {
                     _selected.Add(opt);
                     return true;
                 }
             }
+            return false;
         }
     }
 
@@ -40,7 +45,7 @@ namespace FlorineSkiaSharpForms
     {
         IGameOption _parent;
         FlorineSkiaOptionSet _container;
-        IGameOptionSet
+
         public FlorineSkiaOption(IGameOption Parent)
         {
             _parent = Parent;
@@ -107,7 +112,7 @@ namespace FlorineSkiaSharpForms
         // Alternatively or additionally , after creating/linking, the OnTap
         // event can be hooked into.
         //
-        private class CVTapWrap : TapGestureRecognizer();
+        private class CVTapWrap
         {
             // Making this Static to make the usage slighly more intuitive
             public static CVTapWrap Associate(
@@ -119,20 +124,21 @@ namespace FlorineSkiaSharpForms
                 {
                     wrapper.OnTap += func;
                 }
-                CV.GestureRecognizers.Add(wrapper);
+                CV.GestureRecognizers.Add(wrapper._tapRecognizer);
                 return wrapper;
             }
 
             // ############################################ Non Static CVTapWrap
+            private TapGestureRecognizer _tapRecognizer = new TapGestureRecognizer();
             public SKCanvasView Tie { get; set; }
             public CVTapWrap(SKCanvasView CV) : base() {
                 Tie = CV;
-                this.Tapped += CanvasTapped;
+                _tapRecognizer.Tapped += CanvasTapped;
             }
 
             // ############################################ Event Exposure
             private void CanvasTapped(object sender, EventArgs e) {
-                RaiseTapEvent(e);
+                RaiseTapEvent(new TapEventArgs(e));
             }
 
             protected virtual void RaiseTapEvent(TapEventArgs e) {
@@ -147,7 +153,7 @@ namespace FlorineSkiaSharpForms
                 {
                     OriginalEventArgs = e;
                 }
-                public EventArgs OrginalEventArgs { get; private set; }
+                public EventArgs OriginalEventArgs { get; private set; }
                 public SKCanvasView Canvas { get; set; }
             }
 
