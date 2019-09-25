@@ -186,8 +186,8 @@ namespace Florine
 						return _n;
 					} 
 			}
-            public NutrientSet NutrientState { get { return null; } }
-            public NutrientSet NutrientDelta { get { return null; } }
+            public NutrientSet NutrientState { get; set; }
+            public NutrientSet NutrientDelta { get; set; }
         };
 
     }
