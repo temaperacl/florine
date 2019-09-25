@@ -41,7 +41,7 @@ namespace FlorineSkiaSharpForms
         }
     }
 
-    class FlorineSkiaOption : IGameOption, IFlorineSkiaConnectable
+    class FlorineSkiaOption : IGameOption, IFlorineSkiaConnectable, FlorineSkiaSimpleEventDriver
     {
         IGameOption _parent;
         FlorineSkiaOptionSet _container;
@@ -79,10 +79,10 @@ namespace FlorineSkiaSharpForms
         public void ConnectCanvasView(SKCanvasView CV) {
             IFlorineSkiaConnectable picConn = Picture as IFlorineSkiaConnectable;
             if(picConn != null) { picConn.ConnectCanvasView(CV); }
-            CVTapWrap.Associate(CV, OptionTapHandler);                        
+            FlorineSkiaTapWrap.Associate(CV, OptionTapHandler);                        
         }
 
-        private void OptionTapHandler(object sender, CVTapWrap.TapEventArgs e)
+        private void OptionTapHandler(object sender, FlorineSkiaTapWrap.TapEventArgs e)
         {
             if( Toggle() ) {
                 // Toggle occured - any follow up?
@@ -92,74 +92,7 @@ namespace FlorineSkiaSharpForms
                     e.Canvas.InvalidateSurface();
                 }
             }
-        }
-
-        // TODO: Move to independent File
-        // CVTapWrap ##########################################################
-        // Wrapper for slightly easier association including explicit
-        // propagation of Canvas object.
-        //
-        // Usage as TapGestureRecognizer or:
-        // CVTapWrap wrapper = 
-        //     CVTapWrap.Associate(<SKCanvasView>, [<TapEventHandler>]);        
-        //
-        // Where <SKCanvasView> is the CanvasView to grab
-        // and <TapEventHandler> is an EventHandler that takes
-        // (obj, CVTapWrap.TapEventArgs)
-        // where TapEventArgs contains a .Canvas field that points to the
-        // linked canvas.
-        //
-        // Alternatively or additionally , after creating/linking, the OnTap
-        // event can be hooked into.
-        //
-        private class CVTapWrap
-        {
-            // Making this Static to make the usage slighly more intuitive
-            public static CVTapWrap Associate(
-                SKCanvasView CV,
-                TapEventHandler func = null
-            ) {
-                CVTapWrap wrapper = new CVTapWrap(CV);
-                if(null != func)
-                {
-                    wrapper.OnTap += func;
-                }
-                CV.GestureRecognizers.Add(wrapper._tapRecognizer);
-                return wrapper;
-            }
-
-            // ############################################ Non Static CVTapWrap
-            private TapGestureRecognizer _tapRecognizer = new TapGestureRecognizer();
-            public SKCanvasView Tie { get; set; }
-            public CVTapWrap(SKCanvasView CV) : base() {
-                Tie = CV;
-                _tapRecognizer.Tapped += CanvasTapped;
-            }
-
-            // ############################################ Event Exposure
-            private void CanvasTapped(object sender, EventArgs e) {
-                RaiseTapEvent(new TapEventArgs(e));
-            }
-
-            protected virtual void RaiseTapEvent(TapEventArgs e) {
-                e.Canvas = Tie;
-                if(null != OnTap) {
-                    OnTap(this, e);
-                }
-            }
-
-            public class TapEventArgs : EventArgs {
-                public TapEventArgs(EventArgs e) : base()
-                {
-                    OriginalEventArgs = e;
-                }
-                public EventArgs OriginalEventArgs { get; private set; }
-                public SKCanvasView Canvas { get; set; }
-            }
-
-            public delegate void TapEventHandler(object sender, TapEventArgs e);
-
-            public event TapEventHandler OnTap;
+            RaiseEventTrigger(new EventArgs());
         }
     }    
 }

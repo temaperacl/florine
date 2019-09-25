@@ -7,17 +7,42 @@ namespace Florine
     {
         // Data
         public Florine.Player Player { get; set; }  
-		public NutrientSet DailyDelta { get; set; }
-		public NutrientSet CurrentDelta { get; set; }
+        public NutrientSet DailyDelta 
+        {
+            get
+            {
+               if(null == _currentPage) { return null; }
+               return _currentPage.NutrientState;
+            }
+            set
+            {
+               if(null == _currentPage) { return; }
+               _currentPage.NutrientState = value;
+            }
+        }
+
+        public NutrientSet CurrentDelta 
+        { 
+            get
+            {
+               if(null == _currentPage) { return null; }
+               return _currentPage.NutrientDelta;
+            }
+            set
+            {
+               if(null == _currentPage) { return; }
+               _currentPage.NutrientDelta = value;
+            }
+        }
 		
         private GameState.DataPage _currentPage { get; set; }
-		public int HoursLeftInDay { get; set; }
+        public int HoursLeftInDay { get; set; }
         public GameState()
         {
 			Player = new Florine.Player();
 			DailyDelta = new Florine.NutrientSet();
 			CurrentDelta = new Florine.NutrientSet();
-            _currentPage = new GameState.DataPage();			
+                        _currentPage = new GameState.DataPage();			
         }
 
 
@@ -26,20 +51,20 @@ namespace Florine
             get {
                 return _currentPage;
             }
-			set {				
-				_currentPage = new DataPage(value);
-			}
+            set {				
+                    _currentPage = new DataPage(value);
+            }
         }
 
-		public void ReadyNextPage()
-		{
+        public void ReadyNextPage()
+        {
             FTrack.Track();
             CurrentDelta = new NutrientSet();			
 			if(_currentPage.MainType == PageType.Day_Intro) {
 				DailyDelta = new NutrientSet();				
 			}								
 			_currentPage.AppliedOptions = null;
-		}
+        }
 		
         public void ApplyOption(IGameOption option) {
             FTrack.Track();
@@ -60,6 +85,7 @@ namespace Florine
 				_currentPage.AppliedOptions = new AppliedOptionSet();
 			}
 			_currentPage.AppliedOptions.Add(option);
+                        //_currentPage.NutrientState = Player.Nutrients;
         }
 
         public IPage SetPage(PageType newMainType, PageSubType newSubType) {            
@@ -131,12 +157,12 @@ namespace Florine
         };
 		
         private class DataPage : IPage {
-			public DataPage() { }
-			public DataPage(IPage source) {
-				MainType = source.MainType;
-				SubType = source.SubType;
-				AppliedOptions= source.AppliedOptions;				
-			}
+            public DataPage() { }
+            public DataPage(IPage source) {
+                    MainType = source.MainType;
+                    SubType = source.SubType;
+                    AppliedOptions= source.AppliedOptions;				
+            }
             public PageType MainType { get; set; }
             public PageSubType SubType { get; set; }
 			

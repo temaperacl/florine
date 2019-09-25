@@ -30,7 +30,6 @@ namespace FlorineSkiaSharpForms
         {
 
             SKBitmap bmp = LoadBitmap(resourceID);
-            if (null == bmp) { bmp = LoadBitmap("Images/food/bagel.png"); }
             if (null == bmp) { return null; }
             return SKImage.FromBitmap(bmp);
         }        

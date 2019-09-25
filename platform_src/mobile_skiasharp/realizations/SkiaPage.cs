@@ -65,11 +65,21 @@ namespace FlorineSkiaSharpForms
                 };
             } else {
                 // Food
-                newOpt.Picture = new FoodOptionImage() {
-                    FoodImage = new FlOval() {
-                        mainImage = ResourceLoader.LoadImage("Images/" + pathType + "/" + opt.OptionName + ".png")
-                    }
-                };
+                SKImage ResultImage = ResourceLoader.LoadImage("Images/" + pathType + "/" + opt.OptionName + ".png");
+                if(null == ResultImage) 
+                {
+                    newOpt.Picture = new FoodOptionImage() {
+                        FoodImage = TextImage(opt.OptionName);
+                    };
+                }
+                else 
+                {
+                    newOpt.Picture = new FoodOptionImage() {
+                        FoodImage = new FlOval() {
+                            mainImage = ResultImage
+                        }
+                    };
+                }
             }
 
             return newOpt;

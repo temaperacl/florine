@@ -26,6 +26,7 @@ namespace FlorineSkiaSharpForms
         private enum PageComponentType {
             Header,
             Option,            
+            Message,
             Footer
         }
         private class PageComponent {
@@ -41,11 +42,15 @@ namespace FlorineSkiaSharpForms
 
         private void Continue_Handler(object sender, EventArgs e)
         {
-            IPage Next = _controller.UserOption(null);
+            FlorineSkiaOptionSet OptionSet = PrimaryOptionContainer as FlorineSkiaOptionSet;
+            IGameOptionSet SelectedOptions = PrimaryOptionContainer;
+            if(null != OptionSet) { SelectedOptions = OptionSet.Selected; }
+            
+            IPage Next = _controller.UserOption(SelectedOptions);
             Content = _foundry.RenderPage(_controller.CurrentState);
         }
 
-
+        private IGameOptionSet PrimaryOptionContainer;
         private List<PageComponent> _components = new List<PageComponent>();
         public View UndefinedLayout(
             IPage Source,
@@ -95,7 +100,17 @@ namespace FlorineSkiaSharpForms
                      )
                  );
              }
+             if(null != Source.Message && "" != Source.Message) 
+             {
+                 _components.Add(
+                     new PageComponent(
+                        PageComponentType.Message,
+                        new ImageText(Source.Message)
+                     )
+                 );
+             }
 
+            PrimaryOptionContainer = Source.PrimaryOptions;
             IGameOptionSet Opts = Source.PrimaryOptions;
             if(null != Opts) {
                 foreach(IGameOption opt in Opts) 
@@ -121,6 +136,11 @@ namespace FlorineSkiaSharpForms
                     {
                         conn.ConnectCanvasView(Img);
                     }
+                    IFlorineSkiaEventDriver econn = Opts.Finalizer as IFlorineSkiaEventDriver;
+                    if(null != econn) 
+                    {                        
+                        econn.OnEventTriggered += Continue_Handler;
+                    }
                     _components.Add(
                         new PageComponent(
                             PageComponentType.Footer,
@@ -143,20 +163,22 @@ namespace FlorineSkiaSharpForms
             Grid grid = Content as Grid;
             if (grid == null) return;
 
+             grid.Children.Clear();
+             grid.RowDefinitions.Clear();
+             grid.ColumnDefinitions.Clear();
 	     int Rows = 0;
-         int Cols = 0;
+             int Cols = 0;
 
 	     if (Height > Width)
 	     {
                  //Tall
                  Rows = 12;
-                 Cols = 7;
+                 Cols = 8;
 	     } else {
                  // Wide/Square
                  Rows = 7;
                  Cols = 15;
              }
-
              double CellHeight = Height / Rows;
              double CellWidth = Width / Cols;
 
@@ -186,28 +208,31 @@ namespace FlorineSkiaSharpForms
                  if(Height > Width)                  
                  {
                      //Tall - 12x7
-                     //   0123456
-                     //   |     |
-                     // 0-HHHHHHH-0
-                     // 1 HHHHHHH 1
-                     // 2 HHHHHHH 2
-                     // 3-HHHHHHH-3   1 - 3   4 - 6
-                     // 4 |TTTTT| 4  0123456 0123456
-                     // 5/OOO OOO\5    AAA   AAA BBB
-                     // 6\OOO OOO/6    AAA   AAA BBB
-                     // 7/OOO OOO\7    BBB   CCC DDD
-                     // 8\OOO OOO/8    BBB   CCC DDD
-                     // 9/OOO OOO\9    CCC     EEE
-                     // A\OOO OOO/10   CCC     EEE
-                     // B +<FFF>+ 11               
-                     //   | | | |
-                     //   0123456
+                     //   01234567
+                     //   |      |
+                     // 0-HHHHHHHH-0
+                     // 1 HHHHHHHH 1
+                     // 2 HHHHHHHH 2
+                     // 3-HHHHHHHH-3   1 - 3      4 -- 6
+                     // 4 |TTTTT| 4  01234567    01234567
+                     // 5/OOOOOOO\5    AAAA      AAAABBBB
+                     // 6\OOOOOOO/6    AAAA      AAAABBBB
+                     // 7/OOOOOOOO\7   BBBB      CCCCDDDD
+                     // 8\OOOOOOOO/8   BBBB      CCCCDDDD
+                     // 9/OOOOOOOO\9   CCCC        EEEE
+                     // A\OOOOOOOO/10  CCCC        EEEE
+                     // B | <FF> | 11               
+                     //   | |  | | 
+                     //   012345678
                      switch(p.PCType) {
                          case PageComponentType.Header:
-                             grid.Children.Add( p.PCView,  0,  7,  0,  4 );
+                             grid.Children.Add( p.PCView,  0,  8,  0,  4 );
                              break;
                         case PageComponentType.Footer:
-                             grid.Children.Add( p.PCView,  2,  5, 11, 12 );
+                             grid.Children.Add( p.PCView,  2,  6, 11, 12 );
+                             break;
+                        case PageComponentType.Message:
+                             grid.Children.Add( p.PCView,  0,  8,  4,  5 );
                              break;
                          case PageComponentType.Option:
                              if(OptionCount < 4) {
@@ -215,11 +240,11 @@ namespace FlorineSkiaSharpForms
                              } else {
                                 //Fix
                                  if(CurrentOption == 4 && OptionCount == 5 ) {
-                                     grid.Children.Add( p.PCView,  2,  5,  9,  11 );
+                                     grid.Children.Add( p.PCView,  2,  6,  9,  11 );
                                  } else {
                                      grid.Children.Add( p.PCView,
                                                         0 + (CurrentOption % 2) * 4,
-                                                        3 + (CurrentOption % 2) * 4,
+                                                        4 + (CurrentOption % 2) * 4,
                                                         4 + (int)(CurrentOption / 2) * 2,
                                                         6 + (int)(CurrentOption / 2) * 2 );
                                  }
