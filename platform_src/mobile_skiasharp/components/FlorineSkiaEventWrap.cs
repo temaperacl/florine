@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using SkiaSharp;
 using SkiaSharp.Views.Forms;
+using Xamarin.Forms;
 
 namespace FlorineSkiaSharpForms
 {
@@ -24,7 +25,7 @@ namespace FlorineSkiaSharpForms
     // Alternatively or additionally , after creating/linking, the OnTap
     // event can be hooked into.
     //
-    private class FlorineSkiaTapWrap
+    class FlorineSkiaTapWrap
     {
          // Making this Static to make the usage slighly more intuitive
          public static FlorineSkiaTapWrap Associate(

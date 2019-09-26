@@ -29,53 +29,51 @@ namespace FlorineSkiaSharpForms
     {
         //Todo: Grid Allocation Size, OptSize Usage
         protected virtual void PlaceOption(
-                                 Grid grid, 
-                                 SKRect GridAllocation,
-                                 SKRect OptSize,
-                                 int CurrentOption, 
-                                 int OptionCount, 
+                                 Grid grid,
+                                 SKRectI GridAllocation,
+                                 SKRectI OptSize,
+                                 int CurrentOption,
+                                 int OptionCount,
                                  View Option
-        ) {
+        )
+        {
             int GridLeft = GridAllocation.Left;
             int GridTop = GridAllocation.Top;
-             if(OptionCount == 1) {
-                 grid.Children.Add( 
-                                   Option,  
-                                   GridLeft + 2,  
-                                   GridLeft + 6,  
-                                   GridTop  + 0,  
-                                   GridTop  + 2 );
-             } else {
-                 if(
-                    (CurrentOption == OptionCount -1) // Last Option
-                    && (0 == CurrentOption % 2) //And Odd (Base 0)
-                 ) {
-                     //Center
-                     grid.Children.Add( Option,
-                                        GridLeft + 2,
-                                        GridLeft + 6,
-                                        GridTop  + 0 + (int)(CurrentOption / 2) * 2,
-                                        GridTop  + 2 + (int)(CurrentOption / 2) * 2 );
-                 } else {
-                     //2-by
-                     grid.Children.Add( Option,
-                                        GridLeft + 0 + (CurrentOption % 2) * 4,
-                                        GridLeft + 4 + (CurrentOption % 2) * 4,
-                                        GridTop  + 0 + (int)(CurrentOption / 2) * 2,
-                                        GridTop  + 2 + (int)(CurrentOption / 2) * 2 );
-                 }
-             }
+
+            if (
+            (CurrentOption == OptionCount - 1) // Last Option
+            && (0 == CurrentOption % 2) //And Odd (Base 0)
+            )
+            {
+                //Center
+                grid.Children.Add(Option,
+                                GridLeft + 2,
+                                GridLeft + 6,
+                                GridTop + 0 + (int)(CurrentOption / 2) * 2,
+                                GridTop + 2 + (int)(CurrentOption / 2) * 2);
+            }
+            else
+            {
+                //2-by
+                grid.Children.Add(Option,
+                                GridLeft + (CurrentOption % 2) * OptSize.Width,
+                                GridTop + (CurrentOption / 2) * OptSize.Height
+                                );
+                Grid.SetColumnSpan(Option, OptSize.Width);
+                Grid.SetRowSpan(Option, OptSize.Height);                
+            }
+
         }
 
-        protected virtual SKRect GetResolution(
-            Dictionary<PageComponentType, int> ComponentCounts),
-            bool IsTall
-        {
+        public virtual SKRectI GetResolution(
+            Dictionary<PageComponentType, int> ComponentCounts,
+            bool IsTall   
+        ){
             if (IsTall)
             {
-                return new SKRect(0,0,8,12);
+                return new SKRectI(0,0,8,12);
             } else {
-                return new SKRect(0,0,15,7);
+                return new SKRectI(0,0,15,7);
             }
         }
 
@@ -90,7 +88,7 @@ namespace FlorineSkiaSharpForms
                  if(isTall)                  
                  {
                      LayoutComponentTall(
-                            grid
+                            grid,
                             p.PCType,
                             p.PCView,
                             CurrentOption, 
@@ -98,7 +96,7 @@ namespace FlorineSkiaSharpForms
                      );
                  } else {
                      LayoutComponentWide(
-                            grid
+                            grid,
                             p.PCType,
                             p.PCView,
                             CurrentOption, 
@@ -108,7 +106,7 @@ namespace FlorineSkiaSharpForms
 
         }
 
-        private virtual void LayoutComponentWide(Grid grid, PageComponentType t, View v, int CurrentOption, int OptionCount)
+        protected virtual void LayoutComponentWide(Grid grid, PageComponentType t, View v, int CurrentOption, int OptionCount)
         {
              // 7x15 - "wide"
              //   0123456789ABCDE
@@ -121,27 +119,27 @@ namespace FlorineSkiaSharpForms
              // 6   FFF   OOO OOO
              //   012345678911111
              //             01234
-             switch(p.PCType) {
+             switch(t) {
                  case PageComponentType.Header:
-                     grid.Children.Add( p.PCView,  0,  7,  0,  4 );
+                     grid.Children.Add( v,  0,  7,  0,  4 );
                      break;
                 case PageComponentType.Footer:
-                     grid.Children.Add( p.PCView,  2,  5,  6, 7 );
+                     grid.Children.Add( v,  2,  5,  6, 7 );
                      break;
                  case PageComponentType.Option:
-                     PlaceOption(grid
-                                 new SKRect( 8, 1, 14, 6),
-                                 new SKRect( 0, 0, 4,  2),
+                     PlaceOption(grid,
+                                 new SKRectI( 8, 1, 14, 6),
+                                 new SKRectI( 0, 0, 4,  2),
                                  CurrentOption,
                                  OptionCount,
-                                 p.PCView
+                                 v
                      );
                      ++CurrentOption;
                      break;
              } 
         }
 
-        private virtual void LayoutComponentTall(Grid grid, PageComponentType t, View v, int CurrentOption, int OptionCount)
+        protected virtual void LayoutComponentTall(Grid grid, PageComponentType t, View v, int CurrentOption, int OptionCount)
         {
                      //Tall - 12x7
                      //   01234567
@@ -162,7 +160,7 @@ namespace FlorineSkiaSharpForms
                      //   012345678
                      switch(t) {
                          case PageComponentType.Header:
-                             grid.Children.Add( v,  0,  8,  0,  4 );
+                             grid.Children.Add( v,  0,  8,  0,  12 );
                              break;
                         case PageComponentType.Footer:
                              grid.Children.Add( v,  2,  6, 11, 12 );
@@ -171,9 +169,9 @@ namespace FlorineSkiaSharpForms
                              grid.Children.Add( v,  0,  8,  4,  5 );
                              break;
                          case PageComponentType.Option:
-                             PlaceOption(grid
-                                         new SKRect(0,5,7,10),
-                                         new SKRect(0,0,4,2),
+                             PlaceOption(grid,
+                                         new SKRectI(0,5,7,10),
+                                         new SKRectI(0,0,4,2),
                                          CurrentOption,
                                          OptionCount,
                                          v

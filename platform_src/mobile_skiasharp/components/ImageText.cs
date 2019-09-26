@@ -30,17 +30,28 @@ namespace FlorineSkiaSharpForms
             {
                 paint = new SKPaint()
                 {
-                    TextSize = 24.0f,
+                    TextSize = 64.0f,
                     IsAntialias = true,
-                    Color = new SKColor(0, 0, 0),
-                    TextAlign = SKTextAlign.Left
+                    Color = new SKColor(0,0,0),
+                    TextAlign = SKTextAlign.Center,
+                    StrokeWidth = 5,
+                    Style = SKPaintStyle.Stroke,
+                   
                 };
             }
             // Draw
             canvas.DrawText(
                             Text, 
-                            boundingBox.Left, 
-                            boundingBox.Top,
+                            boundingBox.Left+boundingBox.Width/2, 
+                            boundingBox.Bottom - boundingBox.Height/4,
+                            paint
+            );
+            paint.Style = SKPaintStyle.Fill;
+            paint.Color = new SKColor(250, 250, 250);
+            canvas.DrawText(
+                            Text,
+                            boundingBox.Left + boundingBox.Width / 2,
+                            boundingBox.Bottom - boundingBox.Height / 4,
                             paint
             );
             return;

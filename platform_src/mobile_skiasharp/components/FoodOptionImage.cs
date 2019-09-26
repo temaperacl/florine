@@ -34,7 +34,7 @@ namespace FlorineSkiaSharpForms
         public void Draw(SKCanvas canvas, SKRect boundingBox, SKPaint paint = null)
         {
             canvas.Clear();
-            if(null != FoodImage) { FoodImage.Draw(canvas, boundingBox,  paint); }
+            if (null != FoodImage) { FoodImage.Draw(canvas, boundingBox,  paint); }
             if(Enabled) { _Highlight.Draw(canvas, boundingBox, paint); }
         }
     }

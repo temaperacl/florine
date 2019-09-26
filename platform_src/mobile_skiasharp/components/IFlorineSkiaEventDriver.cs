@@ -10,7 +10,8 @@ namespace FlorineSkiaSharpForms
         event EventHandler OnEventTriggered;
     }
 
-    public class FlorineSkiaSimpleEventDriver {
+    public class FlorineSkiaSimpleEventDriver : IFlorineSkiaEventDriver
+    {
         public event EventHandler OnEventTriggered;
         public virtual void RaiseEventTrigger(EventArgs e) 
         {

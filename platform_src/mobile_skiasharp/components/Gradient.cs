@@ -22,7 +22,8 @@ namespace FlorineSkiaSharpForms
                     e.Surface.Canvas,
                     new SKRect(
                         0, 0, e.Info.Width, e.Info.Height
-                    )
+                    ),
+                    null
                 );
             };
         }
@@ -32,30 +33,31 @@ namespace FlorineSkiaSharpForms
             // Figure out paint
             if(paint == null) 
             {
-                paint = new SKPaint()
+                paint = new SKPaint();
             } else {
                 paint = paint.Clone();
             }
-
+            
             paint.Shader = SKShader.CreateLinearGradient(
-                new SKPoint(boundingBox.Left, boundingbox.Top),
+                new SKPoint(boundingBox.Left, boundingBox.Top),
                 new SKPoint(
                     Horizontal?boundingBox.Right:boundingBox.Left,
                     Horizontal?boundingBox.Top:boundingBox.Bottom
                 ),
-                Details.Keys.ToArray(),
-                Details.Values.ToArray(),
-                SKShaderTileMode.Clamp
-                ),
+                new List<SKColor>(Details.Values).ToArray(),
+                new List<float>(Details.Keys).ToArray(),
+                SKShaderTileMode.Clamp                
             );
 
             // Draw
+            /*
             canvas.DrawText(
                             Text, 
                             boundingBox.Left, 
                             boundingBox.Top,
                             paint
             );
+            */
             return;
         }
     }

@@ -29,7 +29,18 @@ namespace FlorineSkiaSharpForms
         public NutrientSet NutrientState { get { return _parent.NutrientState; } }
         public NutrientSet NutrientDelta { get { return _parent.NutrientDelta; } }
 
-        public IImage Background { get { return null; } }
+        public IImage Background
+        {
+            get
+            {
+                //if (null == _parent.Background) { return null; }
+                return new AspectImage()
+                {
+                    baseImage = ResourceLoader.LoadImage("Images/backdrops/day_kitchen.png"),
+                    scaling = AspectImage.ScalingType.Stretch
+                };
+            }
+        }
 
 
         public IGameOptionSet AppliedOptions { get { return _renderOptionSet(_parent.AppliedOptions); } }
@@ -57,32 +68,29 @@ namespace FlorineSkiaSharpForms
 
             // Absurdly Hackity
             String pathType = "food";
-            if(opt is Activity) { 
+            if (opt is Activity) {
                 //Activity
-                pathType="Activity";
-                newOpt.Picture = new AspectImage() {                    
+                pathType = "Activity";
+                newOpt.Picture = new AspectImage() {
                     baseImage = ResourceLoader.LoadImage("Images/" + pathType + "/" + opt.OptionName + ".png")
                 };
             } else {
                 // Food
                 SKImage ResultImage = ResourceLoader.LoadImage("Images/" + pathType + "/" + opt.OptionName + ".png");
-                if(null == ResultImage) 
+                newOpt.Picture = new FoodOptionImage()
                 {
-                    newOpt.Picture = new FoodOptionImage() {
-                        FoodImage = TextImage(opt.OptionName);
-                    };
-                }
-                else 
-                {
-                    newOpt.Picture = new FoodOptionImage() {
-                        FoodImage = new FlOval() {
-                            mainImage = ResultImage
-                        }
-                    };
-                }
+                    FoodImage = ((null == ResultImage) ?
+                        (IFlorineSkiaDrawable)(new ImageText(opt.OptionName))
+                        : (IFlorineSkiaDrawable)(new FlOval()
+                        {
+                            mainImage = ResultImage,
+                            backgroundColor = new SKPaint() { Color = new SKColor(230, 230, 230) }
+                        }))
+                };
+                
             }
 
             return newOpt;
-        }        
+        }
     }
 }

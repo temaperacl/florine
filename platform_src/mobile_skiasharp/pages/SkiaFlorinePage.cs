@@ -25,12 +25,13 @@ namespace FlorineSkiaSharpForms
 
         private void Continue_Handler(object sender, EventArgs e)
         {
-            IGameOptionSet SelectedOptions = PrimaryOptionContainer;
+            IGameOption SelectedOptions = null;
             FlorineSkiaOptionSet OptionSet = PrimaryOptionContainer as FlorineSkiaOptionSet;
             if(null != OptionSet) { SelectedOptions = OptionSet.Selected; }
             
             IPage Next = _controller.UserOption(SelectedOptions);
             Content = _foundry.RenderPage(_controller.CurrentState);
+            
         }
 
         private IGameOptionSet PrimaryOptionContainer;
@@ -88,7 +89,12 @@ namespace FlorineSkiaSharpForms
         {
 
              if(null != Source.Background) {
-                 SKCanvasView Header = new SKCanvasView();
+                SKCanvasView Header = new SKCanvasView();
+                IFlorineSkiaConnectable iconn = Source.Background as IFlorineSkiaConnectable;
+                if (null != iconn)
+                {
+                    iconn.ConnectCanvasView(Header);
+                }
                  _components.Add(
                      new PageComponent(
                          _inc(PageComponentType.Header),
@@ -98,13 +104,16 @@ namespace FlorineSkiaSharpForms
              }
              if(null != Source.Message && "" != Source.Message) 
              {
-                 _components.Add(
-                     new PageComponent(
-                        _inc(PageComponentType.Message),
-                        new ImageText(Source.Message)
+                SKCanvasView Message = new SKCanvasView();
+                ImageText itconn = new ImageText(Source.Message);
+                itconn.ConnectCanvasView(Message);
+                _components.Add(
+                    new PageComponent(
+                       _inc(PageComponentType.Message),
+                       Message
                      )
-                 );
-             }
+                 );                
+            }
 
             PrimaryOptionContainer = Source.PrimaryOptions;
             IGameOptionSet Opts = Source.PrimaryOptions;
@@ -148,7 +157,7 @@ namespace FlorineSkiaSharpForms
         }
 
         private void SizeChanged_Grid(object sender, EventArgs e)
-        {        
+        {
             // Conceptually:
             //  [ Image= ]
             //  [--------]
@@ -158,78 +167,85 @@ namespace FlorineSkiaSharpForms
             //    [ DN ]            
             Grid grid = Content as Grid;
             if (grid == null) return;
-             grid.Children.Clear();
-             grid.RowDefinitions.Clear();
-             grid.ColumnDefinitions.Clear();
+            grid.Children.Clear();
+            grid.RowDefinitions.Clear();
+            grid.ColumnDefinitions.Clear();            
+            grid.Padding = new Thickness(0.0, 0.0);
 
+            PageLayout ActiveLayout = null;
+            switch (_controller.CurrentState.CurrentPage.MainType)
+            {
+                case GameState.PageType.Select_Meal:
+                    ActiveLayout = new LayoutOptionSelect();
+                    break;
+                default:
+                    ActiveLayout = new LayoutOptionSelect();
+                    break;
+            }
 
-             PageLayout ActiveLayout = null;
-             switch(_controller.CurrentState.CurrentPage.MainType) {
-                 case GameState.PageType.Select_Meal):
-                     ActiveLayout = new LayoutOptionSelect();
-                     break;
-                 default:
-                     ActiveLayout = new LayoutOptionSelect();
+            // ************************************************** Prep
+            bool IsTall = Height > Width;
+            // Todo: Move to layout class.
+            // ************************************************** Get Dimensions
+            SKRect Dimensions = ActiveLayout.GetResolution(
+               _componentCounts,
+               IsTall
+            );
+            int Rows = (int)(Dimensions.Height);
+            int Cols = (int)(Dimensions.Width);
+
+            // *********************************************** Setup Grid            
+            double CellHeight = Height / Rows;
+            double CellWidth = Width / Cols;
+
+            for (int i = 0; i < Rows; ++i)
+            {
+                grid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Star) });
+            }
+            for (int i = 0; i < Cols; ++i)
+            {
+                grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+            }
+
+            // ********************************************** * Layout
+            LayoutComponents(
+                 ActiveLayout,
+                 Height > Width,
+                 _componentCounts,
+                 grid
+            );
+
+            /*
+            for (int i = 0; i < Cols; ++i)
+            {
+                for (int y = 0; y < Rows; ++y)
+                {
+                    grid.Children.Add(new Label() { Text = i.ToString() + ", " + y.ToString(), FontSize = 8 }, i, y);
+                }
              }
-
-             // ************************************************** Prep
-             foreach(PageComponent p in _components) 
-             {
-                 if (p.PCType == PageComponentType.Option) 
-                 {
-                     OptionCount++;
-                 }
-             }
-
-             bool IsTall = Height > Width;
-             // Todo: Move to layout class.
-             // ************************************************** Get Dimensions
-             SKRect Dimensions = ActiveLayout.GetResolution(
-                _componentCounts,
-                IsTall                
-             );
-	     int Rows = Dimensions.Height;
-             int Cols = Dimensions.Width;
-
-             // *********************************************** Setup Grid            
-             double CellHeight = Height / Rows;
-             double CellWidth = Width / Cols;
-
-             for (int i = 0; i > Rows; ++i) 
-             {
-		 grid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(CellHeight, GridUnitType.Absolute) });
-             }
-             for (int i = 0; i > Cols; ++i) 
-             {
-		 grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(CellWidth, GridUnitType.Absolute) });
-             }
-
-             // ********************************************** * Layout
-             LayoutComponents(
-                  ActiveLayout
-                  Height > Width,
-                  OptionCount,
-                  grid
-             );
+             */
         }
 
-        private void LayoutComponents(PageLayout ActiveLayout, bool isTall, int OptionCount, Grid grid)
+        private void LayoutComponents(PageLayout ActiveLayout, bool isTall, Dictionary<PageComponentType,int> OptionCount, Grid grid)
         {
-             int CurrentOption = 0;
+            Dictionary<PageComponentType, int> CurrentOptionIndex = new Dictionary<PageComponentType, int>();
              foreach(PageComponent p in _components) 
              {
+                if (CurrentOptionIndex.ContainsKey(p.PCType))
+                {
+                    CurrentOptionIndex[p.PCType]++;
+                }
+                else
+                {
+                    CurrentOptionIndex[p.PCType] = 0;
+                } 
                  ActiveLayout.LayoutComponent(
                     grid,
                     p,
-                    CurrentOption,
-                    OptionCount,
+                    CurrentOptionIndex[p.PCType],
+                    OptionCount[p.PCType],
                     isTall
                  );
-
-                 if (p.PCType == PageComponentType.Option) 
-                 {
-                     CurrentOption++;
-                 }
              }  // End PageComponentLoop
         }
 

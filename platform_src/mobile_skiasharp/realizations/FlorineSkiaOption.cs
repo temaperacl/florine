@@ -6,19 +6,46 @@ using Xamarin.Forms;
 using SkiaSharp;
 using SkiaSharp.Views.Forms;
 using System.ComponentModel;
+using System.Collections;
 
 namespace FlorineSkiaSharpForms
-{
+{    
     class FlorineSkiaOptionSet : List<IGameOption>, IGameOptionSet
     {         
         public int SelectionLimit { get; set; }        
         public IGameOption Finalizer { get; set; }
         private List<IGameOption> _selected = new List<IGameOption>();
-        public IGameOptionSet Selected {
+        private class SelectedOptionGroup : List<IGameOption>, IGameOption, IGameOptionSet
+        {
+            public string OptionName => "Chosen Options";
+            public IImage Picture => null;
+            public IGameOptionSet SubOptions => this;
+            public int SelectionLimit => SubOptions.Count;
+
+            public IGameOption Finalizer => null;
+
+            public void AdjustNutrients(NutrientSet n)
+            {
+                foreach (IGameOption opt in this)
+                {
+                    opt.AdjustNutrients(n);
+                }
+            }
+
+            public void ImpactPlayer(Player p)
+            {
+                foreach (IGameOption opt in this)
+                {
+                    opt.ImpactPlayer(p);
+                }
+            }
+        }
+
+        public IGameOption Selected {
             get {
-                FlorineSkiaOptionSet resultSet = new FlorineSkiaOptionSet();
+                SelectedOptionGroup resultSet = new SelectedOptionGroup();
                 foreach(IGameOption opt in _selected) {
-                    resultSet.Add(opt);
+                    resultSet.SubOptions.Add(opt);
                 }
                 return resultSet;
             }
@@ -41,7 +68,7 @@ namespace FlorineSkiaSharpForms
         }
     }
 
-    class FlorineSkiaOption : IGameOption, IFlorineSkiaConnectable, FlorineSkiaSimpleEventDriver
+    class FlorineSkiaOption : FlorineSkiaSimpleEventDriver, IGameOption, IFlorineSkiaConnectable
     {
         IGameOption _parent;
         FlorineSkiaOptionSet _container;

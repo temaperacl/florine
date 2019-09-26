@@ -9,7 +9,7 @@ namespace FlorineSkiaSharpForms
     public class FlOval : IFlorineSkiaConnectable, IFlorineSkiaDrawable, Florine.IImage
     {
         public int ImageKey { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public SKPaint backgroundColor = new SKPaint() { Color = new SKColor(0, 0, 200, 100) };
+        public SKPaint backgroundColor = new SKPaint() { Color = new SKColor(0, 0, 0, 0) };
         public SKRect outerBounds = new SKRect();
         public SKRect innerBounds = new SKRect();
         public List<Tuple<float, SKColor>> innerRing = new List<Tuple<float, SKColor>>();
