@@ -63,10 +63,14 @@ namespace FlorineSkiaSharpForms
 //                case GameState.PageType.Day_Intro:                    
                 case GameState.PageType.Select_Meal:
                     return Page.DefaultLayout(Source, CurrentState);
-//                case GameState.PageType.Summarize_Meal:
+                case GameState.PageType.Summarize_Meal:
+                    return Page.DefaultLayout(Source, CurrentState);
 //                case GameState.PageType.Select_Activity:
+                    return Page.DefaultLayout(Source, CurrentState);
 //                case GameState.PageType.Summarize_Activity:
+                    return Page.DefaultLayout(Source, CurrentState);
 //                case GameState.PageType.Summarize_Day:
+                    return Page.DefaultLayout(Source, CurrentState);
                    
             }
             return Page.UndefinedLayout(Source, CurrentState);

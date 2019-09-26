@@ -11,8 +11,14 @@ namespace FlorineSkiaSharpForms
         private SortedDictionary<float, SKColor> _details = new SortedDictionary<float, SKColor>();
         public SortedDictionary<float, SKColor> Details { get { return _details; } }
         public bool Horizontal { get; set; }
+        public SKColor BackgroundColor { get; set;}
+        public float BorderSize { get; set; }
+        public float IndicatorLineLoc { get; set; }
+        public float BarWidth { get; set; }
         public ImageGradient() {
             Horizontal = true;
+            BorderSize = 0;
+            BackgroundColor = new SKColor(0,0,0);
         }
         public int ImageKey { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
@@ -37,19 +43,57 @@ namespace FlorineSkiaSharpForms
             } else {
                 paint = paint.Clone();
             }
+
             
             paint.Shader = SKShader.CreateLinearGradient(
-                new SKPoint(boundingBox.Left, boundingBox.Top),
+                new SKPoint(boundingBox.Left + BorderSize, boundingBox.Top + BorderSize),
                 new SKPoint(
-                    Horizontal?boundingBox.Right:boundingBox.Left,
-                    Horizontal?boundingBox.Top:boundingBox.Bottom
+                    (Horizontal?boundingBox.Right:boundingBox.Left) - BorderSize,
+                    (Horizontal?boundingBox.Top:boundingBox.Bottom) - BorderSize;
                 ),
                 new List<SKColor>(Details.Values).ToArray(),
                 new List<float>(Details.Keys).ToArray(),
                 SKShaderTileMode.Clamp                
             );
+            paint BackgroundPaint = new SKPaint()
+            {
+                Color = BackgroundColor,
+                StrokeWidth = BorderSize
+            };
 
+            //Scale for border
+            float LineLoc =
+                (Horizontal?boundingBox.Width:BoundingBox.Height) * IndicatorLineLoc 
+                + (Horizontal?boundingBox.Left:BoundingBox.Top);
+            canvas.Clear(BackgroundColor);
+            canvas.DrawRect(boundingBox, paint);
+            canvas.DrawLine(
+                            (Horizontal?LineLoc:0),
+                            (Horizontal?0:LineLoc),
+                            (Horizontal?LineLoc:boundingBox.Right),
+                            (Horizontal?boundingBox.Bottom:LineLoc),
+                            BackgroundPaint
+            );
+            float EndLoc = 
+                  (Horizontal?boundingBox.Width:BoundingBox.Height) * BarWidth
+                + (Horizontal?boundingBox.Left:BoundingBox.Top);
+
+            canvas.DrawRect(
+                new SKRect(
+                            (Horizontal?EndLoc:0),
+                            (Horizontal?0:EndLoc),
+                            boundingbox.Right,
+                            boundingBox.Bottom
+                ),
+                BackgroundPaint
+            );
+
+            
+
+            
             // Draw
+            // And IndicatorLine
+            // And BarWidth
             /*
             canvas.DrawText(
                             Text, 

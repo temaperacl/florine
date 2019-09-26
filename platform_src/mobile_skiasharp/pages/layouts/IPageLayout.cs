@@ -22,11 +22,28 @@ namespace FlorineSkiaSharpForms
         Header,
         Option,
         Message,
-        Footer
+        Footer,
+        Player
     }
 
     public abstract class PageLayout
     {
+        // Allow for pre-component rendering layout
+        protected virtual void PreLayout(
+            bool IsTall,
+            Grid grid,
+            Controller  GameController,
+            IPlatformFoundry GameFoundry
+        ) { return; }
+
+        //Allow for post-component rendering layout
+        protected virtual void PostLayout(
+            bool IsTall,
+            Grid grid,
+            Controller  GameController,
+            IPlatformFoundry GameFoundry
+        ) { return; }
+
         //Todo: Grid Allocation Size, OptSize Usage
         protected virtual void PlaceOption(
                                  Grid grid,
@@ -39,6 +56,8 @@ namespace FlorineSkiaSharpForms
         {
             int GridLeft = GridAllocation.Left;
             int GridTop = GridAllocation.Top;
+            int OptCols = GridAllocation.Width / OptSize.Width;
+            int OptRows = GridAllocation.Height / OptSize.Height
 
             if (
             (CurrentOption == OptionCount - 1) // Last Option
@@ -47,21 +66,20 @@ namespace FlorineSkiaSharpForms
             {
                 //Center
                 grid.Children.Add(Option,
-                                GridLeft + 2,
-                                GridLeft + 6,
-                                GridTop + 0 + (int)(CurrentOption / 2) * 2,
-                                GridTop + 2 + (int)(CurrentOption / 2) * 2);
+                                GridLeft + GridAllocation.Width/2 - OptSize.Width /2,
+                                GridLeft + GridAllocation.Width/2 + OptSize.Width /2,
+                );
             }
             else
             {
-                //2-by
+                //Todo : Add bottom check.
                 grid.Children.Add(Option,
-                                GridLeft + (CurrentOption % 2) * OptSize.Width,
-                                GridTop + (CurrentOption / 2) * OptSize.Height
-                                );
-                Grid.SetColumnSpan(Option, OptSize.Width);
-                Grid.SetRowSpan(Option, OptSize.Height);                
+                                GridLeft + (CurrentOption % OptCols) * OptSize.Width,
+                                GridTop + (CurrentOption / OptCols) * OptSize.Height
+                );
             }
+            Grid.SetColumnSpan(Option, OptSize.Width);
+            Grid.SetRowSpan(Option, OptSize.Height);                
 
         }
 
@@ -177,6 +195,9 @@ namespace FlorineSkiaSharpForms
                                          v
                              );
                              ++CurrentOption;
+                             break;
+                        case PageComponentType.Player:
+                             grid.Children.Add( v, 7,2, 9, 3);
                              break;
                      }
         }

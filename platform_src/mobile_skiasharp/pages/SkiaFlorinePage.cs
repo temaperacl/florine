@@ -178,6 +178,8 @@ namespace FlorineSkiaSharpForms
                 case GameState.PageType.Select_Meal:
                     ActiveLayout = new LayoutOptionSelect();
                     break;
+                case GameState.PageType.Summarize_Meal:
+                    ActiveLayout = new MealResultLayout();
                 default:
                     ActiveLayout = new LayoutOptionSelect();
                     break;
@@ -206,14 +208,16 @@ namespace FlorineSkiaSharpForms
             {
                 grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
             }
-
+            bool IsTall = Height > Width;
+            ActiveLayout.PreLayout(IsTall, grid, _controller, _foundry);
             // ********************************************** * Layout
             LayoutComponents(
                  ActiveLayout,
-                 Height > Width,
+                 IsTall,
                  _componentCounts,
                  grid
             );
+            ActiveLayout.PostLayout(IsTall, grid, _controller, _foundry);
 
             /*
             for (int i = 0; i < Cols; ++i)
