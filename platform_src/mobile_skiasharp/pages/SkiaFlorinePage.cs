@@ -26,15 +26,20 @@ namespace FlorineSkiaSharpForms
         private void Continue_Handler(object sender, EventArgs e)
         {
             IGameOption SelectedOptions = null;
-            FlorineSkiaOptionSet OptionSet = PrimaryOptionContainer as FlorineSkiaOptionSet;
-            if(null != OptionSet) { SelectedOptions = OptionSet.Selected; }
+            FlorineSkiaOptionSet OptionSet = PrimaryOptions as FlorineSkiaOptionSet;
+            if (null != OptionSet)
+            {
+                SelectedOptions = OptionSet.Selected;
+            }
+            
             
             IPage Next = _controller.UserOption(SelectedOptions);
             Content = _foundry.RenderPage(_controller.CurrentState);
             
         }
 
-        private IGameOptionSet PrimaryOptionContainer;
+        private IPage SourcePage;
+        private IGameOptionSet PrimaryOptions;
         private List<PageComponent> _components = new List<PageComponent>();
         private Dictionary<PageComponentType, int> _componentCounts = new Dictionary<PageComponentType, int>();
 
@@ -84,7 +89,56 @@ namespace FlorineSkiaSharpForms
             }
             return ptype;
         }
+        private void _readyOptionSet(
+            PageComponentType pcType,
+            IGameOptionSet opts,
+            EventHandler PressFunc = null
+        ) {
+            if (null == opts) { return; }
+            foreach (IGameOption opt in opts)
+            {
+                _readyOption(pcType, opt, PressFunc);
+            }
+        }
 
+        private void _readyOption(
+            PageComponentType pcType,
+            IGameOption opt,
+            EventHandler PressFunc = null
+        ) {
+            if (null == opt) { return; }
+            if (null != opt.SubOptions) {
+                _readyOptionSet(
+                    pcType,
+                    opt.SubOptions,
+                    PressFunc
+                    );
+                return;
+            }
+            SKCanvasView Img = new SKCanvasView();
+            IFlorineSkiaConnectable conn = opt as IFlorineSkiaConnectable;
+
+            if (null != conn)
+            {
+                conn.ConnectCanvasView(Img);
+            }
+
+            IFlorineSkiaEventDriver econn = opt as IFlorineSkiaEventDriver;
+            if (null != econn)
+            {
+                if (null != PressFunc)
+                {
+                    econn.OnEventTriggered += PressFunc;
+                }
+            }
+
+            _components.Add(
+                new PageComponent(
+                    _inc(pcType),
+                    Img
+                )
+            );
+        }
         private void _readyIPage(IPage Source)
         {
 
@@ -97,12 +151,24 @@ namespace FlorineSkiaSharpForms
                 }
                  _components.Add(
                      new PageComponent(
-                         _inc(PageComponentType.Header),
+                         _inc(PageComponentType.Background),
                          Header
                      )
                  );
              }
-             if(null != Source.Message && "" != Source.Message) 
+            if (null != Source.Title)
+            {
+                SKCanvasView Message = new SKCanvasView();
+                ImageText itconn = new ImageText(Source.Title);
+                itconn.ConnectCanvasView(Message);
+                _components.Add(
+                    new PageComponent(
+                       _inc(PageComponentType.Title),
+                       Message
+                     )
+                );
+            }
+            if (null != Source.Message && "" != Source.Message) 
              {
                 SKCanvasView Message = new SKCanvasView();
                 ImageText itconn = new ImageText(Source.Message);
@@ -114,46 +180,26 @@ namespace FlorineSkiaSharpForms
                      )
                  );                
             }
+            _readyOptionSet(
+                PageComponentType.PickedOption,
+                Source.AppliedOptions
+            );
 
-            PrimaryOptionContainer = Source.PrimaryOptions;
-            IGameOptionSet Opts = Source.PrimaryOptions;
-            if(null != Opts) {
-                foreach(IGameOption opt in Opts) 
-                {
-                    SKCanvasView Img = new SKCanvasView();
-                    IFlorineSkiaConnectable conn = opt as IFlorineSkiaConnectable;
-
-                    if(null != conn) {
-                        conn.ConnectCanvasView(Img);
-                    }
-
-                     _components.Add(
-                         new PageComponent(
-                             _inc(PageComponentType.Option),
-                             Img
-                         )
-                     );                                    
-                }
-                if(null != Opts.Finalizer) {
-                    SKCanvasView Img = new SKCanvasView();
-                    IFlorineSkiaConnectable conn = Opts.Finalizer as IFlorineSkiaConnectable;
-                    if (null != conn)
-                    {
-                        conn.ConnectCanvasView(Img);
-                    }
-                    IFlorineSkiaEventDriver econn = Opts.Finalizer as IFlorineSkiaEventDriver;
-                    if(null != econn) 
-                    {                        
-                        econn.OnEventTriggered += Continue_Handler;
-                    }
-                    _components.Add(
-                        new PageComponent(
-                            _inc(PageComponentType.Footer),
-                            Img
-                        )
+            PrimaryOptions = Source.PrimaryOptions;
+            _readyOptionSet(
+                PageComponentType.Option,
+                PrimaryOptions
+            );
+            
+            if (null != Source.PrimaryOptions)
+            {
+                _readyOption(
+                    PageComponentType.Footer,
+                    Source.PrimaryOptions.Finalizer,
+                    Continue_Handler
                     );
-                }
-            }            
+            }
+            SourcePage = Source;
         }
 
         private void SizeChanged_Grid(object sender, EventArgs e)
@@ -180,6 +226,7 @@ namespace FlorineSkiaSharpForms
                     break;
                 case GameState.PageType.Summarize_Meal:
                     ActiveLayout = new MealResultLayout();
+                    break;
                 default:
                     ActiveLayout = new LayoutOptionSelect();
                     break;
@@ -208,8 +255,8 @@ namespace FlorineSkiaSharpForms
             {
                 grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
             }
-            bool IsTall = Height > Width;
-            ActiveLayout.PreLayout(IsTall, grid, _controller, _foundry);
+            
+            ActiveLayout.PreLayout(IsTall, grid, _controller, _foundry, SourcePage);
             // ********************************************** * Layout
             LayoutComponents(
                  ActiveLayout,
@@ -217,7 +264,7 @@ namespace FlorineSkiaSharpForms
                  _componentCounts,
                  grid
             );
-            ActiveLayout.PostLayout(IsTall, grid, _controller, _foundry);
+            ActiveLayout.PostLayout(IsTall, grid, _controller, _foundry, SourcePage);
 
             /*
             for (int i = 0; i < Cols; ++i)

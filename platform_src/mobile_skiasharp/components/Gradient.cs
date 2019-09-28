@@ -17,7 +17,8 @@ namespace FlorineSkiaSharpForms
         public float BarWidth { get; set; }
         public ImageGradient() {
             Horizontal = true;
-            BorderSize = 0;
+            BorderSize = .05f;
+            BarWidth = 1;
             BackgroundColor = new SKColor(0,0,0);
         }
         public int ImageKey { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
@@ -49,24 +50,33 @@ namespace FlorineSkiaSharpForms
                 new SKPoint(boundingBox.Left + BorderSize, boundingBox.Top + BorderSize),
                 new SKPoint(
                     (Horizontal?boundingBox.Right:boundingBox.Left) - BorderSize,
-                    (Horizontal?boundingBox.Top:boundingBox.Bottom) - BorderSize;
+                    (Horizontal?boundingBox.Top:boundingBox.Bottom) - BorderSize
                 ),
                 new List<SKColor>(Details.Values).ToArray(),
                 new List<float>(Details.Keys).ToArray(),
                 SKShaderTileMode.Clamp                
             );
-            paint BackgroundPaint = new SKPaint()
+            SKPaint BackgroundPaint = new SKPaint()
             {
                 Color = BackgroundColor,
                 StrokeWidth = BorderSize
             };
+            float borderHeight = BorderSize; // boundingBox.Height * BorderSize;
+            float borderWidth = BorderSize;  // boundingBox.Width * BorderSize;
 
             //Scale for border
             float LineLoc =
-                (Horizontal?boundingBox.Width:BoundingBox.Height) * IndicatorLineLoc 
-                + (Horizontal?boundingBox.Left:BoundingBox.Top);
+                (Horizontal?boundingBox.Width:boundingBox.Height) * IndicatorLineLoc 
+                + (Horizontal?boundingBox.Left:boundingBox.Top);
             canvas.Clear(BackgroundColor);
-            canvas.DrawRect(boundingBox, paint);
+            canvas.DrawRect(
+                new SKRect(
+                    boundingBox.Left + borderWidth,
+                    boundingBox.Top + borderHeight,
+                    boundingBox.Right - borderWidth,
+                    boundingBox.Bottom - borderHeight                    
+                ), paint
+            );
             canvas.DrawLine(
                             (Horizontal?LineLoc:0),
                             (Horizontal?0:LineLoc),
@@ -74,15 +84,17 @@ namespace FlorineSkiaSharpForms
                             (Horizontal?boundingBox.Bottom:LineLoc),
                             BackgroundPaint
             );
-            float EndLoc = 
-                  (Horizontal?boundingBox.Width:BoundingBox.Height) * BarWidth
-                + (Horizontal?boundingBox.Left:BoundingBox.Top);
+            
+            float EndLoc =
+                  (Horizontal ? boundingBox.Width : boundingBox.Height) * BarWidth
+                + (Horizontal?boundingBox.Left :boundingBox.Top);
 
+            
             canvas.DrawRect(
-                new SKRect(
-                            (Horizontal?EndLoc:0),
-                            (Horizontal?0:EndLoc),
-                            boundingbox.Right,
+                new SKRect(                                                        
+                            (Horizontal ? EndLoc : 0),
+                            (Horizontal ? 0 : EndLoc),
+                            boundingBox.Right,
                             boundingBox.Bottom
                 ),
                 BackgroundPaint

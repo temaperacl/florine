@@ -407,7 +407,7 @@ namespace FlorineHardCodedData
                     //hcPage.Background = "Start_Page";
                     hcPage.PrimaryOptions = new HardCodedOptionSet()
                     {
-                        Finalizer = _emptyOption("")
+                        Finalizer = _emptyOption("Continue")
                     };
                     break;
                 default:

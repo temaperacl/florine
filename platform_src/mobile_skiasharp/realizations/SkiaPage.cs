@@ -34,9 +34,43 @@ namespace FlorineSkiaSharpForms
             get
             {
                 //if (null == _parent.Background) { return null; }
+                string timeFrame = "day";
+                string location = "work";
+                switch (MainType) {
+                    case GameState.PageType.Day_Intro:
+                    case GameState.PageType.Select_Meal:
+                    case GameState.PageType.Summarize_Meal:
+                        location = "kitchen";
+                        break;
+                    case GameState.PageType.Summarize_Activity:
+                    case GameState.PageType.Select_Activity:
+                        location = "work";
+                        break;
+                }
+                switch (SubType) {
+                    case GameState.PageSubType.Breakfast:
+                        timeFrame = "day";
+                        break;
+                    case GameState.PageSubType.Dinner:
+                        timeFrame = "evening";
+                        break;
+                    case GameState.PageSubType.Lunch:
+                        timeFrame = "day";
+                        break;
+                    case GameState.PageSubType.Daily:
+                        timeFrame = "evening";
+                        break;
+                    case GameState.PageSubType.None:
+                        timeFrame = "day";
+                        break;
+                    case GameState.PageSubType.Setup:
+                        return null;
+
+                }
+
                 return new AspectImage()
                 {
-                    baseImage = ResourceLoader.LoadImage("Images/backdrops/day_kitchen.png"),
+                    baseImage = ResourceLoader.LoadImage("Images/backdrops/" + timeFrame + "_" + location + ".png"),
                     scaling = AspectImage.ScalingType.Stretch
                 };
             }
@@ -54,17 +88,25 @@ namespace FlorineSkiaSharpForms
             {
                 SelectionLimit = opts.SelectionLimit,
             };
-            newSet.Finalizer = _renderOption(opts.Finalizer, newSet);
+
+            if (opts.Finalizer != null)
+            {
+                newSet.Finalizer = _renderOption(opts.Finalizer, newSet);
+            }
             foreach (IGameOption opt in opts)
             {
                 newSet.Add(_renderOption(opt, newSet));
             }
+
             return newSet;
         }
         private IGameOption _renderOption(IGameOption opt, FlorineSkiaOptionSet Container)
         {
             FlorineSkiaOption newOpt = new FlorineSkiaOption(opt, Container);
-            newOpt.SubOptions = _renderOptionSet(opt.SubOptions);
+            if (null != newOpt.SubOptions)
+            {
+                newOpt.SubOptions = _renderOptionSet(opt.SubOptions);
+            }
 
             // Absurdly Hackity
             String pathType = "food";

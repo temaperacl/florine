@@ -19,8 +19,10 @@ namespace FlorineSkiaSharpForms
         }
     }
     public enum PageComponentType {
-        Header,
+        Background,
+        Title,
         Option,
+        PickedOption,
         Message,
         Footer,
         Player
@@ -29,20 +31,24 @@ namespace FlorineSkiaSharpForms
     public abstract class PageLayout
     {
         // Allow for pre-component rendering layout
-        protected virtual void PreLayout(
+        public virtual void PreLayout(
             bool IsTall,
             Grid grid,
             Controller  GameController,
-            IPlatformFoundry GameFoundry
+            IPlatformFoundry GameFoundry,
+            IPage SourcePage
         ) { return; }
 
         //Allow for post-component rendering layout
-        protected virtual void PostLayout(
+        public virtual void PostLayout(
             bool IsTall,
             Grid grid,
             Controller  GameController,
-            IPlatformFoundry GameFoundry
-        ) { return; }
+            IPlatformFoundry GameFoundry,
+            IPage SourcePage
+        ) {
+
+        }
 
         //Todo: Grid Allocation Size, OptSize Usage
         protected virtual void PlaceOption(
@@ -57,8 +63,9 @@ namespace FlorineSkiaSharpForms
             int GridLeft = GridAllocation.Left;
             int GridTop = GridAllocation.Top;
             int OptCols = GridAllocation.Width / OptSize.Width;
-            int OptRows = GridAllocation.Height / OptSize.Height
-
+            int OptRows = GridAllocation.Height / OptSize.Height;
+            if (OptCols < 1) { OptCols = 1; }
+            if (OptRows < 1) { OptRows = 1; }
             if (
             (CurrentOption == OptionCount - 1) // Last Option
             && (0 == CurrentOption % 2) //And Odd (Base 0)
@@ -67,7 +74,7 @@ namespace FlorineSkiaSharpForms
                 //Center
                 grid.Children.Add(Option,
                                 GridLeft + GridAllocation.Width/2 - OptSize.Width /2,
-                                GridLeft + GridAllocation.Width/2 + OptSize.Width /2,
+                                GridLeft + GridAllocation.Width/2 + OptSize.Width /2
                 );
             }
             else
@@ -138,7 +145,7 @@ namespace FlorineSkiaSharpForms
              //   012345678911111
              //             01234
              switch(t) {
-                 case PageComponentType.Header:
+                 case PageComponentType.Background:
                      grid.Children.Add( v,  0,  7,  0,  4 );
                      break;
                 case PageComponentType.Footer:
@@ -146,7 +153,7 @@ namespace FlorineSkiaSharpForms
                      break;
                  case PageComponentType.Option:
                      PlaceOption(grid,
-                                 new SKRectI( 8, 1, 14, 6),
+                                 new SKRectI( 8, 0, 14, 6),
                                  new SKRectI( 0, 0, 4,  2),
                                  CurrentOption,
                                  OptionCount,
@@ -177,18 +184,21 @@ namespace FlorineSkiaSharpForms
                      //   | |  | | 
                      //   012345678
                      switch(t) {
-                         case PageComponentType.Header:
+                         case PageComponentType.Background:
                              grid.Children.Add( v,  0,  8,  0,  12 );
                              break;
+                         case PageComponentType.Title:
+                            grid.Children.Add(v, 0, 8, 0, 1);
+                            break;
                         case PageComponentType.Footer:
                              grid.Children.Add( v,  2,  6, 11, 12 );
                              break;
                         case PageComponentType.Message:
-                             grid.Children.Add( v,  0,  8,  4,  5 );
+                             grid.Children.Add( v,  0,  8,  1,  2 );
                              break;
                          case PageComponentType.Option:
                              PlaceOption(grid,
-                                         new SKRectI(0,5,7,10),
+                                         new SKRectI(0,2,8,6),
                                          new SKRectI(0,0,4,2),
                                          CurrentOption,
                                          OptionCount,

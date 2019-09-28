@@ -100,7 +100,8 @@ namespace FlorineSkiaSharpForms
         public string OptionName => _parent.OptionName;
         public void AdjustNutrients(NutrientSet n) { _parent.AdjustNutrients(n); }
         public void ImpactPlayer(Player p) { _parent.ImpactPlayer(p); }
-        public IGameOptionSet SubOptions { get; set; }
+        private IGameOptionSet _customSub;
+        public IGameOptionSet SubOptions { get { if(null != _customSub) { return _customSub; } return _parent.SubOptions; } set { _customSub = value; } }
         public IImage Picture { get; set; }
 
         public void ConnectCanvasView(SKCanvasView CV) {
