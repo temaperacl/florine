@@ -9,24 +9,27 @@ namespace FlorineHardCodedData
         public MobileAssetFoundry()
         {
         }
-
         /* ================================================== IPlatformFoundry */
-        
-        // public virtual GameState LoadGameState() { return new GameState(); }
-        // public virtual bool SaveGameState(GameState _unused) { return false; }
-        //public virtual IList<Food> LoadFood() 
-        //public virtual IList<Nutrient> LoadNutrients() { return _nutrients; }
-        //public virtual IPage GetPage(IPage GenericPage) { return HardCodedPageFromIPage(GenericPage); }        
+
+        public override GameState LoadGameState() { return base.LoadGameState(); }
+        public override bool SaveGameState(GameState _unused) { return base.SaveGameState()k }
+        public override IList<Food> LoadFood() { return base.LoadFood(); }
+        public override IList<Nutrient> LoadNutrients() { return  base.LoadNutrients(); }
+        public override IPage GetPage(IPage GenericPage) { return base.GetPage(GenericPage); }
+        public override Activity AutomaticActivity(GameState gs) { return base.AutomaticActivity(gs); }
 
 
-        //public virtual Activity AutomaticActivity(GameState gs)        
+
+
+
+
         /* ================================================== Support */
         /* Data Dumps */
-        private int AssetKey;
 		
-/*		static Nutrient Carbs = new Nutrient() 
-		{ 
-			Name = "Carbohydrates", 
+// IIMg        private int AssetKey;
+/*		static Nutrient Carbs = new Nutrient()
+		{
+			Name = "Carbohydrates",
 			Class = Nutrient.NutrientType.Macro,
 			Units = NutrientUnit.g,
 			DailyTarget = 130
@@ -45,12 +48,12 @@ namespace FlorineHardCodedData
             Avatar     = 0x10000000
         };
 
-        public static int AssetKey(this Food component)             
+        public static int AssetKey(this Food component)
         {
             int BaseKey = (int)AssetClass.Food;
                 return BaseKey;
         }
-        public static int AssetKey(this Food.FoodOption component) 
+        public static int AssetKey(this Food.FoodOption component)
         {
             int BaseKey = (int)AssetClass.FoodOption;
             return BaseKey;
