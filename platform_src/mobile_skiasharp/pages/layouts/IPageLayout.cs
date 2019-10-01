@@ -74,7 +74,7 @@ namespace FlorineSkiaSharpForms
                 //Center
                 grid.Children.Add(Option,
                                 GridLeft + GridAllocation.Width/2 - OptSize.Width /2,
-                                GridLeft + GridAllocation.Width/2 + OptSize.Width /2
+                                GridTop + (CurrentOption / OptCols) * OptSize.Height
                 );
             }
             else

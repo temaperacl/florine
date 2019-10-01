@@ -56,15 +56,38 @@ namespace FlorineSkiaSharpForms
                     }
                 }
             }
+
+            SKFontMetrics FM = paint.FontMetrics;
+            float lineStart = FM.Leading - FM.Top + 5;
+            float lineSpacing = FM.Leading - FM.Top + FM.Bottom;
+
+
             List<string> lines = new List<string>();
             if (Overflow != WrapType.WordWrap)
             {
                 lines.Add(Text);
+                lineStart = boundingBox.Bottom - boundingBox.Height / 4;
             }
             else
             {
+                string[] words = Text.Split(new char[] { ' ' });
+                StringBuilder curLine = new StringBuilder();
+                float LineLength = 0;
+                foreach (string word in words)
+                {
+                    float wordLen = paint.MeasureText(word);
+                    if (LineLength + wordLen > boundingBox.Width)
+                    {
+                        lines.Add(curLine.ToString());
+                        curLine.Clear();
+                        LineLength = 0;
+                    }
+                    curLine.Append(" ").Append(word);
+                    LineLength += wordLen;
+                }
+                lines.Add(curLine.ToString());
                 // ...
-                // SKFontMetrics FM = paint.FontMetrics;
+                
             }
             // Draw
             for (int i = 0; i < lines.Count; ++i)
@@ -72,7 +95,7 @@ namespace FlorineSkiaSharpForms
                 canvas.DrawText(
                                 lines[i],
                                 boundingBox.Left + boundingBox.Width / 2,
-                                boundingBox.Bottom - boundingBox.Height / 4,
+                                boundingBox.Top + lineStart + (lineSpacing * (i)),
                                 paint
                 );
             }
@@ -84,7 +107,7 @@ namespace FlorineSkiaSharpForms
                 canvas.DrawText(
                             lines[i],
                             boundingBox.Left + boundingBox.Width / 2,
-                            boundingBox.Bottom - boundingBox.Height / 4,
+                            boundingBox.Top + lineStart + (lineSpacing * (i)),
                             paint
                 );
             }

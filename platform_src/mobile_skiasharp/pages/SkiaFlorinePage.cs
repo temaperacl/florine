@@ -171,7 +171,7 @@ namespace FlorineSkiaSharpForms
             if (null != Source.Message && "" != Source.Message) 
              {
                 SKCanvasView Message = new SKCanvasView();
-                ImageText itconn = new ImageText(Source.Message);
+                ImageText itconn = new ImageText(Source.Message) { Overflow = ImageText.WrapType.WordWrap, FontSize = 48.0f };
                 itconn.ConnectCanvasView(Message);
                 _components.Add(
                     new PageComponent(
@@ -227,6 +227,9 @@ namespace FlorineSkiaSharpForms
                 case GameState.PageType.Summarize_Meal:
                     ActiveLayout = new MealResultLayout();
                     break;
+                case GameState.PageType.Summarize_Activity:
+                    ActiveLayout = new ActivitySummaryLayout();
+                        break;
                 default:
                     ActiveLayout = new LayoutOptionSelect();
                     break;
