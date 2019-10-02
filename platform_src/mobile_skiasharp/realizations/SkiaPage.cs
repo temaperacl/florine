@@ -43,8 +43,13 @@ namespace FlorineSkiaSharpForms
                         location = "kitchen";
                         break;
                     case GameState.PageType.Summarize_Activity:
-                    case GameState.PageType.Select_Activity:
                         location = "work";
+                        if(GameState.PageSubType.Daily == SubType) {
+                            location = "busstop";
+                        }
+                        break
+                    case GameState.PageType.Select_Activity:
+                        location = "busstop";
                         break;
                 }
                 switch (SubType) {
@@ -129,7 +134,7 @@ namespace FlorineSkiaSharpForms
                             backgroundColor = new SKPaint() { Color = new SKColor(230, 230, 230) }
                         }))
                 };
-                
+
             }
 
             return newOpt;

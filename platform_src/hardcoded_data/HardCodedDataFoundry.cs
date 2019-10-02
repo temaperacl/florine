@@ -156,7 +156,9 @@ namespace FlorineHardCodedData
 		public class HardCodedActivityPath : BasicActivityPath
 		{
 			public override Florine.Activity ResolveActivityForGameState(GameState gs) {
-				if(gs.CurrentPage.MainType == GameState.PageType.Summarize_Activity) {
+				switch(gs.CurrentPage.MainType)
+                                {
+                                    case GameState.PageType.Summarize_Activity:
 					if(gs.CurrentPage.SubType == GameState.PageSubType.Breakfast) {
 						return new Activity() {
 							Impact = new NutrientSet(),
@@ -170,12 +172,74 @@ namespace FlorineHardCodedData
 							Description = gs.Player.Name + " had a productive day. She wrote a blog post about her latest discovery!",
 						};
 					}
+                                        break;
+                                    case GameState.PageType.Select_Activity:
+                                        break;
 				}
 
 				//Select_Activity
 				return null;
 			}
 		}
+
+                public IGameOptionSet GetDailyActivities() 
+                {
+                    HardCodedOptionSet activities = new HardCodedOptionSet()
+                    {
+                        SelectionLimit = 1,
+                        Finalizer = _emptyOption("Choose")
+                    };
+
+                    activities.Add(
+                        new Activity() {
+                                Impact = new NutrientSet(),
+                                OptionName = "Cooking",
+                                Description = "Cook Tasty Stuff",
+                        }
+                    );
+                    activities.Add(
+                        new Activity() {
+                                Impact = new NutrientSet(),
+                                OptionName = "Dancing",
+                                Description = "Cook Tasty Stuff",
+                        }
+                    );
+                    activities.Add(
+                        new Activity() {
+                                Impact = new NutrientSet(),
+                                OptionName = "Gym",
+                                Description = "Cook Tasty Stuff",
+                        }
+                    );
+                    activities.Add(
+                        new Activity() {
+                                Impact = new NutrientSet(),
+                                OptionName = "Home",
+                                Description = "Cook Tasty Stuff",
+                        }
+                    );
+                    activities.Add(
+                        new Activity() {
+                                Impact = new NutrientSet(),
+                                OptionName = "Social",
+                                Description = "Cook Tasty Stuff",
+                        }
+                    );
+                    activities.Add(
+                        new Activity() {
+                                Impact = new NutrientSet(),
+                                OptionName = "Studying",
+                                Description = "Cook Tasty Stuff",
+                        }
+                    );
+                    activities.Add(
+                        new Activity() {
+                                Impact = new NutrientSet(),
+                                OptionName = "Shopping",
+                                Description = "Cook Tasty Stuff",
+                        }
+                    );
+                }
 
 		static HardCodedActivityPath _onlyPath = new HardCodedActivityPath();
 		public bool GetNextGameState(GameState CurrentState,
@@ -330,7 +394,7 @@ namespace FlorineHardCodedData
 					hcPage.PrimaryOptions = new HardCodedOptionSet()
 					{
 						Finalizer = _emptyOption("Continue")
-					};
+                                        };
 					break;
 				case GameState.PageType.Day_Intro:
 					hcPage.Title = "A New Day!";
@@ -388,11 +452,7 @@ namespace FlorineHardCodedData
 				case GameState.PageType.Select_Activity:
 					hcPage.Title = "Select Activity";
 					hcPage.Message = "TBD";
-					//hcPage.Background = "Start_Page";
-					hcPage.PrimaryOptions = new HardCodedOptionSet()
-					{
-						Finalizer = _emptyOption("Continue")
-					};
+					hcPage.PrimaryOptions = GetDailyActivities();
 					break;
 				case GameState.PageType.Summarize_Activity:
 					hcPage.Title = "Activity summary";

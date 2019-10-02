@@ -9,10 +9,16 @@ using System.ComponentModel;
 using System.Collections;
 
 namespace FlorineSkiaSharpForms
-{    
+{
     class FlorineSkiaOptionSet : List<IGameOption>, IGameOptionSet
-    {         
-        public int SelectionLimit { get; set; }        
+    {
+        public enum SelectionType {
+            SELECT_TOGGLE,
+            SELECT_MOVE
+        }
+        private SelectionType _model = SelectionType.TOGGLE;
+        public SelectionType SelectionModel { get { return _model; } set { _model = value; }}
+        public int SelectionLimit { get; set; }
         public IGameOption Finalizer { get; set; }
         private List<IGameOption> _selected = new List<IGameOption>();
         private class SelectedOptionGroup : List<IGameOption>, IGameOption, IGameOptionSet
@@ -51,13 +57,24 @@ namespace FlorineSkiaSharpForms
             }
         }
         public bool ToggleOption(IGameOption opt) {
-            
-            if (_selected.Contains(opt)) 
+
+            if (_selected.Contains(opt))
             {
                 _selected.Remove(opt);
                 return false;
             }
-            if (_selected.Count >= SelectionLimit) { return false; }
+            if (_selected.Count > SelectionLimit || SelectionLimit == 0) { return false; }
+            if (_selected.Count == SelectionLimit)
+            {
+                if ( SelectionModel == SelectionType.SELECT_MOVE )
+                {
+                    // Remove the first item on the list to clear room.
+                    _selected.RemoveAt(0);
+                } else {
+                    // Default refuse to add the option
+                    return false;
+                }
+            }
             foreach (IGameOption nopt in this) {
                 if(nopt == opt) {
                     _selected.Add(opt);
@@ -90,9 +107,9 @@ namespace FlorineSkiaSharpForms
                     bool oldState = img.Enabled;
                     img.Enabled = CurrentState;
                     return (oldState != CurrentState);
-                } 
+                }
                 // Assume something changed
-                return true; 
+                return true;
             }
             // No container - no toggling.
             return false;
@@ -107,7 +124,7 @@ namespace FlorineSkiaSharpForms
         public void ConnectCanvasView(SKCanvasView CV) {
             IFlorineSkiaConnectable picConn = Picture as IFlorineSkiaConnectable;
             if(picConn != null) { picConn.ConnectCanvasView(CV); }
-            FlorineSkiaTapWrap.Associate(CV, OptionTapHandler);                        
+            FlorineSkiaTapWrap.Associate(CV, OptionTapHandler);
         }
 
         private void OptionTapHandler(object sender, FlorineSkiaTapWrap.TapEventArgs e)
@@ -122,6 +139,6 @@ namespace FlorineSkiaSharpForms
             }
             RaiseEventTrigger(new EventArgs());
         }
-    }    
+    }
 }
 
