@@ -13,7 +13,9 @@ namespace FlorineSkiaSharpForms
         public SKRect outerBounds = new SKRect();
         public SKRect innerBounds = new SKRect();
         public List<Tuple<float, SKColor>> innerRing = new List<Tuple<float, SKColor>>();
+        public List<Tuple<float, SKColor>> Inner { get { return innerRing; } set {innerRing = value; } }        
         public List<Tuple<float, SKColor>> outerRing = new List<Tuple<float, SKColor>>();
+        public List<Tuple<float, SKColor>> Outer { get { return outerRing; } set { outerRing = value; } }
         public SKImage mainImage { get { return coreImage.baseImage; } set { coreImage.baseImage = value; } }
         private AspectImage coreImage = new AspectImage();
         private float ringWidth = 10;

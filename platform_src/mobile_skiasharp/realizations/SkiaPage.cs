@@ -135,6 +135,15 @@ namespace FlorineSkiaSharpForms
                 SKImage ResultImage = ResourceLoader.LoadImage("Images/" + pathType + "/" + opt.OptionName.ToLower() + ".png");
                 newOpt.Picture = new SelectableOptionImage()
                 {
+                   Food food_data = opt as FoodOption;
+
+                   if(null != food && food_data.Parent.IsKnown) {
+                       // Populate nutrient info bars.
+                       // List<Tuple<float, SKColor>>
+                       List<Tuple<float, SKColor>> MacroNuts = new List<Tuple<float, SKColor>>();
+                       List<Tuple<float, SKColor>> MicroNuts = new List<Tuple<float, SKColor>>();
+                   }
+                        
                     FoodImage = ((null == ResultImage) ?
                         (IFlorineSkiaDrawable)(new ImageText(opt.OptionName))
                         : (IFlorineSkiaDrawable)(new FlOval()
