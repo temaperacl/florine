@@ -8,7 +8,7 @@ using Xamarin.Forms;
 
 namespace FlorineSkiaSharpForms
 {
-    public class SkiaSharpFormsFoundry : FlorineHardCodedData.HardCodedDataFoundry // : IPlatformFoundry
+    public class SkiaSharpFormsFoundry : MobileAssetFoundry // : IPlatformFoundry
     {
         public SkiaSharpFormsFoundry() {            
         }

@@ -47,7 +47,7 @@ namespace FlorineSkiaSharpForms
                         if(GameState.PageSubType.Daily == SubType) {
                             location = "busstop";
                         }
-                        break
+                        break;
                     case GameState.PageType.Select_Activity:
                         location = "busstop";
                         break;
@@ -117,14 +117,23 @@ namespace FlorineSkiaSharpForms
             String pathType = "food";
             if (opt is Activity) {
                 //Activity
-                pathType = "Activity";
-                newOpt.Picture = new AspectImage() {
-                    baseImage = ResourceLoader.LoadImage("Images/" + pathType + "/" + opt.OptionName + ".png")
+                Container.SelectionModel = FlorineSkiaOptionSet.SelectionType.SELECT_MOVE;
+                pathType = "activities";
+                SKImage ResultImage = ResourceLoader.LoadImage("Images/" + pathType + "/" + opt.OptionName.ToLower() + ".png");
+                newOpt.Picture = new SelectableOptionImage()
+                {
+                    FoodImage = ((null == ResultImage) ?
+                        (IFlorineSkiaDrawable)(new ImageText(opt.OptionName))
+                        : (IFlorineSkiaDrawable)(new FlOval()
+                        {
+                            mainImage = ResultImage,
+                            backgroundColor = new SKPaint() { Color = new SKColor(230, 230, 230) }
+                        }))
                 };
             } else {
                 // Food
-                SKImage ResultImage = ResourceLoader.LoadImage("Images/" + pathType + "/" + opt.OptionName + ".png");
-                newOpt.Picture = new FoodOptionImage()
+                SKImage ResultImage = ResourceLoader.LoadImage("Images/" + pathType + "/" + opt.OptionName.ToLower() + ".png");
+                newOpt.Picture = new SelectableOptionImage()
                 {
                     FoodImage = ((null == ResultImage) ?
                         (IFlorineSkiaDrawable)(new ImageText(opt.OptionName))

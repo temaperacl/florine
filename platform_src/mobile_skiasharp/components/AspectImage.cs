@@ -20,7 +20,7 @@ namespace FlorineSkiaSharpForms
                 }
             }
         }
-
+        protected virtual bool NeedImage { get { return true; } }
         public int ImageKey { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
         private SKImage _image = null;
@@ -91,7 +91,7 @@ namespace FlorineSkiaSharpForms
         public ScalingType scaling = ScalingType.Zoom;
         public void Draw(SKCanvas canvas, SKRect boundingBox, SKPaint paint = null)
         {
-            if (_image == null) { return; }
+            if (_image == null && NeedImage) { return; }
             DrawImage(canvas, RatioBox(boundingBox), paint);
             return;
         }

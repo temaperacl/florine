@@ -182,64 +182,73 @@ namespace FlorineHardCodedData
 			}
 		}
 
-                public IGameOptionSet GetDailyActivities() 
-                {
-                    HardCodedOptionSet activities = new HardCodedOptionSet()
-                    {
-                        SelectionLimit = 1,
-                        Finalizer = _emptyOption("Choose")
-                    };
+        public IGameOptionSet GetDailyActivities()
+        {
+            HardCodedOptionSet activities = new HardCodedOptionSet()
+            {
+                SelectionLimit = 1,
+                Finalizer = _emptyOption("Choose")
+            };
 
-                    activities.Add(
-                        new Activity() {
-                                Impact = new NutrientSet(),
-                                OptionName = "Cooking",
-                                Description = "Cook Tasty Stuff",
-                        }
-                    );
-                    activities.Add(
-                        new Activity() {
-                                Impact = new NutrientSet(),
-                                OptionName = "Dancing",
-                                Description = "Cook Tasty Stuff",
-                        }
-                    );
-                    activities.Add(
-                        new Activity() {
-                                Impact = new NutrientSet(),
-                                OptionName = "Gym",
-                                Description = "Cook Tasty Stuff",
-                        }
-                    );
-                    activities.Add(
-                        new Activity() {
-                                Impact = new NutrientSet(),
-                                OptionName = "Home",
-                                Description = "Cook Tasty Stuff",
-                        }
-                    );
-                    activities.Add(
-                        new Activity() {
-                                Impact = new NutrientSet(),
-                                OptionName = "Social",
-                                Description = "Cook Tasty Stuff",
-                        }
-                    );
-                    activities.Add(
-                        new Activity() {
-                                Impact = new NutrientSet(),
-                                OptionName = "Studying",
-                                Description = "Cook Tasty Stuff",
-                        }
-                    );
-                    activities.Add(
-                        new Activity() {
-                                Impact = new NutrientSet(),
-                                OptionName = "Shopping",
-                                Description = "Cook Tasty Stuff",
-                        }
-                    );
+            activities.Add(
+                new Activity()
+                {
+                    Impact = new NutrientSet(),
+                    OptionName = "Cooking",
+                    Description = "Cook Tasty Stuff",
                 }
+            );
+            activities.Add(
+                new Activity()
+                {
+                    Impact = new NutrientSet(),
+                    OptionName = "Dancing",
+                    Description = "Cook Tasty Stuff",
+                }
+            );
+            activities.Add(
+                new Activity()
+                {
+                    Impact = new NutrientSet(),
+                    OptionName = "Gym",
+                    Description = "Cook Tasty Stuff",
+                }
+            );
+            activities.Add(
+                new Activity()
+                {
+                    Impact = new NutrientSet(),
+                    OptionName = "Home",
+                    Description = "Cook Tasty Stuff",
+                }
+            );
+            activities.Add(
+                new Activity()
+                {
+                    Impact = new NutrientSet(),
+                    OptionName = "Social",
+                    Description = "Cook Tasty Stuff",
+                }
+            );
+            activities.Add(
+                new Activity()
+                {
+                    Impact = new NutrientSet(),
+                    OptionName = "Studying",
+                    Description = "Cook Tasty Stuff",
+                }
+            );
+            activities.Add(
+                new Activity()
+                {
+                    Impact = new NutrientSet(),
+                    OptionName = "Shopping",
+                    Description = "Cook Tasty Stuff",
+                }
+            );
+
+            return activities;
+        }
 
 		static HardCodedActivityPath _onlyPath = new HardCodedActivityPath();
 		public bool GetNextGameState(GameState CurrentState,

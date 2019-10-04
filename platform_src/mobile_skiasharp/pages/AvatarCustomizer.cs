@@ -188,18 +188,18 @@ namespace FlorineSkiaSharpForms
             canvas.Clear(new SKColor(0, 0, 0, 0));
 
             SKRect outerBounds = new SKRect(info.Width * .15f, info.Height * .1f, info.Width * .85f, info.Height * .9f);
-            PlayerAvatar.Avatar.DrawZoomElement(obj.Link.Item1,
-                canvas,
-                outerBounds,
-                obj.Link.Item2,
-                true
-                );
+//            PlayerAvatar.Avatar.DrawZoomElement(obj.Link.Item1,
+//                canvas,
+//                outerBounds,
+//                obj.Link.Item2,
+//                true
+//                );
         }
 
         private void Tcol_Tapped(object sender, EventArgs e)
         {
             LinkedCanvasView<Tuple<PlayerAvatar.AvatarElement, SKColor>> obj = (LinkedCanvasView<Tuple<PlayerAvatar.AvatarElement, SKColor>>)sender;
-            PlayerAvatar.Avatar.ColorScheme[obj.Link.Item1] = obj.Link.Item2;
+            //PlayerAvatar.Avatar.ColorScheme[obj.Link.Item1] = obj.Link.Item2;
             _displays["avatar"].InvalidateSurface();
             //InvalidateAll();
         }
@@ -219,12 +219,13 @@ namespace FlorineSkiaSharpForms
             canvas.Clear(new SKColor(0,0,0,0));
 
             SKRect outerBounds = new SKRect(info.Width * .15f, info.Height * .1f, info.Width * .85f, info.Height * .9f);
-            PlayerAvatar.Avatar.DrawZoomElement(obj.Link,
+/*            PlayerAvatar.Avatar.DrawZoomElement(obj.Link,
                 canvas,
                 outerBounds,
                 new SKColor(125, 0, 0),
                 true
                 );
+                */
         }
 
         private void Cb_PaintSurface(object sender, SkiaSharp.Views.Forms.SKPaintSurfaceEventArgs e)
@@ -237,7 +238,7 @@ namespace FlorineSkiaSharpForms
             SKRect outerBounds = new SKRect(info.Width * .15f, info.Height * .1f, info.Width * .85f, info.Height * .9f);
 
 
-            PlayerAvatar.Avatar.Draw(canvas, outerBounds);
+            //PlayerAvatar.Avatar.Draw(canvas, outerBounds);
         }
 
         private void AvatarCustomizer_SizeChanged(object sender, EventArgs e)

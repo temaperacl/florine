@@ -16,7 +16,7 @@ namespace FlorineSkiaSharpForms
             SELECT_TOGGLE,
             SELECT_MOVE
         }
-        private SelectionType _model = SelectionType.TOGGLE;
+        private SelectionType _model = SelectionType.SELECT_TOGGLE;
         public SelectionType SelectionModel { get { return _model; } set { _model = value; }}
         public int SelectionLimit { get; set; }
         public IGameOption Finalizer { get; set; }
@@ -102,7 +102,7 @@ namespace FlorineSkiaSharpForms
         public bool Toggle() {
             if(null != _container) {
                 bool CurrentState = _container.ToggleOption(this);
-                FoodOptionImage img = Picture as FoodOptionImage;
+                SelectableOptionImage img = Picture as SelectableOptionImage;
                 if(null != img) {
                     bool oldState = img.Enabled;
                     img.Enabled = CurrentState;

@@ -2,17 +2,21 @@ using System;
 using System.Collections.Generic;
 using Florine;
 
-namespace FlorineHardCodedData
+namespace FlorineSkiaSharpForms
 {
-    public class MobileAssetFoundry : HardCodedDataFoundry //IPlatformFoundry
+    public class MobileAssetFoundry : FlorineHardCodedData.HardCodedDataFoundry //IPlatformFoundry
     {
         public MobileAssetFoundry()
         {
         }
         /* ================================================== IPlatformFoundry */
 
-        public override GameState LoadGameState() { return base.LoadGameState(); }
-        public override bool SaveGameState(GameState _unused) { return base.SaveGameState()k }
+        public override GameState LoadGameState() {
+            GameState gs = base.LoadGameState();
+            gs.Player.Avatar.Picture = new PlayerAvatar(gs.Player.Avatar.Picture);
+            return gs;
+        }
+        //public override bool SaveGameState(GameState _unused) { return base.SaveGameState(); }
         public override IList<Food> LoadFood() { return base.LoadFood(); }
         public override IList<Nutrient> LoadNutrients() { return  base.LoadNutrients(); }
         public override IPage GetPage(IPage GenericPage) { return base.GetPage(GenericPage); }

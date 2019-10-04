@@ -76,7 +76,7 @@ namespace FlorineSkiaSharpForms
              grid.SizeChanged += SizeChanged_Grid;
              _components.Clear();
              _componentCounts.Clear();
-             _readyIPage(Source);
+             _readyIPage(Source, State);
             return grid;
         }
 
@@ -139,7 +139,7 @@ namespace FlorineSkiaSharpForms
                 )
             );
         }
-        private void _readyIPage(IPage Source)
+        private void _readyIPage(IPage Source, GameState gameState)
         {
 
              if(null != Source.Background) {
@@ -200,6 +200,19 @@ namespace FlorineSkiaSharpForms
                     );
             }
             SourcePage = Source;
+
+            if (null != gameState.Player)
+            {
+                SKCanvasView avatar = new SKCanvasView();
+                IFlorineSkiaConnectable itconn = gameState.Player.Avatar.Picture as IFlorineSkiaConnectable;
+                itconn.ConnectCanvasView(avatar);
+                _components.Add(
+                    new PageComponent(
+                       _inc(PageComponentType.Player),
+                       avatar
+                     )
+                );
+            }
         }
 
         private void SizeChanged_Grid(object sender, EventArgs e)
