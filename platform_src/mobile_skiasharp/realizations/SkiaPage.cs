@@ -132,24 +132,49 @@ namespace FlorineSkiaSharpForms
                 };
             } else {
                 // Food
+                Food.FoodOption food_data = opt as Food.FoodOption;
+                List<Tuple<float, SKColor>> MacroNuts = new List<Tuple<float, SKColor>>();
+                List<Tuple<float, SKColor>> MicroNuts = new List<Tuple<float, SKColor>>();
+
+                if (null != food_data && food_data.Parent.IsKnown)
+                {
+                    // Populate nutrient info bars.
+                    // List<Tuple<float, SKColor>>                    
+                    foreach (KeyValuePair<Nutrient, NutrientAmount> kvp in food_data.Parent.Nutrients)
+                    {
+                        FlorineSkiaNutrient AdjNut = new FlorineSkiaNutrient(kvp.Key);
+                        float RelativeAmount = 45 * ((float)(kvp.Value) / (float)(kvp.Key.DailyTarget));
+                        if (RelativeAmount > 45.0f) { RelativeAmount = 45.0f; }
+                        if (kvp.Key.Class == Nutrient.NutrientType.Macro)
+                        {
+                            MacroNuts.Add(new Tuple<float, SKColor>(
+                                RelativeAmount,
+                                AdjNut.RingColor
+                                ));
+                        }
+                        else
+                        {
+                            MicroNuts.Add(new Tuple<float, SKColor>(
+                                RelativeAmount,
+                                AdjNut.RingColor
+                                ));
+                        }
+                    }
+                    
+                }
+
                 SKImage ResultImage = ResourceLoader.LoadImage("Images/" + pathType + "/" + opt.OptionName.ToLower() + ".png");
                 newOpt.Picture = new SelectableOptionImage()
                 {
-                   Food food_data = opt as FoodOption;
-
-                   if(null != food && food_data.Parent.IsKnown) {
-                       // Populate nutrient info bars.
-                       // List<Tuple<float, SKColor>>
-                       List<Tuple<float, SKColor>> MacroNuts = new List<Tuple<float, SKColor>>();
-                       List<Tuple<float, SKColor>> MicroNuts = new List<Tuple<float, SKColor>>();
-                   }
-                        
                     FoodImage = ((null == ResultImage) ?
                         (IFlorineSkiaDrawable)(new ImageText(opt.OptionName))
                         : (IFlorineSkiaDrawable)(new FlOval()
                         {
                             mainImage = ResultImage,
-                            backgroundColor = new SKPaint() { Color = new SKColor(230, 230, 230) }
+                            backgroundColor = new SKPaint() { Color = new SKColor(230, 230, 230) },
+                            RightRing = MicroNuts,
+                            LeftRing = MacroNuts,
+
                         }))
                 };
 

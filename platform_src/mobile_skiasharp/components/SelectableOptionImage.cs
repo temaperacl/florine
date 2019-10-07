@@ -13,7 +13,7 @@ namespace FlorineSkiaSharpForms
         public IFlorineSkiaDrawable FoodImage { get; set; }
 
         private FlOval _Highlight = new FlOval() {
-            innerRing = {
+            outerRing = {
                 new Tuple<float, SKColor>(360f, new SKColor(0,0,230))
             },
             backgroundColor = new SKPaint() { Color = new SKColor(0, 0, 0, 0) }

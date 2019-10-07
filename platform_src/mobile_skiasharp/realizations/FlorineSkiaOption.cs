@@ -56,6 +56,11 @@ namespace FlorineSkiaSharpForms
                 return resultSet;
             }
         }
+        public bool OptionSelected(IGameOption opt)
+        {
+            return _selected.Contains(opt);
+        }
+
         public bool ToggleOption(IGameOption opt) {
 
             if (_selected.Contains(opt))
@@ -69,14 +74,21 @@ namespace FlorineSkiaSharpForms
                 if ( SelectionModel == SelectionType.SELECT_MOVE )
                 {
                     // Remove the first item on the list to clear room.
+                    FlorineSkiaOption deadOpt = _selected[0] as FlorineSkiaOption;
                     _selected.RemoveAt(0);
+                    if (null != deadOpt)
+                    {
+                        deadOpt.Redraw();
+                    }
+                    
                 } else {
                     // Default refuse to add the option
                     return false;
                 }
             }
             foreach (IGameOption nopt in this) {
-                if(nopt == opt) {
+                if (nopt == opt)
+                {
                     _selected.Add(opt);
                     return true;
                 }
@@ -120,11 +132,30 @@ namespace FlorineSkiaSharpForms
         private IGameOptionSet _customSub;
         public IGameOptionSet SubOptions { get { if(null != _customSub) { return _customSub; } return _parent.SubOptions; } set { _customSub = value; } }
         public IImage Picture { get; set; }
-
+        private List<SKCanvasView> _views = new List<SKCanvasView>();
         public void ConnectCanvasView(SKCanvasView CV) {
             IFlorineSkiaConnectable picConn = Picture as IFlorineSkiaConnectable;
             if(picConn != null) { picConn.ConnectCanvasView(CV); }
             FlorineSkiaTapWrap.Associate(CV, OptionTapHandler);
+            _views.Add(CV);
+        }
+
+        public void Redraw()
+        {
+            if (null != _container)
+            {
+                bool CurrentState = _container.OptionSelected(this);
+                SelectableOptionImage img = Picture as SelectableOptionImage;
+                if (null != img)
+                {
+                    bool oldState = img.Enabled;
+                    img.Enabled = CurrentState;                    
+                }
+            }
+            foreach (SKCanvasView CV in _views)
+            {
+                CV.InvalidateSurface();
+            }
         }
 
         private void OptionTapHandler(object sender, FlorineSkiaTapWrap.TapEventArgs e)
