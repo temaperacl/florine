@@ -11,5 +11,26 @@ namespace FlorineSkiaSharpForms
 {
     public class LayoutOptionSelect : PageLayout
     {
+        SKCanvasView Description;
+        public override void LayoutComponent(Grid grid, PageComponent p, int CurrentOption, int OptionCount, bool isTall)
+        {
+            if (p.PCType == PageComponentType.Description)
+            {
+                Description = p.PCView as SKCanvasView;
+            }
+            else
+            {
+                base.LayoutComponent(grid, p, CurrentOption, OptionCount, isTall);
+            }
+        }
+
+        public override void PostLayout(bool IsTall, Grid grid, Controller GameController, IPlatformFoundry GameFoundry, IPage SourcePage)
+        {
+            if (null != Description)
+            {
+                grid.Children.Add(Description, 0, 8, 5, 12);
+            }
+            base.PostLayout(IsTall, grid, GameController, GameFoundry, SourcePage);
+        }
     }
 }

@@ -6,6 +6,7 @@ namespace Florine
     public class Food
     {
         public String Name { get; set; }
+        public string Description { get; set; }
         public NutrientSet Nutrients { get; set; }
         public IImage OptionPicture { get; set; }
         public bool IsKnown { get; set; }

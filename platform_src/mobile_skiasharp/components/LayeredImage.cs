@@ -10,7 +10,7 @@ namespace FlorineSkiaSharpForms
         // SKRect, AspectImage ----
         //
         public List<IFlorineSkiaDrawable> Layers = new List<IFlorineSkiaDrawable>();
-
+        protected override bool NeedImage { get { return false; } }
         protected override void DrawImage(SKCanvas canvas, SKRect finalBoundingBox, SKPaint paint = null)
         {
             base.DrawImage(canvas, finalBoundingBox, paint);            

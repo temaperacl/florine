@@ -28,15 +28,16 @@ namespace FlorineSkiaSharpForms
         {
 
             outerBounds = RatioBox(new SKRect(
-                                              info.Left + info.Width * .15f,
-                                              info.Top  + info.Height * .1f,
-                                              info.Left + info.Width * .85f,
-                                              info.Top  + info.Height * .9f));
-            innerBounds = RatioBox(new SKRect(
-                                              info.Left + info.Width * .15f + 12,
-                                              info.Top  + info.Height * .1f + 12,
-                                              info.Left + info.Width * .85f - 12,
-                                              info.Top  + info.Height * .9f - 12));
+                                              info.Left + info.Width * .05f,
+                                              info.Top  + info.Height * .03f,
+                                              info.Left + info.Width * .95f,
+                                              info.Top  + info.Height * .97f));
+            innerBounds = new SKRect(
+                                              outerBounds.Left + 9,
+                                              outerBounds.Top + 9,
+                                              outerBounds.Right - 9,
+                                              outerBounds.Bottom - 9
+                                              );
 
             this.Paint(canvas);
         }
@@ -53,8 +54,18 @@ namespace FlorineSkiaSharpForms
             SKCanvas canvas = surface.Canvas;
             canvas.Clear();
 
-            outerBounds = RatioBox(new SKRect(info.Width * .15f, info.Height * .1f, info.Width * .85f, info.Height * .9f));
-            innerBounds = RatioBox(new SKRect(info.Width * .15f + 12, info.Height * .1f + 12, info.Width * .85f - 12, info.Height * .9f - 12));
+            outerBounds = RatioBox(new SKRect(
+                info.Width * .05f,
+                info.Height * .03f,
+                info.Width * .95f,
+                info.Height * .97f));
+            innerBounds = RatioBox(new SKRect(
+                outerBounds.Left + 9,
+                outerBounds.Top + 9, 
+                outerBounds.Right - 9,
+                outerBounds.Bottom - 9
+               )
+               );
 
             this.Paint(canvas);
         }
@@ -92,10 +103,25 @@ namespace FlorineSkiaSharpForms
                 canvas.DrawOval(innerBounds, backgroundColor);
             }
             SKRect innerRingBound = new SKRect(
-                innerBounds.Left + ringWidth / 2,
-                innerBounds.Top + ringWidth /2,
-                innerBounds.Right - ringWidth /2,
-                innerBounds.Bottom - ringWidth / 2);
+                innerBounds.Left + 2,// + ringWidth / 2,
+                innerBounds.Top + 2,// + ringWidth /2,
+                innerBounds.Right - 2,// - ringWidth /2,
+                innerBounds.Bottom - 2);// - ringWidth / 2);
+
+
+            SKPaint BackPaint = new SKPaint()
+            {
+                Color = backgroundColor.Color,
+                IsStroke = true,
+                StrokeWidth = ringWidth,
+            };
+            SKPaint EdgePaint = new SKPaint()
+            {
+                Color = new SKColor(0,0,0),
+                IsStroke = true,
+                StrokeWidth = ringWidth,
+            };
+
             float fAngle = 180f;
             foreach (Tuple<float, SKColor> outerValue in outerRing)
             {
@@ -105,15 +131,16 @@ namespace FlorineSkiaSharpForms
                     IsStroke = true,
                     StrokeWidth = 10,
                 };
+
                 using (SKPath path = new SKPath())
-                {
-                    path.AddArc(outerBounds, fAngle, outerValue.Item1);
+                {                    
+                    path.AddArc(outerBounds, fAngle, outerValue.Item1);                    
                     canvas.DrawPath(path, painter);
                     fAngle += outerValue.Item1;
                 }
             }
 
-            fAngle = 270;
+            fAngle = 0;
             foreach (Tuple<float, SKColor> innerValue in innerRight)
             {
                 SKPaint painter = new SKPaint()
@@ -125,12 +152,22 @@ namespace FlorineSkiaSharpForms
                 using (SKPath path = new SKPath())
                 {
                     path.AddArc(innerRingBound, fAngle, innerValue.Item1);
-                    canvas.DrawPath(path, painter);
-                    fAngle += innerValue.Item1;
+                    canvas.DrawPath(path, EdgePaint);
                 }
+                using (SKPath path = new SKPath())
+                {
+                    path.AddArc(innerBounds, fAngle, innerValue.Item1);                 
+                    canvas.DrawPath(path, painter);
+                }
+                fAngle += innerValue.Item1;
+            }
+            using (SKPath path = new SKPath())
+            {
+                path.AddArc(innerRingBound, fAngle, 180-fAngle);
+                canvas.DrawPath(path, BackPaint);                
             }
 
-            fAngle = 90;
+            fAngle = 180;
             foreach (Tuple<float, SKColor> innerValue in innerLeft)
             {
                 SKPaint painter = new SKPaint()
@@ -139,12 +176,23 @@ namespace FlorineSkiaSharpForms
                     IsStroke = true,
                     StrokeWidth = ringWidth,
                 };
+                
                 using (SKPath path = new SKPath())
                 {
                     path.AddArc(innerRingBound, fAngle, innerValue.Item1);
-                    canvas.DrawPath(path, painter);
-                    fAngle = innerValue.Item1;
+                    canvas.DrawPath(path, EdgePaint);                    
                 }
+                using (SKPath path = new SKPath())
+                {
+                    path.AddArc(innerBounds, fAngle, innerValue.Item1);                    
+                    canvas.DrawPath(path, painter);                    
+                }
+                fAngle += innerValue.Item1;
+            }
+            using (SKPath path = new SKPath())
+            {
+                path.AddArc(innerRingBound, fAngle, 360 - fAngle);
+                canvas.DrawPath(path, BackPaint);
             }
 
             coreImage.Draw(canvas, innerBounds);

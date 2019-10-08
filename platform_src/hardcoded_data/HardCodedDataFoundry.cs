@@ -35,7 +35,8 @@ namespace FlorineHardCodedData
 						{Potassium,  l[8]},
 						{Vitamin_B12,l[9]},
 						{Vitamin_A,  l[10]}
-					}
+					},
+                    Description = kvp.Key + " is a tasty food that you can eat! Eat Eat Eat Eat Eat Eat Eat Eat Eat Eat! Yummy! Yummy! "
 				});
 			}
 

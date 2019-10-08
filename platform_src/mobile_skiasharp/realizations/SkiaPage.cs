@@ -117,6 +117,7 @@ namespace FlorineSkiaSharpForms
             String pathType = "food";
             if (opt is Activity) {
                 //Activity
+                newOpt.Description = ((Activity)opt).Description;
                 Container.SelectionModel = FlorineSkiaOptionSet.SelectionType.SELECT_MOVE;
                 pathType = "activities";
                 SKImage ResultImage = ResourceLoader.LoadImage("Images/" + pathType + "/" + opt.OptionName.ToLower() + ".png");
@@ -133,6 +134,14 @@ namespace FlorineSkiaSharpForms
             } else {
                 // Food
                 Food.FoodOption food_data = opt as Food.FoodOption;
+                if (null != food_data)
+                {
+                    newOpt.Description = food_data.Parent.Description;
+                }
+                else
+                {
+                    newOpt.Description = "Desc Missing";
+                }
                 List<Tuple<float, SKColor>> MacroNuts = new List<Tuple<float, SKColor>>();
                 List<Tuple<float, SKColor>> MicroNuts = new List<Tuple<float, SKColor>>();
 

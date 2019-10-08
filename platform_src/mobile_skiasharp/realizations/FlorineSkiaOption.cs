@@ -21,6 +21,61 @@ namespace FlorineSkiaSharpForms
         public int SelectionLimit { get; set; }
         public IGameOption Finalizer { get; set; }
         private List<IGameOption> _selected = new List<IGameOption>();
+        public class DescriptionUpdater : IFlorineSkiaConnectable, IFlorineSkiaDrawable
+        {
+            public DescriptionUpdater(IGameOptionSet parent) { _parent = parent; }
+            private IGameOptionSet _parent;
+            private LayeredImage _layers = new LayeredImage()
+            {
+                Layers = {
+                   new FlOval()
+                }
+            };
+            private SKCanvasView _MainCanvas;
+            private string _toDisp;
+            public void DisplayIt(string S)
+            {
+                if (null == _MainCanvas) { return; }
+                _toDisp = S;
+                if (_layers.Layers.Count > 1) { _layers.Layers.RemoveAt(1); }
+                _layers.Layers.Add(new ImageText(_toDisp));
+                if (null != _MainCanvas) { _MainCanvas.IsVisible = true; }
+                _MainCanvas.InvalidateSurface();
+            }
+            public void ConnectCanvasView(SKCanvasView CV)
+            {
+                _MainCanvas = CV;
+                _MainCanvas.IsVisible = false;
+                _MainCanvas.PaintSurface += _MainCanvas_PaintSurface;
+            }
+
+            private void _MainCanvas_PaintSurface(object sender, SKPaintSurfaceEventArgs args)
+            {
+               
+                    SKImageInfo info = args.Info;
+                    SKSurface surface = args.Surface;
+                    SKCanvas canvas = surface.Canvas;
+                    canvas.Clear();
+                Draw(canvas,
+                    new SKRect(
+                        0f,
+                        0f,
+                        (float)info.Width,
+                        (float)info.Height
+                        ),
+                    null);
+
+            }
+
+            public void Draw(SKCanvas canvas, SKRect boundingBox, SKPaint paint)
+            {
+                _layers.Draw(canvas, boundingBox, paint);
+            }
+        }
+        public DescriptionUpdater UpdaterHook;
+        public FlorineSkiaOptionSet() {
+            UpdaterHook = new DescriptionUpdater(this);
+        }
         private class SelectedOptionGroup : List<IGameOption>, IGameOption, IGameOptionSet
         {
             public string OptionName => "Chosen Options";
@@ -90,6 +145,11 @@ namespace FlorineSkiaSharpForms
                 if (nopt == opt)
                 {
                     _selected.Add(opt);
+                    FlorineSkiaOption showOpt = opt as FlorineSkiaOption;
+                    if (null != showOpt)
+                    {
+                        UpdaterHook.DisplayIt(showOpt.Description);
+                    }
                     return true;
                 }
             }
@@ -127,6 +187,10 @@ namespace FlorineSkiaSharpForms
             return false;
         }
         public string OptionName => _parent.OptionName;
+        public string Description
+        {
+            get; set;
+        }
         public void AdjustNutrients(NutrientSet n) { _parent.AdjustNutrients(n); }
         public void ImpactPlayer(Player p) { _parent.ImpactPlayer(p); }
         private IGameOptionSet _customSub;

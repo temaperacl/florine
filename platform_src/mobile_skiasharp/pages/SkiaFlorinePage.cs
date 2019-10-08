@@ -198,6 +198,17 @@ namespace FlorineSkiaSharpForms
                     Source.PrimaryOptions.Finalizer,
                     Continue_Handler
                     );
+                FlorineSkiaOptionSet FSO = PrimaryOptions as FlorineSkiaOptionSet;
+                if (FSO != null) {
+                    SKCanvasView Desc = new SKCanvasView();
+                    FSO.UpdaterHook.ConnectCanvasView(Desc);
+                    _components.Add(
+                        new PageComponent(
+                            _inc(PageComponentType.Description),
+                            Desc
+                        )
+                    );
+                }                
             }
             SourcePage = Source;
 

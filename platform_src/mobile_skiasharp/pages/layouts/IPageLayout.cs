@@ -24,6 +24,7 @@ namespace FlorineSkiaSharpForms
         Background,
         Title,
         Option,
+        Description,
         PickedOption,
         Message,
         Footer,
@@ -51,7 +52,7 @@ namespace FlorineSkiaSharpForms
             IPage SourcePage
         )
         {
-
+            //UpdaterHook
         }
 
         //Todo: Grid Allocation Size, OptSize Usage
@@ -219,6 +220,9 @@ namespace FlorineSkiaSharpForms
                                 v
                     );
                     ++CurrentOption;
+                    break;
+                case PageComponentType.Description:
+                    grid.Children.Add(v, 0, 8, 5, 12);
                     break;
 //                case PageComponentType.Player:
 //                    grid.Children.Add(v, 7, 2, 9, 3);
