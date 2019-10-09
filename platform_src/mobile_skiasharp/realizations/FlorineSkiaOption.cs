@@ -28,7 +28,9 @@ namespace FlorineSkiaSharpForms
             private LayeredImage _layers = new LayeredImage()
             {
                 Layers = {
-                   new FlOval()
+                   new FlOval() {
+                       backgroundColor = new SKPaint() { Color = new SKColor(0,80,190)}
+                   }
                 }
             };
             private SKCanvasView _MainCanvas;
@@ -37,8 +39,13 @@ namespace FlorineSkiaSharpForms
             {
                 if (null == _MainCanvas) { return; }
                 _toDisp = S;
-                if (_layers.Layers.Count > 1) { _layers.Layers.RemoveAt(1); }
-                _layers.Layers.Add(new ImageText(_toDisp));
+                if (_layers.Layers.Count > 1) { _layers.Layers.RemoveAt(0); }
+                _layers.Layers.Insert(
+                    0,
+                    new ImageText(_toDisp) {
+                    Overflow = ImageText.WrapType.DiamondWrap,
+                    FontSize = 36.0f,                   
+                } );
                 if (null != _MainCanvas) { _MainCanvas.IsVisible = true; }
                 _MainCanvas.InvalidateSurface();
             }
@@ -47,9 +54,14 @@ namespace FlorineSkiaSharpForms
                 _MainCanvas = CV;
                 _MainCanvas.IsVisible = false;
                 _MainCanvas.PaintSurface += _MainCanvas_PaintSurface;
+                FlorineSkiaTapWrap.Associate(CV, DescriptionTapHandler);
+            }
+            private void DescriptionTapHandler(object sender, FlorineSkiaTapWrap.TapEventArgs e)
+            {
+                _MainCanvas.IsVisible = false;
             }
 
-            private void _MainCanvas_PaintSurface(object sender, SKPaintSurfaceEventArgs args)
+                private void _MainCanvas_PaintSurface(object sender, SKPaintSurfaceEventArgs args)
             {
                
                     SKImageInfo info = args.Info;

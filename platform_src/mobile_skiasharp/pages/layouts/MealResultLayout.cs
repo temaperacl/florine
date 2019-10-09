@@ -179,6 +179,9 @@ namespace FlorineSkiaSharpForms
                     return;
                 case PageComponentType.Message:
                     return;
+                case PageComponentType.Player:
+                    grid.Children.Add(v, 2, 10, 13, 18);
+                    return;
             }
             base.LayoutComponentTall(grid, t, v, CurrentOption, OptionCount);
         }

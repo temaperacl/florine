@@ -206,7 +206,7 @@ namespace FlorineSkiaSharpForms
                     grid.Children.Add(v, 0, 8, 0, 1);
                     break;
                 case PageComponentType.Footer:
-                    grid.Children.Add(v, 2, 6, 11, 12);
+                    grid.Children.Add(v, 2, 6, 10, 12);
                     break;
                 case PageComponentType.Message:
                     grid.Children.Add(v, 0, 8, 1, 2);

@@ -13,6 +13,7 @@ namespace FlorineSkiaSharpForms
 
         public override GameState LoadGameState() {
             GameState gs = base.LoadGameState();
+            gs.Player.Name = "Faerina";
             gs.Player.Avatar.Picture = new PlayerAvatar(gs.Player.Avatar.Picture);
             return gs;
         }

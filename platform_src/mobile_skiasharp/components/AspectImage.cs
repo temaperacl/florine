@@ -51,7 +51,7 @@ namespace FlorineSkiaSharpForms
         }
         protected SKRect RatioBox(SKRect boundingBox)
         {
-            if (_image == null) { return new SKRect(); }
+            if (_image == null) { return boundingBox; }
             
             if (scaling == ScalingType.Stretch)
             {

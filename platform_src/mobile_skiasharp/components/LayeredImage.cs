@@ -14,7 +14,7 @@ namespace FlorineSkiaSharpForms
         protected override void DrawImage(SKCanvas canvas, SKRect finalBoundingBox, SKPaint paint = null)
         {
             base.DrawImage(canvas, finalBoundingBox, paint);            
-            for(int i = Layers.Count - 1; i > 0; --i) {                
+            for(int i = Layers.Count - 1; i >= 0; --i) {                
                 Layers[i].Draw(canvas, finalBoundingBox, paint);
             }
         }
