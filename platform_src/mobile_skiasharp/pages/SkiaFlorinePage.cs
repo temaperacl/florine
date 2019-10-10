@@ -254,6 +254,9 @@ namespace FlorineSkiaSharpForms
                 case GameState.PageType.Summarize_Activity:
                     ActiveLayout = new ActivitySummaryLayout();
                         break;
+                case GameState.PageType.Char_Creation:
+                    ActiveLayout = new AvatarSelectionLayout();
+                    break;
                 default:
                     ActiveLayout = new LayoutOptionSelect();
                     break;

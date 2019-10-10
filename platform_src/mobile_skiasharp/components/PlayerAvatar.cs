@@ -25,12 +25,14 @@ namespace FlorineSkiaSharpForms
                 
         private SKImage _hair = ResourceLoader.LoadImage("Images/customization/01_hair/50%/bob_50.png");
         private SKImage _face = ResourceLoader.LoadImage("Images/customization/02_faces/50%/face1_50.png");
+        public SKImage Clothes { get { return _clothes; } set { _clothes = value; } }
         private SKImage _clothes = ResourceLoader.LoadImage("Images/customization/03_clothes/Box/50%/businesscasual1_box_50.png");
         private SKImage _body = ResourceLoader.LoadImage("Images/customization/04_bodyshapes/50%/boxshape_50.png");
         private SKImage _wings = ResourceLoader.LoadImage("Images/customization/05_wings/50%/basicwings_50.png");
         
         protected override void DrawImage(SKCanvas canvas, SKRect finalBoundingBox, SKPaint paint = null)
-        {            
+        {
+            canvas.Clear();
             canvas.DrawImage(_wings, finalBoundingBox, paint);
             canvas.DrawImage(_body, finalBoundingBox, paint);
             canvas.DrawImage(_face, finalBoundingBox, paint);

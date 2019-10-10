@@ -71,7 +71,9 @@ namespace FlorineSkiaSharpForms
                     return Page.DefaultLayout(Source, CurrentState);
                 case GameState.PageType.Summarize_Day:
                     return Page.DefaultLayout(Source, CurrentState);
-                   
+                case GameState.PageType.Char_Creation:
+                    return Page.DefaultLayout(Source, CurrentState);
+
             }
             return Page.UndefinedLayout(Source, CurrentState);
         }

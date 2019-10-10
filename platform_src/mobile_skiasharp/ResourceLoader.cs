@@ -8,11 +8,23 @@ namespace FlorineSkiaSharpForms
     class ResourceLoader
     {
         public static ISkiaSharpFlorineDataSource DataSource = null;
+        public static Dictionary<string, SKImage> ImageList(string SubType)
+        {
+            //DataSource.G
+            //List<string> Identifiers(string SubSet);
+            Dictionary<string, SKImage> newDict = new Dictionary<string, SKImage>();
+            foreach (string s in DataSource.Identifiers("Images/" + SubType))
+            {
+                string rs = "Images/" + SubType + "/" + s;
+                newDict[rs] = LoadImage(rs);
+            }
+            return newDict;
+        }
         public static SKBitmap LoadBitmap(string resourceID)
         {
             if (null == DataSource) { return null; }
             SKBitmap cereal;
-            System.Reflection.Assembly assembly = System.Reflection.Assembly.GetAssembly(typeof(ResourceLoader));
+            //System.Reflection.Assembly assembly = System.Reflection.Assembly.GetAssembly(typeof(ResourceLoader));
             byte [] data = DataSource.GetBytes(resourceID);
             if(null != data && data.Length > 0 ) {                
                 cereal = SKBitmap.Decode(data);
