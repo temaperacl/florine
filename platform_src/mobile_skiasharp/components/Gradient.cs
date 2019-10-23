@@ -15,6 +15,12 @@ namespace FlorineSkiaSharpForms
         public float BorderSize { get; set; }
         public float IndicatorLineLoc { get; set; }
         public float BarWidth { get; set; }
+        public enum GradientType
+        {
+            Smooth,
+            RelativeSharp
+        }
+        public GradientType Style { get; set; } = GradientType.Smooth;
         public ImageGradient() {
             Horizontal = true;
             BorderSize = .05f;
@@ -45,61 +51,76 @@ namespace FlorineSkiaSharpForms
                 paint = paint.Clone();
             }
 
-            
-            paint.Shader = SKShader.CreateLinearGradient(
-                new SKPoint(boundingBox.Left + BorderSize, boundingBox.Top + BorderSize),
-                new SKPoint(
-                    (Horizontal?boundingBox.Right:boundingBox.Left) - BorderSize,
-                    (Horizontal?boundingBox.Top:boundingBox.Bottom) - BorderSize
-                ),
-                new List<SKColor>(Details.Values).ToArray(),
-                new List<float>(Details.Keys).ToArray(),
-                SKShaderTileMode.Clamp                
-            );
-            SKPaint BackgroundPaint = new SKPaint()
+            if (Style == GradientType.Smooth)
             {
-                Color = BackgroundColor,
-                StrokeWidth = BorderSize
-            };
-            float borderHeight = BorderSize; // boundingBox.Height * BorderSize;
-            float borderWidth = BorderSize;  // boundingBox.Width * BorderSize;
+                paint.Shader = SKShader.CreateLinearGradient(
+                    new SKPoint(boundingBox.Left + BorderSize, boundingBox.Top + BorderSize),
+                    new SKPoint(
+                        (Horizontal ? boundingBox.Right : boundingBox.Left) - BorderSize,
+                        (Horizontal ? boundingBox.Top : boundingBox.Bottom) - BorderSize
+                    ),
+                    new List<SKColor>(Details.Values).ToArray(),
+                    new List<float>(Details.Keys).ToArray(),
+                    SKShaderTileMode.Clamp
+                );
+                SKPaint BackgroundPaint = new SKPaint()
+                {
+                    Color = BackgroundColor,
+                    StrokeWidth = BorderSize
+                };
+                float borderHeight = BorderSize; // boundingBox.Height * BorderSize;
+                float borderWidth = BorderSize;  // boundingBox.Width * BorderSize;
 
-            //Scale for border
-            float LineLoc =
-                (Horizontal?boundingBox.Width:boundingBox.Height) * IndicatorLineLoc 
-                + (Horizontal?boundingBox.Left:boundingBox.Top);
-            canvas.Clear(BackgroundColor);
-            canvas.DrawRect(
-                new SKRect(
-                    boundingBox.Left + borderWidth,
-                    boundingBox.Top + borderHeight,
-                    boundingBox.Right - borderWidth,
-                    boundingBox.Bottom - borderHeight                    
-                ), paint
-            );
-            canvas.DrawLine(
-                            (Horizontal?LineLoc:0),
-                            (Horizontal?0:LineLoc),
-                            (Horizontal?LineLoc:boundingBox.Right),
-                            (Horizontal?boundingBox.Bottom:LineLoc),
-                            BackgroundPaint
-            );
-            
-            float EndLoc =
-                  (Horizontal ? boundingBox.Width : boundingBox.Height) * BarWidth
-                + (Horizontal?boundingBox.Left :boundingBox.Top);
+                //Scale for border
+                float LineLoc =
+                    (Horizontal ? boundingBox.Width : boundingBox.Height) * IndicatorLineLoc
+                    + (Horizontal ? boundingBox.Left : boundingBox.Top);
+                canvas.Clear(BackgroundColor);
+                canvas.DrawRect(
+                    new SKRect(
+                        boundingBox.Left + borderWidth,
+                        boundingBox.Top + borderHeight,
+                        boundingBox.Right - borderWidth,
+                        boundingBox.Bottom - borderHeight
+                    ), paint
+                );
+                canvas.DrawLine(
+                                (Horizontal ? LineLoc : 0),
+                                (Horizontal ? 0 : LineLoc),
+                                (Horizontal ? LineLoc : boundingBox.Right),
+                                (Horizontal ? boundingBox.Bottom : LineLoc),
+                                BackgroundPaint
+                );
 
-            
-            canvas.DrawRect(
-                new SKRect(                                                        
-                            (Horizontal ? EndLoc : 0),
-                            (Horizontal ? 0 : EndLoc),
-                            boundingBox.Right,
-                            boundingBox.Bottom
-                ),
-                BackgroundPaint
-            );
+                float EndLoc =
+                      (Horizontal ? boundingBox.Width : boundingBox.Height) * BarWidth
+                    + (Horizontal ? boundingBox.Left : boundingBox.Top);
 
+
+                canvas.DrawRect(
+                    new SKRect(
+                                (Horizontal ? EndLoc : 0),
+                                (Horizontal ? 0 : EndLoc),
+                                boundingBox.Right,
+                                boundingBox.Bottom
+                    ),
+                    BackgroundPaint
+                );
+            }
+
+            if (Style == GradientType.RelativeSharp)
+            {
+                float TotalLength = boundingBox.Width;
+                float curLen = boundingBox.Left;
+                foreach (KeyValuePair<float, SKColor> kvp in Details) {
+                    float ItemLen = TotalLength * kvp.Key;
+                    canvas.DrawRect(
+                        new SKRect(curLen, boundingBox.Top, ItemLen, boundingBox.Bottom),
+                        new SKPaint() { Color = kvp.Value }
+                    );
+                    curLen = ItemLen;                    
+                }
+            }
             
 
             

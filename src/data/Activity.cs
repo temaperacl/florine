@@ -10,13 +10,13 @@ namespace Florine
 		public String Description { get; set; }
 		public IImage Picture { get; set; }
 		public IGameOptionSet SubOptions { get; set; }
-		public void ImpactPlayer(Player target) 
+		public virtual void ImpactPlayer(Player target) 
 		{
 			if(null != Impact) {
 			    AdjustNutrients(target.Nutrients);
 			}
 		}
-		public void AdjustNutrients(NutrientSet target) {
+		public virtual void AdjustNutrients(NutrientSet target) {
 			// Probably should change NutrientSet type to inherit directly or implement IEnumX
 			foreach( KeyValuePair<Nutrient, NutrientAmount> kvp in Impact ) {				
 				NutrientAmount val = 0;

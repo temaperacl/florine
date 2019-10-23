@@ -58,7 +58,7 @@ namespace Florine
 						
 			GameState.PageType nextType;
             GameState.PageSubType nextSubType;
-			_foundry.GetNextGameState(_context, out nextType, out nextSubType);
+			_foundry.GetNextGameState(_context, opt, out nextType, out nextSubType);
 			return _goToPage(nextType, nextSubType);
         }
     }

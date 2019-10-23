@@ -52,6 +52,24 @@ namespace FlorineSkiaSharpForms
             IPage SourcePage
         )
         {
+            Gauge nit = new Gauge()
+            {
+                Min = 0,
+                Max = 24,
+                Value = (float)(GameController.CurrentState.Player.HoursIntoDay)
+            };
+            
+            SKCanvasView vvr = new SKCanvasView();
+            nit.ConnectCanvasView(vvr);
+            grid.Children.Add(vvr, 25, 29, 0 ,4);
+
+            /*
+            ImageText cnit = new ImageText(GameController.CurrentState.Player.Energy.ToString());
+            
+            SKCanvasView cvvr = new SKCanvasView();
+            cnit.ConnectCanvasView(cvvr);
+            grid.Children.Add(cvvr, 0, 6, 4, 6);
+            */
             //UpdaterHook
         }
 
@@ -94,7 +112,7 @@ namespace FlorineSkiaSharpForms
             Grid.SetRowSpan(Option, OptSize.Height);
 
         }
-
+        
         public virtual SKRectI GetResolution(
             Dictionary<PageComponentType, int> ComponentCounts,
             bool IsTall
@@ -102,13 +120,14 @@ namespace FlorineSkiaSharpForms
         {
             if (IsTall)
             {
-                return new SKRectI(0, 0, 8, 12);
+                return new SKRectI(0, 0, 30,30);
             }
             else
             {
-                return new SKRectI(0, 0, 15, 7);
+                return new SKRectI(0, 0, 30,30);
             }
         }
+        
 
         public virtual void LayoutComponent(
                                              Grid grid,
@@ -157,10 +176,10 @@ namespace FlorineSkiaSharpForms
             switch (t)
             {
                 case PageComponentType.Background:
-                    grid.Children.Add(v, 0, 7, 0, 4);
+                    grid.Children.Add(v, 0, 30, 0, 30);
                     break;
                 case PageComponentType.Footer:
-                    grid.Children.Add(v, 2, 5, 6, 7);
+                    grid.Children.Add(v, 3, 27, 6, 7);
                     break;
                 case PageComponentType.Option:
                     PlaceOption(grid,
@@ -197,32 +216,32 @@ namespace FlorineSkiaSharpForms
             switch (t)
             {
                 case PageComponentType.Background:
-                    grid.Children.Add(v, 0, 8, 0, 12);
-                    break;
-                case PageComponentType.Player:
-                    grid.Children.Add(v, 1, 4, 8, 11);
+                    grid.Children.Add(v, 0, 30, 0, 30);
                     break;
                 case PageComponentType.Title:
-                    grid.Children.Add(v, 0, 8, 0, 1);
-                    break;
-                case PageComponentType.Footer:
-                    grid.Children.Add(v, 2, 6, 10, 12);
+                    grid.Children.Add(v, 0, 30, 0, 3);
                     break;
                 case PageComponentType.Message:
-                    grid.Children.Add(v, 0, 8, 1, 2);
-                    break;
+                    grid.Children.Add(v, 0, 30, 3, 5);
+                    break;               
                 case PageComponentType.Option:
                     PlaceOption(grid,
-                                new SKRectI(0, 2, 8, 6),
-                                new SKRectI(0, 0, 4, 2),
+                                new SKRectI(1, 5, 29, 16),
+                                new SKRectI(0, 0, 14, 4),
                                 CurrentOption,
                                 OptionCount,
                                 v
                     );
                     ++CurrentOption;
                     break;
+                case PageComponentType.Player:
+                    grid.Children.Add(v, 3, 12, 17, 27);
+                    break;
+                case PageComponentType.Footer:
+                    grid.Children.Add(v, 6, 24, 27, 30);
+                    break;                    
                 case PageComponentType.Description:
-                    grid.Children.Add(v, 0, 8, 5, 12);
+                    grid.Children.Add(v, 0, 30, 15, 28);
                     break;
 //                case PageComponentType.Player:
 //                    grid.Children.Add(v, 7, 2, 9, 3);

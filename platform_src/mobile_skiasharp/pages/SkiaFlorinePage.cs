@@ -47,6 +47,9 @@ namespace FlorineSkiaSharpForms
             IPage Source,
             GameState State)
         {
+            return DefaultLayout(Source, State);
+            
+            /*
             Button ContinueButton = new Button()
             {
                 Text = "Continue",
@@ -65,6 +68,7 @@ namespace FlorineSkiaSharpForms
                     ContinueButton
                 }
             };
+            */
         }
 
         public View DefaultLayout(
@@ -180,6 +184,9 @@ namespace FlorineSkiaSharpForms
                      )
                  );                
             }
+
+            IGameOptionSet DescriptionSet = Source.AppliedOptions;
+
             _readyOptionSet(
                 PageComponentType.PickedOption,
                 Source.AppliedOptions
@@ -190,15 +197,22 @@ namespace FlorineSkiaSharpForms
                 PageComponentType.Option,
                 PrimaryOptions
             );
-            
+
             if (null != Source.PrimaryOptions)
             {
+                if (PrimaryOptions.Count > 0)
+                {
+                    DescriptionSet = PrimaryOptions;
+                }
+            
                 _readyOption(
                     PageComponentType.Footer,
                     Source.PrimaryOptions.Finalizer,
                     Continue_Handler
                     );
-                FlorineSkiaOptionSet FSO = PrimaryOptions as FlorineSkiaOptionSet;
+            }
+            if (null != DescriptionSet) {
+                FlorineSkiaOptionSet FSO = DescriptionSet as FlorineSkiaOptionSet;
                 if (FSO != null) {
                     SKCanvasView Desc = new SKCanvasView();
                     FSO.UpdaterHook.ConnectCanvasView(Desc);
@@ -245,6 +259,7 @@ namespace FlorineSkiaSharpForms
             PageLayout ActiveLayout = null;
             switch (_controller.CurrentState.CurrentPage.MainType)
             {
+                case GameState.PageType.Select_Activity:
                 case GameState.PageType.Select_Meal:
                     ActiveLayout = new LayoutOptionSelect();
                     break;
@@ -254,11 +269,13 @@ namespace FlorineSkiaSharpForms
                 case GameState.PageType.Summarize_Activity:
                     ActiveLayout = new ActivitySummaryLayout();
                         break;
+                case GameState.PageType.Start:
                 case GameState.PageType.Char_Creation:
                     ActiveLayout = new AvatarSelectionLayout();
                     break;
                 default:
-                    ActiveLayout = new LayoutOptionSelect();
+                    ActiveLayout = new MessageOnlyLayout();
+                    //new LayoutOptionSelect();
                     break;
             }
 
@@ -301,10 +318,11 @@ namespace FlorineSkiaSharpForms
             {
                 for (int y = 0; y < Rows; ++y)
                 {
-                    grid.Children.Add(new Label() { Text = i.ToString() + ", " + y.ToString(), FontSize = 8 }, i, y);
+                    grid.Children.Add(new Label() { Text = i.ToString() + ", " + y.ToString(), FontSize = 2 }, i, y);
                 }
              }
              */
+             
         }
 
         private void LayoutComponents(PageLayout ActiveLayout, bool isTall, Dictionary<PageComponentType,int> OptionCount, Grid grid)

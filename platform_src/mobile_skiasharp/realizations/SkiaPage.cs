@@ -44,7 +44,7 @@ namespace FlorineSkiaSharpForms
                         break;
                     case GameState.PageType.Summarize_Activity:
                         location = "work";
-                        if(GameState.PageSubType.Daily == SubType) {
+                        if (GameState.PageSubType.Daily == SubType) {
                             location = "busstop";
                         }
                         break;
@@ -52,6 +52,16 @@ namespace FlorineSkiaSharpForms
                         location = "busstop";
                         break;
                 }
+                if (_controller.CurrentState.Player.HoursIntoDay < 7
+                    || _controller.CurrentState.Player.HoursIntoDay > 19)
+                {
+                    timeFrame = "evening";
+                }
+                else
+                {
+                    timeFrame = "day";
+                }
+                /*
                 switch (SubType) {
                     case GameState.PageSubType.Breakfast:
                         timeFrame = "day";
@@ -72,6 +82,7 @@ namespace FlorineSkiaSharpForms
                         return null;
 
                 }
+                */
 
                 return new AspectImage()
                 {
@@ -120,11 +131,12 @@ namespace FlorineSkiaSharpForms
                 newOpt.Description = ((Activity)opt).Description;
                 Container.SelectionModel = FlorineSkiaOptionSet.SelectionType.SELECT_MOVE;
                 pathType = "activities";
-                SKImage ResultImage = ResourceLoader.LoadImage("Images/" + pathType + "/" + opt.OptionName.ToLower() + ".png");
+                string tokenName = opt.OptionName;                
+                SKImage ResultImage = ResourceLoader.LoadImage("Images/" + pathType + "/" + tokenName.ToLower() + ".png");
                 newOpt.Picture = new SelectableOptionImage()
                 {
                     FoodImage = ((null == ResultImage) ?
-                        (IFlorineSkiaDrawable)(new ImageText(opt.OptionName))
+                        (IFlorineSkiaDrawable)(new ImageText(tokenName))
                         : (IFlorineSkiaDrawable)(new FlOval()
                         {
                             mainImage = ResultImage,
@@ -133,7 +145,13 @@ namespace FlorineSkiaSharpForms
                 };
             } else {
                 // Food
+                FlorineSkiaOption SourceOpt = opt as FlorineSkiaOption;
                 Food.FoodOption food_data = opt as Food.FoodOption;
+                if (null == food_data && SourceOpt != null)
+                {
+                    food_data = SourceOpt.SourceOpt as Food.FoodOption;
+                }
+                
                 if (null != food_data)
                 {
                     newOpt.Description = food_data.Parent.Description;
@@ -152,10 +170,13 @@ namespace FlorineSkiaSharpForms
                     foreach (KeyValuePair<Nutrient, NutrientAmount> kvp in food_data.Parent.Nutrients)
                     {
                         FlorineSkiaNutrient AdjNut = new FlorineSkiaNutrient(kvp.Key);
-                        float RelativeAmount = 45 * ((float)(kvp.Value) / (float)(kvp.Key.DailyTarget));
-                        if (RelativeAmount > 45.0f) { RelativeAmount = 45.0f; }
+                        float RelativeAmount = kvp.Key.RatioRDV(kvp.Value);
+                        if (RelativeAmount > 2f) { RelativeAmount = 2f; }
+                            //45 * ((float)(kvp.Value) / (float)(kvp.Key.DailyTarget));
+                            //if (RelativeAmount > 45.0f) { RelativeAmount = 45.0f; }
                         if (kvp.Key.Class == Nutrient.NutrientType.Macro)
                         {
+                            RelativeAmount *= 90f / 4f;
                             MacroNuts.Add(new Tuple<float, SKColor>(
                                 RelativeAmount,
                                 AdjNut.RingColor
@@ -167,12 +188,63 @@ namespace FlorineSkiaSharpForms
                                 RelativeAmount,
                                 AdjNut.RingColor
                                 ));
+                            RelativeAmount *= 90f / 6f;
                         }
                     }
                     
                 }
-
-                SKImage ResultImage = ResourceLoader.LoadImage("Images/" + pathType + "/" + opt.OptionName.ToLower() + ".png");
+                string tokenName = opt.OptionName;
+                switch (tokenName)
+                {
+                    case "Grilled Cheese":
+                        tokenName = "grilledcheese"; break;
+                    case "Pancakes":
+                        tokenName = "pancakes"; break;
+                    case "Fruit":
+                        tokenName = "fruit"; break;
+                    case "Eggs":
+                        tokenName = "eggs"; break;
+                    case "Cereal":
+                        tokenName = "cereal"; break;
+                    case "Toaster Pastry":
+                        tokenName = "toastedpastry"; break;
+                    case "Toast":
+                    case "White Toast":
+                    case "Wheat Toast":
+                    case "Multigrain Toast":
+                        tokenName = "toast"; break;
+                    case "Strawberry Yogurt":
+                        tokenName = "yogurt"; break;
+                    case "Eggs, Bacon, and Toast":
+                        tokenName = "toasteggsbacon"; break;
+                    case "Hamburger":
+                        tokenName = "hamburger"; break;
+                    case "Chocolate Ice Cream":
+                        tokenName = "icecream"; break;
+                    case "Instant Noodles":
+                        tokenName = "instantnoodles"; break;
+                    case "Lamb Chops":
+                        tokenName = "lambchops"; break;
+                    case "Meatball Sub":
+                        tokenName = "meatballhero"; break;
+                    case "Peanut Butter & Jelly":
+                        tokenName = "pbj"; break;
+                    case "Pepperoni Pizza Slice":
+                        tokenName = "pizza"; break;
+                    case "Vegetable Soup":
+                        tokenName = "soup"; break;
+                    case "Spaghetti":
+                        tokenName = "spaghetti"; break;
+                    case "Spaghetti w/ Meatballs":
+                        tokenName = "spaghettiwmeatball"; break;
+                    case "Sushi Roll, Tuna":
+                        tokenName = "sushi"; break;
+                    case "Tacos":
+                        tokenName = "tacos"; break;
+                    case "Donuts":
+                        tokenName = "donuts"; break;
+                }
+                SKImage ResultImage = ResourceLoader.LoadImage("Images/" + pathType + "/" + tokenName + ".png");
                 newOpt.Picture = new SelectableOptionImage()
                 {
                     FoodImage = ((null == ResultImage) ?

@@ -12,16 +12,32 @@ namespace FlorineSkiaSharpForms
         public SKPaint backgroundColor = new SKPaint() { Color = new SKColor(0, 0, 0, 0) };
         public SKRect outerBounds = new SKRect();
         public SKRect innerBounds = new SKRect();
+        public enum OvalType
+        {
+            Oval,
+            Rectangle
+        }
+        public OvalType Shape { get; set; } = OvalType.Oval;
         public List<Tuple<float, SKColor>> innerRight = new List<Tuple<float, SKColor>>();
         public List<Tuple<float, SKColor>> innerLeft = new List<Tuple<float, SKColor>>();
         public List<Tuple<float, SKColor>> LeftRing { get { return innerLeft; } set { innerLeft = value; } }
         public List<Tuple<float, SKColor>> RightRing { get { return innerRight; } set { innerRight = value; } }
         public List<Tuple<float, SKColor>> outerRing = new List<Tuple<float, SKColor>>();
         public List<Tuple<float, SKColor>> Outer { get { return outerRing; } set { outerRing = value; } }
+        public SKColor innerHighlight
+        {
+            set
+            {
+                innerRight.Add(new Tuple<float, SKColor>(180f, value));
+                innerLeft.Add(new Tuple<float, SKColor>(180f, value));
+            }
+        }
         public SKImage mainImage { get { return coreImage.baseImage; } set { coreImage.baseImage = value; } }
         private AspectImage coreImage = new AspectImage();
         private float ringWidth = 10;
-        private float ovalRatio = .5f;        
+        private float _oR = .5f;
+        public float ovalRatio { get { return _oR; } set { _oR = value; } }
+             
         public void Draw(SKCanvas canvas, SKRect info, SKPaint paint = null)
         { DrawOval(canvas, info, paint); }
         public void DrawOval(SKCanvas canvas, SKRect info, SKPaint paint = null)
@@ -96,12 +112,102 @@ namespace FlorineSkiaSharpForms
             return actualBound;
             
         }
+        private void subDrawCore(SKCanvas canvas, SKRect bounds, SKPaint paint)
+        {
+            switch (Shape) {
+                case OvalType.Oval:
+                    canvas.DrawOval(bounds,paint);
+                    break;
+                case OvalType.Rectangle:
+                    canvas.DrawRoundRect(bounds, 5f, 5f, paint);
+                    //canvas.DrawRect(bounds, paint);
+                    break;
+            }
+        }
+        //private SKPoitn
+        private void subDrawRing(
+            SKCanvas canvas,
+            SKRect bounds,
+            List<Tuple<float, SKColor>> RingValues,
+            float fBase,
+            SKPaint backingPaint = null,
+            SKPaint edgePaint = null,
+            float fEnd = float.NaN)
+        {
+
+            
+            float fAngle = fBase;
+            foreach (Tuple<float, SKColor> ringValue in RingValues)
+            {
+                SKPaint painter = new SKPaint()
+                {
+                    Color = ringValue.Item2,
+                    IsStroke = true,
+                    StrokeWidth = ringWidth,
+                };
+                if (null != edgePaint)
+                {
+                    using (SKPath path = new SKPath())
+                    {
+                        switch (Shape)
+                        {
+                            case OvalType.Oval:
+                                path.AddArc(bounds, fAngle, ringValue.Item1);
+                                break;
+                            case OvalType.Rectangle:
+                                path.AddRoundRect(bounds, 5f, 5f);
+                                break;
+                        }
+                        
+                        canvas.DrawPath(path, edgePaint);
+                    }
+                }
+                using (SKPath path = new SKPath())
+                {
+                    switch (Shape)
+                    {
+                        case OvalType.Oval:
+                            path.AddArc(innerBounds, fAngle, ringValue.Item1);
+                            break;
+                        case OvalType.Rectangle:
+                            path.AddRoundRect(bounds, 5f, 5f);
+                            break;
+                    }
+                    
+                    canvas.DrawPath(path, painter);
+                }
+                fAngle += ringValue.Item1;
+            }
+            if (null != backingPaint)
+            {
+                if (float.IsNaN(fEnd))
+                {
+                    fEnd = fAngle + 180f;
+                }
+                using (SKPath path = new SKPath())
+                {
+                    switch (Shape)
+                    {
+                        case OvalType.Oval:
+                            path.AddArc(bounds, fAngle, fEnd - fAngle);
+                            break;
+                        case OvalType.Rectangle:
+                            path.AddRoundRect(bounds, 5f, 5f);
+                            break;
+                    }                    
+                    canvas.DrawPath(path, backingPaint);
+                }
+            }
+
+
+        }
         public void Paint(SKCanvas canvas)
         {
             if (null != backgroundColor)
             {
-                canvas.DrawOval(innerBounds, backgroundColor);
+                subDrawCore(canvas, innerBounds, backgroundColor);                
             }
+
             SKRect innerRingBound = new SKRect(
                 innerBounds.Left + 2,// + ringWidth / 2,
                 innerBounds.Top + 2,// + ringWidth /2,
@@ -121,79 +227,28 @@ namespace FlorineSkiaSharpForms
                 IsStroke = true,
                 StrokeWidth = ringWidth,
             };
-
-            float fAngle = 180f;
-            foreach (Tuple<float, SKColor> outerValue in outerRing)
-            {
-                SKPaint painter = new SKPaint()
-                {
-                    Color = outerValue.Item2,
-                    IsStroke = true,
-                    StrokeWidth = 10,
-                };
-
-                using (SKPath path = new SKPath())
-                {                    
-                    path.AddArc(outerBounds, fAngle, outerValue.Item1);                    
-                    canvas.DrawPath(path, painter);
-                    fAngle += outerValue.Item1;
-                }
-            }
-
-            fAngle = 0;
-            foreach (Tuple<float, SKColor> innerValue in innerRight)
-            {
-                SKPaint painter = new SKPaint()
-                {
-                    Color = innerValue.Item2,
-                    IsStroke = true,
-                    StrokeWidth = ringWidth,
-                };
-                using (SKPath path = new SKPath())
-                {
-                    path.AddArc(innerRingBound, fAngle, innerValue.Item1);
-                    canvas.DrawPath(path, EdgePaint);
-                }
-                using (SKPath path = new SKPath())
-                {
-                    path.AddArc(innerBounds, fAngle, innerValue.Item1);                 
-                    canvas.DrawPath(path, painter);
-                }
-                fAngle += innerValue.Item1;
-            }
-            using (SKPath path = new SKPath())
-            {
-                path.AddArc(innerRingBound, fAngle, 180-fAngle);
-                canvas.DrawPath(path, BackPaint);                
-            }
-
-            fAngle = 180;
-            foreach (Tuple<float, SKColor> innerValue in innerLeft)
-            {
-                SKPaint painter = new SKPaint()
-                {
-                    Color = innerValue.Item2,
-                    IsStroke = true,
-                    StrokeWidth = ringWidth,
-                };
-                
-                using (SKPath path = new SKPath())
-                {
-                    path.AddArc(innerRingBound, fAngle, innerValue.Item1);
-                    canvas.DrawPath(path, EdgePaint);                    
-                }
-                using (SKPath path = new SKPath())
-                {
-                    path.AddArc(innerBounds, fAngle, innerValue.Item1);                    
-                    canvas.DrawPath(path, painter);                    
-                }
-                fAngle += innerValue.Item1;
-            }
-            using (SKPath path = new SKPath())
-            {
-                path.AddArc(innerRingBound, fAngle, 360 - fAngle);
-                canvas.DrawPath(path, BackPaint);
-            }
+            
+            subDrawRing(
+                canvas,
+                outerBounds,
+                outerRing,
+                180f);
+            subDrawRing(
+                canvas,
+                innerRingBound,
+                innerRight,
+                0f,
+                BackPaint,
+                EdgePaint,
+                180f);
+            subDrawRing(
+                canvas,
+                innerRingBound,
+                innerLeft,
+                180f,
+                BackPaint,
+                EdgePaint,
+                360f);
 
             coreImage.Draw(canvas, innerBounds);
             

@@ -23,7 +23,7 @@ namespace FlorineSkiaSharpForms
             switch (t)
             {
                 case PageComponentType.Message:
-                    grid.Children.Add(v, 0, 8, 1, 10);
+                    grid.Children.Add(v, 0, 30, 4, 16);
                     break;
                 default:
                     base.LayoutComponentTall(grid, t, v, CurrentOption, OptionCount);

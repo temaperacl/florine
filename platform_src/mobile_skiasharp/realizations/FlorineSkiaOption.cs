@@ -29,7 +29,9 @@ namespace FlorineSkiaSharpForms
             {
                 Layers = {
                    new FlOval() {
-                       backgroundColor = new SKPaint() { Color = new SKColor(0,80,190)}
+                       backgroundColor = new SKPaint() { Color = new SKColor(0,80,190, 230)},
+                       Shape = FlOval.OvalType.Rectangle,
+                       innerHighlight =  new SKColor(100,250,250, 255),
                    }
                 }
             };
@@ -38,12 +40,18 @@ namespace FlorineSkiaSharpForms
             public void DisplayIt(string S)
             {
                 if (null == _MainCanvas) { return; }
+                if (S == string.Empty)
+                {
+                    _MainCanvas.IsVisible = false;
+                    _MainCanvas.InvalidateSurface();
+                    return;
+                }
                 _toDisp = S;
                 if (_layers.Layers.Count > 1) { _layers.Layers.RemoveAt(0); }
                 _layers.Layers.Insert(
                     0,
                     new ImageText(_toDisp) {
-                    Overflow = ImageText.WrapType.DiamondWrap,
+                    //Overflow = ImageText.WrapType.DiamondWrap,
                     FontSize = 36.0f,                   
                 } );
                 if (null != _MainCanvas) { _MainCanvas.IsVisible = true; }
@@ -132,6 +140,7 @@ namespace FlorineSkiaSharpForms
 
             if (_selected.Contains(opt))
             {
+                UpdaterHook.DisplayIt(string.Empty);
                 _selected.Remove(opt);
                 return false;
             }
@@ -203,6 +212,7 @@ namespace FlorineSkiaSharpForms
         {
             get; set;
         }
+        public IGameOption SourceOpt { get { return _parent; } }
         public void AdjustNutrients(NutrientSet n) { _parent.AdjustNutrients(n); }
         public void ImpactPlayer(Player p) { _parent.ImpactPlayer(p); }
         private IGameOptionSet _customSub;

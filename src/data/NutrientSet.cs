@@ -34,8 +34,7 @@ namespace Florine
 	
     public class NutrientSet : IEnumerable<KeyValuePair<Nutrient, NutrientAmount>>
     {
-        // Just Derive?
-        
+        // Just Derive?        
         public IEnumerator<KeyValuePair<Nutrient, NutrientAmount>> GetEnumerator()
         {
             foreach (KeyValuePair<string, NutrientAmount> kvp in Nutrients)

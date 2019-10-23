@@ -67,6 +67,21 @@ namespace FlorineSkiaSharpForms
             return new FlorineSkiaCVWrap(IG);
             //return BarCanvas;
         }
+        private SKCanvasView _DivBar(
+            SortedDictionary<float, SKColor> Items
+        )
+        {
+            ImageGradient IG = new ImageGradient()
+            {
+                Style = ImageGradient.GradientType.RelativeSharp
+            };
+            foreach (KeyValuePair<float, SKColor> kvp in Items)
+            {
+                IG.Details.Add(kvp.Key, kvp.Value);
+            }
+            return new FlorineSkiaCVWrap(IG);
+            //return BarCanvas;
+        }
 
         // Allow for pre-component rendering layout
         public override void PreLayout(
@@ -94,7 +109,7 @@ namespace FlorineSkiaSharpForms
             if (IsTall)
             {
                 // Calories
-                grid.Children.Add(_Text("Calories"), 9, 13, 2, 3);
+                grid.Children.Add(_Text("Calories"), 15, 20, 4, 6);
                 View CalorieView = _GradientBar(
                      0,
                      PC.TargetCalories,
@@ -103,13 +118,42 @@ namespace FlorineSkiaSharpForms
                      true,
                      false
                 );
-                grid.Children.Add(CalorieView, 13, 19, 2, 3);
+                
+                grid.Children.Add(CalorieView, 20, 30, 4, 6);
+                
+                SortedDictionary<float, SKColor> MicroNutrients = new SortedDictionary<float, SKColor>();
+                SortedDictionary<float, SKColor> MacroNutrients = new SortedDictionary<float, SKColor>();
+                float microNut = 0f;
+                float macroNut = 0f;
+                foreach (KeyValuePair<Nutrient, NutrientAmount> kvp in PC.Nutrients)
+                {
+                    FlorineSkiaNutrient AdjNut = new FlorineSkiaNutrient(kvp.Key);
+                    float curRatio = kvp.Key.RatioRDV(kvp.Value);
+                    if (curRatio > 2f) { curRatio = 2f; }
+                    if (curRatio <= 0f) { continue; }
+                    
+                    switch (kvp.Key.Class)
+                    {
+                        case Nutrient.NutrientType.Macro:
+                            curRatio /= 8f;
+                            macroNut += curRatio;
+                            MacroNutrients.Add(macroNut, AdjNut.RingColor);
+                            break;
+                        case Nutrient.NutrientType.Mineral:
+                        case Nutrient.NutrientType.Vitamin:
+                            curRatio /= 12f;
+                            microNut += curRatio;
+                            MicroNutrients.Add(microNut, AdjNut.RingColor);
+                            break;
+                    }
+                }
+                grid.Children.Add(_Text("Nutrients"), 15, 20, 6, 8);
+                grid.Children.Add(_DivBar(MicroNutrients), 20, 30, 6, 8);
 
-                grid.Children.Add(_Text("Nutrients"),     9, 13, 3, 4);
-                grid.Children.Add(_Text("Macronutrients"), 9, 13, 4, 5);
+                grid.Children.Add(_Text("Macronutrients"), 11, 20, 8, 10);
+                grid.Children.Add(_DivBar(MacroNutrients), 20, 30, 8, 10);
 
-
-                grid.Children.Add(_Text("Energy"), 9, 13, 5, 6);
+                grid.Children.Add(_Text("Energy"), 15, 20, 10, 12);
                 grid.Children.Add(
                     _GradientBar(
                         0.0,
@@ -119,10 +163,10 @@ namespace FlorineSkiaSharpForms
                         false,
                         true
                      ),
-                    13, 19, 5, 6
+                    20, 30, 10, 12
                 );
 
-                grid.Children.Add(_Text("Focus"), 9, 13, 6, 7);
+                grid.Children.Add(_Text("Focus"), 15, 20, 12, 14);
                 grid.Children.Add(
                     _GradientBar(
                         0.0,
@@ -132,7 +176,7 @@ namespace FlorineSkiaSharpForms
                         false,
                         true
                      ),
-                    13, 19, 6, 7
+                    20, 30, 12, 14
                 );
 
             }
@@ -141,7 +185,7 @@ namespace FlorineSkiaSharpForms
         }
 
 
-        public override SKRectI GetResolution(
+       /* public override SKRectI GetResolution(
             Dictionary<PageComponentType, int> ComponentCounts,
             bool IsTall
         )
@@ -155,7 +199,7 @@ namespace FlorineSkiaSharpForms
                 return new SKRectI(0, 0, 20, 20);
             }
         }
-
+        */
 
         //TBD: Wide
         protected override void LayoutComponentTall(Grid grid, PageComponentType t, View v, int CurrentOption, int OptionCount)
@@ -163,25 +207,25 @@ namespace FlorineSkiaSharpForms
             switch (t)
             {
                 case PageComponentType.Background:
-                    grid.Children.Add(v, 0, 20, 0, 20);
+                    grid.Children.Add(v, 0, 30, 0, 30);
                     return;
                 case PageComponentType.PickedOption:
                     PlaceOption(grid,
-                                new SKRectI(1, 1, 9, 12),
-                                new SKRectI(0, 0, 8, 3),
+                                new SKRectI(1, 4, 12, 15),
+                                new SKRectI(0, 0, 10, 4),
                                 CurrentOption,
                                 OptionCount,
                                 v
                     );
                     return;
-                case PageComponentType.Footer:
-                    grid.Children.Add(v, 0, 20, 18, 20);
-                    return;
+                //case PageComponentType.Footer:
+                //    grid.Children.Add(v, 0, 20, 18, 20);
+                //    return;
                 case PageComponentType.Message:
                     return;
-                case PageComponentType.Player:
-                    grid.Children.Add(v, 2, 10, 13, 18);
-                    return;
+                //case PageComponentType.Player:
+                //    grid.Children.Add(v, 2, 10, 13, 18);
+                //    return;
             }
             base.LayoutComponentTall(grid, t, v, CurrentOption, OptionCount);
         }

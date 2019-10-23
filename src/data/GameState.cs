@@ -105,7 +105,7 @@ namespace Florine
 					case PageType.Select_Meal:        
 						switch(newSubType) {
 							case PageSubType.Breakfast: HoursPassed = 7; break;
-							case PageSubType.Lunch:     HoursPassed = 0; break;
+							case PageSubType.Lunch:     HoursPassed = 2; break;
 							case PageSubType.Dinner:    HoursPassed = 0; break;
 							case PageSubType.Daily:		HoursPassed = 0; break;
 						}
@@ -115,9 +115,9 @@ namespace Florine
 					case PageType.Summarize_Activity:
 						switch(newSubType) {
 							case PageSubType.Breakfast: HoursPassed = 3; break;
-							case PageSubType.Lunch:     HoursPassed = 5; break;
-							case PageSubType.Dinner:    HoursPassed = 4; break;
-							case PageSubType.Daily:		HoursPassed = 0; break;
+							case PageSubType.Lunch:     HoursPassed = 4; break;
+							case PageSubType.Dinner:    HoursPassed = 1; break;
+							case PageSubType.Daily:		HoursPassed = 1; break;
 						}
 						break;
 					case PageType.Summarize_Day:      HoursPassed = 0; break;

@@ -24,7 +24,20 @@ namespace Florine
 		public double Calories { get; set; }
 		public double TargetCalories { get; set; }
 		public double HoursIntoDay { get; set; }
-		
+        private bool _readyToEndDay = false;
+		public bool ReadyToEndDay
+        {
+            get
+            {
+                return _readyToEndDay
+                    || Energy <= 10
+                    || HoursIntoDay > 22;
+            }
+            set
+            {
+                _readyToEndDay = value;
+            }
+        }
 		public void Tick(int Hours)
 		{
 			//Raw Calories.
@@ -38,7 +51,11 @@ namespace Florine
 			TargetCalories = target_kcal;
 			
 			if(Hours > 0) {
-			   Energy = 100 * Math.Min(1.0, Calories/target_kcal);			
+                if (HoursIntoDay > 7)
+                {
+                    Energy -= Hours * (100 / 16);
+                }
+			   //Energy = 100 * Math.Min(1.0, Calories/target_kcal);			
 			    Hunger = 100 - Energy;
 			    Focus = Energy;
 			
@@ -75,7 +92,9 @@ namespace Florine
 			Energy = 100;
 			TargetCalories = 0;
 			HoursIntoDay = 0;
-		}
+            ReadyToEndDay = false;
+
+        }
 		
         public void ApplyOption(IGameOption option)
         {
