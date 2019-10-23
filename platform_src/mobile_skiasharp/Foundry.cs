@@ -18,16 +18,11 @@ namespace FlorineSkiaSharpForms
             //
 
             GameState oldGame = new GameState();
-            GameState.PageType mainType;
-            GameState.PageSubType subType;
+            //GameState.PageType mainType;
+            //GameState.PageSubType subType;
 
             // Load Vars;
-            return base.LoadGameState();
-            
-           // oldGame.SetPage(mainType, subType);
-
-            // Player      
-            return oldGame;
+            return base.LoadGameState();            
         }        
 
         public override bool SaveGameState(GameState gs)

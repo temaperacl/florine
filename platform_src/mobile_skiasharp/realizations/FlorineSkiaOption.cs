@@ -140,6 +140,10 @@ namespace FlorineSkiaSharpForms
 
             if (_selected.Contains(opt))
             {
+                if (SelectionModel == SelectionType.SELECT_MOVE)
+                {
+                    return true;
+                }
                 UpdaterHook.DisplayIt(string.Empty);
                 _selected.Remove(opt);
                 return false;

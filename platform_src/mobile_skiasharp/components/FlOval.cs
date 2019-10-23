@@ -90,7 +90,7 @@ namespace FlorineSkiaSharpForms
         {
 
             float BoundRatio = boundingBox.Height / boundingBox.Width;
-            float scaler = 1;
+            //float scaler = 1;
             float newWidth = boundingBox.Width;
             float newHeight = boundingBox.Height;
             if (ovalRatio < BoundRatio)

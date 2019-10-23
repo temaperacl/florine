@@ -92,7 +92,7 @@ namespace FlorineSkiaSharpForms
                 case "wings": Target = "05_wings/100%"; break;
             }
             Dictionary<string, SKImage> clothes = ResourceLoader.ImageList("customization/" + Target);
-            int i = 0;
+            //int i = 0;
             Opy[type] = new List<SKCanvasView>();
 
             foreach (KeyValuePair<string, SKImage> kvp in clothes)
