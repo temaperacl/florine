@@ -73,6 +73,7 @@ namespace FlorineSkiaSharpForms
         {               
             base.PostLayout(IsTall, grid, GameController, GameFoundry, SourcePage);
         }
+        Player ActualPlayerBase;
         PlayerAvatar ActualPlayer;
         SKCanvasView PlayerView;
         Dictionary<SKCanvasView, AspectImage> _rmI = new Dictionary<SKCanvasView, AspectImage>();
@@ -155,7 +156,24 @@ namespace FlorineSkiaSharpForms
         }
         public override void PostLayout(bool IsTall, Grid grid, Controller GameController, IPlatformFoundry GameFoundry, IPage SourcePage)
         {
+            ActualPlayerBase = GameController.CurrentState.Player;
             ActualPlayer = GameController.CurrentState.Player.Avatar.Picture as PlayerAvatar;
+            Entry NameEntry = new Entry()
+            {
+                Text = "Faerina",
+                HorizontalTextAlignment = TextAlignment.Center,
+//                FontSize = 8f,
+                VerticalOptions = new LayoutOptions()
+                {
+                    Alignment = LayoutAlignment.End
+                },
+                
+                
+            };
+            
+            NameEntry.TextChanged += NameEntry_TextChanged;
+            grid.Children.Add(NameEntry, 0, 30, 0, 4);
+
             grid.Children.Add(Oval(0, 0, 200, 120,  2f),  0, 10, 2, 15);
             grid.Children.Add(Oval(0, 0, 200, 120,  2f), 10, 20, 2, 15);
             grid.Children.Add(Oval(0, 0, 200, 120,  2f), 20, 30, 2, 15);
@@ -167,15 +185,21 @@ namespace FlorineSkiaSharpForms
             grid.Children.Add(SetupSelector("clothes"), 0, 10, 16, 22);
             grid.Children.Add(SetupSelector("wings"), 10, 20, 16, 22);
             grid.Children.Add(SetupSelector("hair"), 20, 30, 16, 22);
-            grid.Children.Add(PlayerView, 11, 19, 3, 14);
+            grid.Children.Add(PlayerView, 11, 19, 3, 14);            
         }
+
+        private void NameEntry_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            ActualPlayerBase.Name = e.NewTextValue;            
+        }
+
         protected override void LayoutComponentTall(Grid grid, PageComponentType t, View v, int CurrentOption, int OptionCount)
         {
             switch (t)
             {
                 case PageComponentType.Title:
                 case PageComponentType.Message:
-                    grid.Children.Add(v, 0, 30, 1, 3);
+                    //grid.Children.Add(v, 0, 30, 1, 3);
                     break;
                 case PageComponentType.Player:
                     PlayerView = v as SKCanvasView;                    

@@ -6,21 +6,18 @@ namespace Florine
     public class Player
     {
         public Player() {
-            Name = "Faerina";
             Avatar = new Avatar();
             Nutrients = new NutrientSet();
-			Energy = 100;
-			Focus = 100;
-			Hunger = 0;
         }
-        public String Name { get; set; }
+        public String Name { get; set; } = "Faerina";
         public Avatar Avatar { get; set; }
         public NutrientSet Nutrients { get; set; }
 		public IActivityPath MainPath { get; set; }
-		
-		public double Energy { get; set; }		
-		public double Focus { get; set; }
-		public double Hunger { get; set; }
+        public int Happiness { get; set; } = 0;
+        public int Money { get; set; } = 0;
+        public double Energy { get; set; } = 0.0;
+        public double Focus { get; set; } = 0.0;
+        public double Hunger { get; set; } = 0.0;
 		public double Calories { get; set; }
 		public double TargetCalories { get; set; }
 		public double HoursIntoDay { get; set; }
