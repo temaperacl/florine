@@ -11,6 +11,7 @@ namespace Florine
 		void ImpactPlayer(Player p);
 		void AdjustNutrients(NutrientSet n);
 		IGameOptionSet SubOptions { get; }
+        bool Enabled { get; }
     }
 
     public interface IGameOptionSet : IList<IGameOption>

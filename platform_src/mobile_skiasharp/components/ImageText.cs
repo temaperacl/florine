@@ -7,9 +7,11 @@ using SkiaSharp.Views.Forms;
 namespace FlorineSkiaSharpForms
 {
     public class ImageText : IFlorineSkiaConnectable, IFlorineSkiaDrawable, Florine.IImage
-    {        
+    {
+        public static Florine.Controller GameController;
         public String Text { get; set; }
         public ImageText(String text) { Text = text; }
+        public bool AutoBackground { get; set; } = false;
         public float FontSize = 64.0f;
         public enum WrapType
         {
@@ -40,6 +42,105 @@ namespace FlorineSkiaSharpForms
                 width * 1.8f * (.5f - (float)Math.Abs((elevationB / height) - .5))
             );
         }
+
+        /*
+        private List<TextFragment> BreakUpLines(SKRect boundingBox, string Text, SKPaint paint)
+        {
+            List<TextFragment> Fragments = new List<TextFragment>();
+            // =========================================================================
+            if (Text == "") { return Fragments; }
+
+            SKFontMetrics FM = paint.FontMetrics;
+            float lineStart = FM.Leading - FM.Top + 5;
+            float lineSpacing = FM.Leading - FM.Top + FM.Bottom;
+            
+            string[] words = Text.Trim().Split(new char[] { ' ' });
+            StringBuilder curLine = new StringBuilder();
+            float LineLength = 0;
+            float maxLineLength = boundingBox.Width * .75f;
+            if (Overflow == WrapType.DiamondWrap)
+            {
+                maxLineLength = CalculateDiamondLineLength(
+                    boundingBox.Width,
+                    boundingBox.Height,
+                    lineSpacing * 1f,
+                    lineSpacing * 2f
+                );
+            }
+
+            foreach (string word in words)
+            {
+                if (word.Length == 0) { continue; }
+                float wordLen = paint.MeasureText(word);
+                if (LineLength + wordLen > maxLineLength)
+                {
+                    lines.Add(curLine.ToString());
+                    curLine.Clear();
+                    LineLength = 0;
+                    if (Overflow == WrapType.DiamondWrap)
+                    {
+                        maxLineLength = CalculateDiamondLineLength(
+                            boundingBox.Width,
+                            boundingBox.Height,
+                            lineSpacing * lines.Count + lineSpacing,
+                            lineSpacing * (lines.Count + 1f) + (lineSpacing)
+                        );
+                    }
+                }
+                curLine.Append(" ").Append(word);
+                LineLength += wordLen;
+            }
+
+            lines.Add(curLine.ToString());
+            // ...
+            lineStart = boundingBox.Height / 2 - lineSpacing * lines.Count / 2 + lineSpacing * .75f;
+            
+
+            //canvas.DrawRect(0f, boundingBox.Top + lineStart, boundingBox.Width, lineSpacing * lines.Count, new SKPaint() { Color = new SKColor(0, 122, 122) });            
+
+            // Draw
+            if (AutoBackground)
+            {
+                FlOval ff = new FlOval()
+                {
+                    backgroundColor = new SKPaint() { Color = new SKColor(0, 80, 190, 230) },
+                    Shape = FlOval.OvalType.Rectangle,
+                    ovalRatio = float.NaN,
+                    innerHighlight = new SKColor(100, 250, 250, 255),
+                };
+                ff.Draw(canvas, new SKRect(
+                    boundingBox.Left,
+                    boundingBox.Top + lineStart - lineSpacing - 5f,
+                    boundingBox.Right,
+                    boundingBox.Top + lineStart + lineSpacing * lines.Count
+                    ));
+            }
+            for (int i = 0; i < lines.Count; ++i)
+            {
+                canvas.DrawText(
+                                lines[i],
+                                boundingBox.Left + boundingBox.Width / 2,
+                                boundingBox.Top + lineStart + (lineSpacing * (i)),
+                                paint
+                );
+            }
+
+            paint.Style = SKPaintStyle.Fill;
+            paint.Color = new SKColor(250, 250, 250);
+            for (int i = 0; i < lines.Count; ++i)
+            {
+                canvas.DrawText(
+                            lines[i],
+                            boundingBox.Left + boundingBox.Width / 2,
+                            boundingBox.Top + lineStart + (lineSpacing * (i)),
+                            paint
+                );
+
+            }
+            // =========================================================================
+            return Fragments;
+        }
+        */
         public void Draw(SKCanvas canvas, SKRect boundingBox, SKPaint paint = null)
         {
             if (Text == "") { return; }            
@@ -82,7 +183,7 @@ namespace FlorineSkiaSharpForms
                 string[] words = Text.Trim().Split(new char[] { ' ' });
                 StringBuilder curLine = new StringBuilder();
                 float LineLength = 0;
-                float maxLineLength = boundingBox.Width * .9f;
+                float maxLineLength = boundingBox.Width * .75f;
                 if ( Overflow == WrapType.DiamondWrap )
                 {
                     maxLineLength = CalculateDiamondLineLength(                    
@@ -122,6 +223,22 @@ namespace FlorineSkiaSharpForms
             //canvas.DrawRect(0f, boundingBox.Top + lineStart, boundingBox.Width, lineSpacing * lines.Count, new SKPaint() { Color = new SKColor(0, 122, 122) });            
 
             // Draw
+            if (AutoBackground)
+            {
+                FlOval ff = new FlOval()
+                {
+                    backgroundColor = new SKPaint() { Color = new SKColor(0, 80, 190, 230) },
+                    Shape = FlOval.OvalType.Rectangle,
+                    ovalRatio = float.NaN,
+                    innerHighlight = new SKColor(100, 250, 250, 255),
+                };
+                ff.Draw(canvas, new SKRect(
+                    boundingBox.Left,
+                    boundingBox.Top +lineStart - lineSpacing - 5f,
+                    boundingBox.Right,
+                    boundingBox.Top + lineStart + lineSpacing * lines.Count
+                    ));
+            }
             for (int i = 0; i < lines.Count; ++i)
             {
                 canvas.DrawText(
@@ -142,8 +259,16 @@ namespace FlorineSkiaSharpForms
                             boundingBox.Top + lineStart + (lineSpacing * (i)),
                             paint
                 );
+                
             }
             return;
+        }
+
+        private class TextFragment
+        {
+            public string Text { get; set; } = "";
+            public SKPaint Paint { get; set; } = new SKPaint();
+            public SKPoint Location { get; set; } = new SKPoint();
         }
     }
 }

@@ -41,7 +41,7 @@ namespace FlorineSkiaSharpForms
                     RingColor = new SKColor(0xff, 0, 0);
                     break;
                 case "Potassium":
-                    RingColor = new SKColor(0x99, 0, 0xff);
+                    RingColor = new SKColor(0x80, 0, 0x80);
                     break;
                 case "Vitamin B12":
                     RingColor = new SKColor(0xff, 0x22, 0xcc);

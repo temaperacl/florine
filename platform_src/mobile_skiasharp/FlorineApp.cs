@@ -16,6 +16,7 @@ namespace FlorineSkiaSharpForms
             _foundry = new FlorineSkiaSharpForms.SkiaSharpFormsFoundry();
             _controller = new Florine.Controller(_foundry);
             _controller.Init();
+            ImageText.GameController = _controller;
             MainPage = new SkiaFlorinePage(_controller, _foundry);
             
         }

@@ -18,6 +18,7 @@ namespace Florine
 
      public class FoodOption: IGameOption {
             public Food Parent;
+            public bool Enabled { get { return true; } }
             public String OptionName { get { return Parent.Name; } }
             public IImage Picture { get { return Parent.OptionPicture; } }
             public IGameOptionSet SubOptions { get { return null; } }

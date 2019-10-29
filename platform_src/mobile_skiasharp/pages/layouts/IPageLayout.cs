@@ -52,6 +52,7 @@ namespace FlorineSkiaSharpForms
             IPage SourcePage
         )
         {
+            /*
             Gauge nit = new Gauge()
             {
                 Min = 0,
@@ -62,7 +63,7 @@ namespace FlorineSkiaSharpForms
             SKCanvasView vvr = new SKCanvasView();
             nit.ConnectCanvasView(vvr);
             grid.Children.Add(vvr, 25, 29, 0 ,4);
-
+            */
             /*
             ImageText cnit = new ImageText(GameController.CurrentState.Player.Energy.ToString());
             

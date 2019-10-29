@@ -39,8 +39,14 @@ namespace FlorineSkiaSharpForms
                 switch (MainType) {
                     case GameState.PageType.Day_Intro:
                     case GameState.PageType.Select_Meal:
-                    case GameState.PageType.Summarize_Meal:
                         location = "kitchen";
+                        if (SubType == GameState.PageSubType.Lunch)
+                        {
+                            location = "busstop";
+                        }
+                        break;
+                    case GameState.PageType.Summarize_Meal:
+                        
                         break;
                     case GameState.PageType.Summarize_Activity:
                         location = "work";
@@ -52,8 +58,27 @@ namespace FlorineSkiaSharpForms
                         location = "busstop";
                         break;
                 }
+                switch (SubType) {
+                    case GameState.PageSubType.Breakfast:
+                        timeFrame = "day";
+                        break;
+                    case GameState.PageSubType.Lunch:
+                        timeFrame = "day";
+                        if (MainType == GameState.PageType.Summarize_Activity)
+                        {
+                            timeFrame = "evening";
+                        }
+                        break;
+                    case GameState.PageSubType.Dinner:
+                        timeFrame = "evening";
+                        break;
+                    default:
+                        timeFrame = "evening";
+                        break;
+                }
+                /*
                 if (_controller.CurrentState.Player.HoursIntoDay < 7
-                    || _controller.CurrentState.Player.HoursIntoDay > 19)
+                    || _controller.CurrentState.Player.HoursIntoDay > 14)
                 {
                     timeFrame = "evening";
                 }
@@ -61,6 +86,7 @@ namespace FlorineSkiaSharpForms
                 {
                     timeFrame = "day";
                 }
+                */
                 /*
                 switch (SubType) {
                     case GameState.PageSubType.Breakfast:
@@ -167,16 +193,17 @@ namespace FlorineSkiaSharpForms
                 {
                     // Populate nutrient info bars.
                     // List<Tuple<float, SKColor>>                    
+
                     foreach (KeyValuePair<Nutrient, NutrientAmount> kvp in food_data.Parent.Nutrients)
                     {
                         FlorineSkiaNutrient AdjNut = new FlorineSkiaNutrient(kvp.Key);
                         float RelativeAmount = kvp.Key.RatioRDV(kvp.Value);
-                        if (RelativeAmount > 2f) { RelativeAmount = 2f; }
+                        
                             //45 * ((float)(kvp.Value) / (float)(kvp.Key.DailyTarget));
                             //if (RelativeAmount > 45.0f) { RelativeAmount = 45.0f; }
                         if (kvp.Key.Class == Nutrient.NutrientType.Macro)
-                        {
-                            RelativeAmount *= 90f / 4f;
+                        {                            
+                            RelativeAmount *= 180f / 4f;
                             MacroNuts.Add(new Tuple<float, SKColor>(
                                 RelativeAmount,
                                 AdjNut.RingColor
@@ -184,11 +211,13 @@ namespace FlorineSkiaSharpForms
                         }
                         else
                         {
+                            if (RelativeAmount > 1f) { RelativeAmount = 1f; }
+                            RelativeAmount *= 180 / 6f;
                             MicroNuts.Add(new Tuple<float, SKColor>(
                                 RelativeAmount,
                                 AdjNut.RingColor
                                 ));
-                            RelativeAmount *= 90f / 6f;
+                            
                         }
                     }
                     
@@ -245,19 +274,44 @@ namespace FlorineSkiaSharpForms
                         tokenName = "donuts"; break;
                 }
                 SKImage ResultImage = ResourceLoader.LoadImage("Images/" + pathType + "/" + tokenName + ".png");
-                newOpt.Picture = new SelectableOptionImage()
+                if (opt is FlorineHardCodedData.HardCodedDataFoundry.NoSelectFoodOption)
                 {
-                    FoodImage = ((null == ResultImage) ?
-                        (IFlorineSkiaDrawable)(new ImageText(opt.OptionName))
-                        : (IFlorineSkiaDrawable)(new FlOval()
-                        {
-                            mainImage = ResultImage,
-                            backgroundColor = new SKPaint() { Color = new SKColor(230, 230, 230) },
-                            RightRing = MicroNuts,
-                            LeftRing = MacroNuts,
 
-                        }))
-                };
+                    newOpt.Picture = new SelectableOptionImage()
+                    {
+
+                        FoodImage = new LayeredImage()
+                        {
+                            Layers = {
+                                new ImageText(opt.OptionName) { Overflow = ImageText.WrapType.DiamondWrap, FontSize = 32f },
+                                new FlOval()
+                            {
+                                mainImage = null,
+                                backgroundColor = new SKPaint() { Color = new SKColor(212, 175, 5) },
+                                RightRing = MicroNuts,
+                                LeftRing = MacroNuts,
+
+                            }
+                            }
+                        }
+                    };
+                }
+                else
+                {
+                    newOpt.Picture = new SelectableOptionImage()
+                    {
+                        FoodImage = ((null == ResultImage) ?
+                            (IFlorineSkiaDrawable)(new ImageText(opt.OptionName))
+                            : (IFlorineSkiaDrawable)(new FlOval()
+                            {
+                                mainImage = ResultImage,
+                                backgroundColor = new SKPaint() { Color = new SKColor(230, 230, 230) },
+                                RightRing = MicroNuts,
+                                LeftRing = MacroNuts,
+
+                            }))
+                    };
+                }
 
             }
 

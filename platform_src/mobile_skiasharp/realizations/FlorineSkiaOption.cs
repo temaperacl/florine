@@ -52,7 +52,7 @@ namespace FlorineSkiaSharpForms
                 _layers.Layers.Insert(
                     0,
                     new ImageText(_toDisp) {
-                    //Overflow = ImageText.WrapType.DiamondWrap,
+                    Overflow = ImageText.WrapType.WordWrap,
                     FontSize = 36.0f,                   
                 } );
                 if (null != _MainCanvas) { _MainCanvas.IsVisible = true; }
@@ -99,6 +99,7 @@ namespace FlorineSkiaSharpForms
         }
         private class SelectedOptionGroup : List<IGameOption>, IGameOption, IGameOptionSet
         {
+            public bool Enabled { get { return true; } }
             public string OptionName => "Chosen Options";
             public IImage Picture => null;
             public IGameOptionSet SubOptions => this;
@@ -139,6 +140,7 @@ namespace FlorineSkiaSharpForms
 
         public bool ToggleOption(IGameOption opt) {
 
+            if (!opt.Enabled) { return false; }
             if (_selected.Contains(opt))
             {
                 if (SelectionModel == SelectionType.SELECT_MOVE)
@@ -187,7 +189,7 @@ namespace FlorineSkiaSharpForms
     {
         IGameOption _parent;
         FlorineSkiaOptionSet _container;
-
+        public bool Enabled { get { return _parent.Enabled; } }
         public FlorineSkiaOption(IGameOption Parent)
         {
             _parent = Parent;

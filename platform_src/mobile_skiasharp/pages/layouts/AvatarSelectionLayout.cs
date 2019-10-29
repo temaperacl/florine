@@ -219,8 +219,8 @@ namespace FlorineSkiaSharpForms
                 subGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
                 subGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
 
-                SKCanvasView Left = Oval(200, 0, 0, 200, 4);
-                SKCanvasView Right = Oval(200, 0, 0, 200, 4);
+                SKCanvasView Left = LeftArrow(200, 0, 0, 200, 4);
+                SKCanvasView Right = RightArrow(200, 0, 0, 200, 4);
                 _rmT[Left] = type;
                 _rmT[Right] = type;
                 FlorineSkiaTapWrap.Associate(Left, PrevClothes);
@@ -246,6 +246,62 @@ namespace FlorineSkiaSharpForms
             base.LayoutComponentWide(grid, t, v, CurrentOption, OptionCount);
         }
 
+        private SKCanvasView LeftArrow(byte r, byte g, byte b, byte a, float Ratio)
+        {
+            SKCanvasView v = new SKCanvasView();
+            v.PaintSurface += V_PaintSurface_Left;            
+            return v;
+        }
+
+        private void V_PaintSurface_Left(object sender, SKPaintSurfaceEventArgs e)
+        {            
+            int MidY = e.Info.Rect.MidY;
+            int iModWid = (int)(e.Info.Rect.Width * .35);
+            int X0 = e.Info.Rect.Left + iModWid;
+            int X1 = e.Info.Rect.Right - iModWid;
+            int iModHeight = (int)(e.Info.Rect.Height * .35);
+            int Y0 = e.Info.Rect.Top + iModHeight;
+            int Y1 = e.Info.Rect.Bottom - iModHeight;  
+            SKPoint P0 = new SKPoint(X1, Y0);
+            SKPoint P1 = new SKPoint(X0, MidY);
+            SKPoint P2 = new SKPoint(X1,Y1);
+            SKPaint paint = new SKPaint()
+            {
+                Color = SKColors.Black,
+                IsStroke = true,
+                StrokeWidth = 5f
+            };
+            e.Surface.Canvas.DrawLine(P0, P1, paint);
+            e.Surface.Canvas.DrawLine(P1, P2, paint);            
+        }
+
+        private SKCanvasView RightArrow(byte r, byte g, byte b, byte a, float Ratio)
+        {
+            SKCanvasView v = new SKCanvasView();
+            v.PaintSurface += V_PaintSurface_Right;
+            return v;
+        }
+        private void V_PaintSurface_Right(object sender, SKPaintSurfaceEventArgs e)
+        {            
+            int MidY = e.Info.Rect.MidY;
+            int iModWid = (int)(e.Info.Rect.Width * .35);
+            int X0 = e.Info.Rect.Left + iModWid;
+            int X1 = e.Info.Rect.Right - iModWid;
+            int iModHeight = (int)(e.Info.Rect.Height * .35);
+            int Y0 = e.Info.Rect.Top + iModHeight;
+            int Y1 = e.Info.Rect.Bottom - iModHeight;
+            SKPoint P0 = new SKPoint(X0, Y0);
+            SKPoint P1 = new SKPoint(X1, MidY);
+            SKPoint P2 = new SKPoint(X0, Y1);
+            SKPaint paint = new SKPaint()
+            {
+                Color = SKColors.Black,
+                IsStroke = true,
+                StrokeWidth = 5f
+            };
+            e.Surface.Canvas.DrawLine(P0, P1, paint);
+            e.Surface.Canvas.DrawLine(P1, P2, paint);
+        }
         private SKCanvasView Oval(byte r, byte g, byte b, byte a, float Ratio)
         {
             SKCanvasView v = new SKCanvasView();
@@ -286,7 +342,8 @@ namespace FlorineSkiaSharpForms
                 new SKColor(217,118,76),  // 4          
                 new SKColor(182,88,34),   // 5             
                 new SKColor(143,70,29),   // 6
-            }), 5, 25, 14, 16);
+                new SKColor(113,50,20),   // 6
+            }), 4, 26, 14, 16);
             
             grid.Children.Add(Oval(0, 0, 200, 120, 1f), 0, 10, 16, 22);
             grid.Children.Add(Oval(0, 0, 200, 120, 1f), 10, 20, 16, 22);

@@ -43,9 +43,19 @@ namespace FlorineSkiaSharpForms
 
             if (CanHaveTooMuch)
             {
+
+                IG.Details[0f] = new SKColor(250, 0, 0);
+                IG.Details[.35f] = SKColors.Yellow;
+                IG.Details[.5f] = new SKColor(0, 250, 0);
+                IG.Details[.65f] = SKColors.Yellow;
+                IG.Details[1f] = new SKColor(250, 0, 0);
+                /*
                 IG.Details[(float)Min] = new SKColor(250, 0, 0);
+                IG.Details[(float)((Center - Min) / 2 + Min)] = SKColors.Yellow;
                 IG.Details[Center] = new SKColor(0, 250, 0);
+                IG.Details[(float)((Max - Center) / 2 + Center)] = SKColors.Yellow;
                 IG.Details[(float)Max] = new SKColor(250, 0, 0);
+                */
             }
             else
             {
@@ -68,7 +78,7 @@ namespace FlorineSkiaSharpForms
             //return BarCanvas;
         }
         private SKCanvasView _DivBar(
-            SortedDictionary<float, SKColor> Items
+            SortedDictionary<float, SKColor> Items            
         )
         {
             ImageGradient IG = new ImageGradient()
@@ -77,8 +87,8 @@ namespace FlorineSkiaSharpForms
             };
             foreach (KeyValuePair<float, SKColor> kvp in Items)
             {
-                IG.Details.Add(kvp.Key, kvp.Value);
-            }
+                IG.Details.Add(kvp.Key, kvp.Value);                
+            }            
             return new FlorineSkiaCVWrap(IG);
             //return BarCanvas;
         }
@@ -119,40 +129,74 @@ namespace FlorineSkiaSharpForms
                      false
                 );
                 
-                grid.Children.Add(CalorieView, 20, 30, 4, 6);
-                
+                grid.Children.Add(CalorieView, 20, 29, 4, 6);
+                SortedDictionary<float, SKColor> WhiteBar = new SortedDictionary<float, SKColor>()
+                {
+                    { 0f, new SKColor(255,255,255,20) },
+                    { 1f, new SKColor(255,255,255,20) },
+                };
                 SortedDictionary<float, SKColor> MicroNutrients = new SortedDictionary<float, SKColor>();
+                SortedDictionary<float, SKColor> MicroPotential = new SortedDictionary<float, SKColor>();
                 SortedDictionary<float, SKColor> MacroNutrients = new SortedDictionary<float, SKColor>();
                 float microNut = 0f;
+                float microPot = 0f;
                 float macroNut = 0f;
                 foreach (KeyValuePair<Nutrient, NutrientAmount> kvp in PC.Nutrients)
                 {
                     FlorineSkiaNutrient AdjNut = new FlorineSkiaNutrient(kvp.Key);
-                    float curRatio = kvp.Key.RatioRDV(kvp.Value);
-                    if (curRatio > 2f) { curRatio = 2f; }
-                    if (curRatio <= 0f) { continue; }
+                    float curRatio = kvp.Key.RatioRDV(kvp.Value);                    
                     
                     switch (kvp.Key.Class)
                     {
                         case Nutrient.NutrientType.Macro:
+                            if (curRatio > 2f) { curRatio = 2f; }
+                            if (curRatio <= 0f) { continue; }
                             curRatio /= 8f;
                             macroNut += curRatio;
                             MacroNutrients.Add(macroNut, AdjNut.RingColor);
                             break;
                         case Nutrient.NutrientType.Mineral:
                         case Nutrient.NutrientType.Vitamin:
-                            curRatio /= 12f;
-                            microNut += curRatio;
-                            MicroNutrients.Add(microNut, AdjNut.RingColor);
+                            if (curRatio > 1f) { curRatio = 1f; }
+                            float fRestRatio = float.NaN;
+                            if (curRatio < 1f)
+                            {
+                                fRestRatio = 1f - curRatio;
+                                fRestRatio /= 7f;
+                            }
+                            curRatio /= 7f;
+                            microPot += 1f / 7f;
+
+                            if (curRatio > float.Epsilon)
+                            {
+                                microNut += curRatio;
+                                MicroNutrients.Add(microNut, AdjNut.RingColor);
+                            }
+                            if (!float.IsNaN(fRestRatio))
+                            {
+                                microNut += fRestRatio;
+                                MicroNutrients.Add(microNut, SKColors.Transparent);
+                            }
+                            SKColor newCol = new SKColor(
+                                AdjNut.RingColor.Red,
+                                AdjNut.RingColor.Green,
+                                AdjNut.RingColor.Blue,
+                                80
+                                );
+                            MicroPotential.Add(microPot, newCol);
                             break;
                     }
                 }
-                grid.Children.Add(_Text("Nutrients"), 15, 20, 6, 8);
-                grid.Children.Add(_DivBar(MicroNutrients), 20, 30, 6, 8);
+                grid.Children.Add(_Text("Vitamins"), 15, 20, 6, 8);
 
-                grid.Children.Add(_Text("Macronutrients"), 11, 20, 8, 10);
-                grid.Children.Add(_DivBar(MacroNutrients), 20, 30, 8, 10);
 
+                grid.Children.Add(_DivBar(WhiteBar), 20, 29, 6, 8);
+                grid.Children.Add(_DivBar(MicroPotential), 20, 29, 6, 8);
+                grid.Children.Add(_DivBar(MicroNutrients), 20, 29, 6, 8);
+                
+
+                grid.Children.Add(_Text("Nutrients"), 15, 20, 8, 10);
+                grid.Children.Add(_DivBar(MacroNutrients), 20, 29, 8, 10);
 
                 int EnergyY = 20;
                 int FocusY = EnergyY + 3;
@@ -167,7 +211,7 @@ namespace FlorineSkiaSharpForms
                         false,
                         true
                      ),
-                    20, 30, EnergyY, EnergyY + 2
+                    20, 29, EnergyY, EnergyY + 2
                 );
 
                 grid.Children.Add(_Text("Focus"), 15, 20, FocusY, FocusY + 2);
@@ -180,7 +224,7 @@ namespace FlorineSkiaSharpForms
                         false,
                         true
                      ),
-                    20, 30, FocusY, FocusY + 2
+                    20, 29, FocusY, FocusY + 2
                 );
             }
             base.PostLayout(IsTall, grid, GameController, GameFoundry, CurrentPage);

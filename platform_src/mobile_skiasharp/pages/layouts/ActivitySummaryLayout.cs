@@ -44,9 +44,11 @@ namespace FlorineSkiaSharpForms
 
             if (CanHaveTooMuch)
             {
-                IG.Details[(float)Min] = new SKColor(250, 0, 0);
-                IG.Details[Center] = new SKColor(0, 250, 0);
-                IG.Details[(float)Max] = new SKColor(250, 0, 0);
+                IG.Details[0f] = new SKColor(250, 0, 0);
+                IG.Details[.35f] = SKColors.Yellow;
+                IG.Details[.5f] = new SKColor(0, 250, 0);
+                IG.Details[.65f] = SKColors.Yellow;
+                IG.Details[1f] = new SKColor(250, 0, 0);
             }
             else
             {
@@ -68,11 +70,144 @@ namespace FlorineSkiaSharpForms
             return new FlorineSkiaCVWrap(IG);
             //return BarCanvas;
         }
+        private SKCanvasView _DivBar(
+            SortedDictionary<float, SKColor> Items
+        )
+        {
+            ImageGradient IG = new ImageGradient()
+            {
+                Style = ImageGradient.GradientType.RelativeSharp
+            };
+            foreach (KeyValuePair<float, SKColor> kvp in Items)
+            {
+                IG.Details.Add(kvp.Key, kvp.Value);
+            }
+            return new FlorineSkiaCVWrap(IG);
+            //return BarCanvas;
+        }
+        /* ******************************************************** */
+        View XBG = null;
         public override void PostLayout(bool IsTall, Grid grid, Controller GameController, IPlatformFoundry GameFoundry, IPage SourcePage)
         {
+            Player PC = GameController.CurrentState.Player;
+            // Calories
+            if (GameController.GetCurrentPage().SubType == GameState.PageSubType.Dinner)
+            {
+                grid.Children.Add(_Text("Calories"), 1, 10, 4, 6);
+                View CalorieView = _GradientBar(
+                     0,
+                     PC.TargetCalories,
+                     PC.TargetCalories * 2,
+                     PC.Calories,
+                     true,
+                     false
+                );
+
+                grid.Children.Add(CalorieView, 10, 29, 4, 6);
+
+                SortedDictionary<float, SKColor> MicroNutrients = new SortedDictionary<float, SKColor>();
+                SortedDictionary<float, SKColor> MacroNutrients = new SortedDictionary<float, SKColor>();
+                float microNut = 0f;
+                float macroNut = 0f;
+                foreach (KeyValuePair<Nutrient, NutrientAmount> kvp in PC.Nutrients)
+                {
+                    FlorineSkiaNutrient AdjNut = new FlorineSkiaNutrient(kvp.Key);
+                    float curRatio = kvp.Key.RatioRDV(kvp.Value);
+                    if (curRatio > 2f) { curRatio = 2f; }
+                    if (curRatio <= 0f) { continue; }
+
+                    switch (kvp.Key.Class)
+                    {
+                        case Nutrient.NutrientType.Macro:
+                            curRatio /= 8f;
+                            macroNut += curRatio;
+                            MacroNutrients.Add(macroNut, AdjNut.RingColor);
+                            break;
+                        case Nutrient.NutrientType.Mineral:
+                        case Nutrient.NutrientType.Vitamin:
+                            curRatio /= 12f;
+                            microNut += curRatio;
+                            MicroNutrients.Add(microNut, AdjNut.RingColor);
+                            break;
+                    }
+                }
+                grid.Children.Add(_Text("Vitamins"), 1, 10, 6, 8);
+                grid.Children.Add(_DivBar(MicroNutrients), 10, 30, 6, 8);
+
+                grid.Children.Add(_Text("Nutrients"), 1, 10, 8, 10);
+                grid.Children.Add(_DivBar(MacroNutrients), 10, 30, 8, 10);
+            }
+
+            if (GameController.GetCurrentPage().SubType == GameState.PageSubType.Lunch)
+            {
+                IGameOptionSet iActivities = GameController.GetCurrentPage().AppliedOptions;
+                int Amount = 0;
+                foreach (IGameOption act in iActivities)
+                {
+                    Activity mainAct = act as Activity;
+                    if (null != mainAct)
+                    {
+                        Amount += mainAct.Pay;
+                    }
+                    if (null != act.SubOptions)
+                    {
+                        foreach (IGameOption subopt in act.SubOptions)
+                        {
+                            Activity subAct = subopt as Activity;
+                            if (subAct != null)
+                            {
+                                Amount += subAct.Pay;
+                            }
+                        }
+                    }
+                }
+
+                if (Amount != 0)
+                {
+                    View moneyGrid = MoneyView.RenderView(Amount);
+                    grid.Children.Add(moneyGrid, 10, 20, 15, 18);
+                }
+            }
+            else if (GameController.GetCurrentPage().SubType == GameState.PageSubType.Dinner)
+            {
+                View BackView = new FlorineSkiaCVWrap(new FlOval()
+                {
+                    backgroundColor = new SKPaint() { Color = new SKColor(0, 80, 190, 230) },
+                    Shape = FlOval.OvalType.Rectangle,
+                    ovalRatio = float.NaN,
+                    innerHighlight = new SKColor(100, 250, 250, 255),
+                });
+                View moneyGrid = MoneyView.RenderView(PC.Money, false);                
+                View HappinessGrid = Happiness.RenderView(PC.Happiness, false);
+                View TotalText = new FlorineSkiaCVWrap(new ImageText("Total"));
+                
+
+                View tdBackView = new FlorineSkiaCVWrap(new FlOval()
+                {
+                    backgroundColor = new SKPaint() { Color = new SKColor(0, 80, 190, 230) },
+                    Shape = FlOval.OvalType.Rectangle,
+                    ovalRatio = float.NaN,
+                    innerHighlight = new SKColor(100, 250, 250, 255),
+                });
+                View tdmoneyGrid = MoneyView.RenderView(PC.MoneyToDate, false);
+                View tdHappinessGrid = Happiness.RenderView(PC.HappinessToDate, false);
+                View tdTotalText = new FlorineSkiaCVWrap(new ImageText("Today"));
+
+                //grid.Children.Add(BackView, 0, 30, 10, 14);
+                grid.Children.Add(TotalText, 2, 9,       11, 13);
+                grid.Children.Add(moneyGrid, 8, 17,      10, 13);
+                grid.Children.Add(HappinessGrid, 18, 28, 10, 13);
+
+                //grid.Children.Add(tdBackView, 0, 30, 14, 18);
+                grid.Children.Add(tdTotalText, 2, 9, 14, 16);
+                grid.Children.Add(tdmoneyGrid, 8, 17, 13, 16);
+                grid.Children.Add(tdHappinessGrid, 18, 28, 13, 16);
+
+
+            }
+
             int EnergyY = 20;
             int FocusY = EnergyY + 3;
-            Player PC = GameController.CurrentState.Player;
             grid.Children.Add(_Text("Energy"), 15, 20, EnergyY, EnergyY+2);
             grid.Children.Add(
                 _GradientBar(
@@ -83,7 +218,7 @@ namespace FlorineSkiaSharpForms
                     false,
                     true
                  ),
-                20, 30, EnergyY, EnergyY + 2
+                20, 29, EnergyY, EnergyY + 2
             );
 
             grid.Children.Add(_Text("Focus"), 15, 20, FocusY, FocusY+2);
@@ -96,9 +231,28 @@ namespace FlorineSkiaSharpForms
                     false,
                     true
                  ),
-                20, 30, FocusY, FocusY + 2
+                20, 29, FocusY, FocusY + 2
             );
+            
             base.PostLayout(IsTall, grid, GameController, GameFoundry, SourcePage);
+        }
+
+        
+
+        public override void PreLayout(bool IsTall, Grid grid, Controller GameController, IPlatformFoundry GameFoundry, IPage SourcePage)
+        {
+            if (SourcePage.SubType == GameState.PageSubType.Dinner)
+            {
+                SKCanvasView Back = new SKCanvasView();
+                Back.PaintSurface += Back_PaintSurface;
+                XBG = Back;
+            }
+            
+            base.PreLayout(IsTall, grid, GameController, GameFoundry, SourcePage);
+        }
+        private void Back_PaintSurface(object sender, SKPaintSurfaceEventArgs e)
+        {
+            e.Surface.Canvas.Clear(new SKColor(50, 50, 50));
         }
         protected override void LayoutComponentWide(Grid grid, PageComponentType t, View v, int CurrentOption, int OptionCount)
         {
@@ -109,13 +263,31 @@ namespace FlorineSkiaSharpForms
         {
             switch (t)
             {
+                case PageComponentType.Background:
+                    if (null == XBG)
+                    {
+                        XBG = v;
+                    }
+                    
+                    
+                        grid.Children.Add(
+                                XBG,
+                                0,
+                                grid.ColumnDefinitions.Count,
+                                0,
+                                grid.RowDefinitions.Count);
+                    
+                    break;
                 case PageComponentType.Message:
-                    grid.Children.Add(v, 0, 30, 4, 16);
+                    grid.Children.Add(v, 00, 30, 4, 16);
                     break;
                 default:
                     base.LayoutComponentTall(grid, t, v, CurrentOption, OptionCount);
                     break;
             }
         }
+
+        /* ************************************************************************************************** */
+
     }    
 }

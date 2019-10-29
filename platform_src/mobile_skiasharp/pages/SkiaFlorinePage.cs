@@ -175,7 +175,14 @@ namespace FlorineSkiaSharpForms
             if (null != Source.Message && "" != Source.Message) 
              {
                 SKCanvasView Message = new SKCanvasView();
-                ImageText itconn = new ImageText(Source.Message) { Overflow = ImageText.WrapType.WordWrap, FontSize = 48.0f };
+                ImageText itconn = new ImageText(Source.Message) {
+                    Overflow = ImageText.WrapType.WordWrap,
+                    FontSize = 48.0f,
+                    AutoBackground = (
+                    Source.MainType == GameState.PageType.Summarize_Activity
+                    )
+                };
+                
                 itconn.ConnectCanvasView(Message);
                 _components.Add(
                     new PageComponent(

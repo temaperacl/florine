@@ -13,8 +13,28 @@ namespace Florine
         public Avatar Avatar { get; set; }
         public NutrientSet Nutrients { get; set; }
 		public IActivityPath MainPath { get; set; }
-        public int Happiness { get; set; } = 0;
-        public int Money { get; set; } = 0;
+        int _money = 0;
+        int _happiness = 0;
+        public int Happiness
+        {
+            get { return _happiness; }
+            set
+            {
+                HappinessToDate += (value - _happiness);
+                _happiness = value;
+            }
+        }
+        public int Money
+        {
+            get { return _money; }
+            set
+            {
+                MoneyToDate += (value - _money);
+                _money = value;
+            }
+        }
+        public int HappinessToDate { get; set; } = 0;
+        public int MoneyToDate { get; set; } = 0;
         public double Energy { get; set; } = 0.0;
         public double Focus { get; set; } = 0.0;
         public double Hunger { get; set; } = 0.0;
@@ -75,14 +95,16 @@ namespace Florine
 		}
 		
 		public void StartNewDay() 
-		{ 		
-			//Calculate Next-day effects
-			/*
+		{
+            //Calculate Next-day effects
+            /*
 			Nutrients["Fat"] = 0.0;
 			Nutrients["Carbohydrates"] = 0.0;
 			Nutrients["Protein"] = 0.0;
 			Nutrients["Fiber"] = 0.0;		
 			*/
+            MoneyToDate = 0;
+            HappinessToDate = 0;
 			Nutrients = new NutrientSet();
 			Calories = 0;
 			Hunger = 0;

@@ -6,9 +6,11 @@ namespace Florine
     public class Activity : IGameOption
     {		
         public NutrientSet Impact { get; set;}
-		public String OptionName { get; set; }
+        public bool Enabled { get; set; } = true;
+        public String OptionName { get; set; }
 		public String Description { get; set; }
 		public IImage Picture { get; set; }
+        public int Pay { get; set; } = 0;
 		public IGameOptionSet SubOptions { get; set; }
 		public virtual void ImpactPlayer(Player target) 
 		{

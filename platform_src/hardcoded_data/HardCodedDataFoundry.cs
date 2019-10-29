@@ -4,25 +4,25 @@ using Florine;
 
 namespace FlorineHardCodedData
 {
-	public class HardCodedDataFoundry : IPlatformFoundry
-	{
-		GameState _state = new GameState();
+    public class HardCodedDataFoundry : IPlatformFoundry
+    {
+        GameState _state = new GameState();
+        static Random r = new Random();
+        Avatar _playerAvatar = new Avatar();
 
-		Avatar _playerAvatar = new Avatar();
+        public HardCodedDataFoundry()
+        {
+        }
 
-		public HardCodedDataFoundry()
-		{
-		}
+        /* IPlatformFoundry */
 
-		/* IPlatformFoundry */
+        public virtual GameState LoadGameState() { return _state; }
 
-		public virtual GameState LoadGameState() { return _state; }
-
-        public virtual IList<Food> LoadFood() {            
-			foreach(KeyValuePair<string, List<NutrientAmount>> kvp in FoodTable) {
-				List<NutrientAmount> l = kvp.Value;
+        public virtual IList<Food> LoadFood() {
+            foreach (KeyValuePair<string, List<NutrientAmount>> kvp in FoodTable) {
+                List<NutrientAmount> l = kvp.Value;
                 _foodIdx[kvp.Key] = _foodIdx.Count;
-                NutrientAmount n = l[11];
+                NutrientAmount n = l[12];
                 _foodstuffs.Add(new Food() {
                     Name = kvp.Key,
                     Nutrients = new NutrientSet() {
@@ -30,136 +30,146 @@ namespace FlorineHardCodedData
                         {Carbs,      l[1] * n},
                         {Fats,       l[2] * n},
                         {Fiber,      l[3] * n},
-                        {Folic_Acid, l[4] * n},
-                        {Vitamin_D,  l[5] * n},
-                        {Calcium,    l[6] * n},
-                        {Iron,       l[7] * n},
-                        {Potassium,  l[8] * n},
-                        {Vitamin_B12,l[9] * n},
-                        {Vitamin_A,  l[10] * n}
+                        {Folic_Acid, l[5] * n},
+                        {Vitamin_D,  l[6] * n},
+                        {Calcium,    l[7] * n},
+                        {Iron,       l[8] * n},
+                        {Potassium,  l[9] * n},
+                        {Vitamin_B12,l[10] * n},
+                        {Vitamin_A,  l[11] * n}
                     },
                     Description = kvp.Key // Food Description
-				});
-			}
+                });
+            }
 
-			foreach (Food f in _foodstuffs)
-			{
-				f.OptionPicture = LoadImageFromFood(f);
-			}
-			return _foodstuffs;
-		}
-		public virtual IList<Nutrient> LoadNutrients() { return _nutrients; }
-		public virtual IPage GetPage(IPage GenericPage) { return HardCodedPageFromIPage(GenericPage); }
-		public virtual bool SaveGameState(GameState _unused) { return false; }
-		/* */
-		public virtual IImage LoadImageFromFood(Food Parent)
-		{
-			return null;
-		}
+            foreach (Food f in _foodstuffs)
+            {
+                f.OptionPicture = LoadImageFromFood(f);
+            }
+            return _foodstuffs;
+        }
+        public virtual IList<Nutrient> LoadNutrients() { return _nutrients; }
+        public virtual IPage GetPage(IPage GenericPage) { return HardCodedPageFromIPage(GenericPage); }
+        public virtual bool SaveGameState(GameState _unused) { return false; }
+        /* */
+        public virtual IImage LoadImageFromFood(Food Parent)
+        {
+            return null;
+        }
 
-		public virtual Activity AutomaticActivity(GameState gs)
-		{
-			return _onlyPath.GetActivity(gs);
-		}
+        public virtual Activity AutomaticActivity(GameState gs)
+        {
+            return _onlyPath.GetActivity(gs);
+        }
 
-		/* Data Dumps */
+        /* Data Dumps */
 
-		static Nutrient Carbs = new Nutrient()
-		{
-			Name = "Carbohydrates",
-			Class = Nutrient.NutrientType.Macro,
-			Units = NutrientUnit.g,
-			DailyTarget = 130
-		};
-		static Nutrient Proteins = new Nutrient()
-		{
-			Name = "Protein",
-			Class = Nutrient.NutrientType.Macro,
-			Units = NutrientUnit.g,
-			DailyTarget = 46
-		};
-		static Nutrient Fats = new Nutrient()
-		{
-			Name = "Fat",
-			Class = Nutrient.NutrientType.Macro,
-			Units = NutrientUnit.g,
-			DailyTarget = 0
-		};
-		static Nutrient Fiber = new Nutrient()
-		{
-			Name = "Fiber",
-			Class = Nutrient.NutrientType.Macro,
-			Units = NutrientUnit.g,
-			DailyTarget = 28
-		};
+        static Nutrient Carbs = new Nutrient()
+        {
+            Name = "Carbohydrates",
+            Class = Nutrient.NutrientType.Macro,
+            Units = NutrientUnit.g,
+            DailyTarget = 130
+        };
+        static Nutrient Proteins = new Nutrient()
+        {
+            Name = "Protein",
+            Class = Nutrient.NutrientType.Macro,
+            Units = NutrientUnit.g,
+            DailyTarget = 46
+        };
+        static Nutrient Fats = new Nutrient()
+        {
+            Name = "Fat",
+            Class = Nutrient.NutrientType.Macro,
+            Units = NutrientUnit.g,
+            DailyTarget = 57
+        };
+        static Nutrient Fiber = new Nutrient()
+        {
+            Name = "Fiber",
+            Class = Nutrient.NutrientType.Macro,
+            Units = NutrientUnit.g,
+            DailyTarget = 28
+        };
 
-		static Nutrient Vitamin_A = new Nutrient()
-		{
-			Name = "Vitamin A",
-			Class = Nutrient.NutrientType.Vitamin,
-			Units = NutrientUnit.mg,
-			DailyTarget = 700
-		};
-		static Nutrient Vitamin_B12 =new Nutrient()
-		{
-			Name = "Vitamin B12",
-			Class = Nutrient.NutrientType.Vitamin ,
-			Units = NutrientUnit.mcg,
-			DailyTarget = 2.4
-		};
-		static Nutrient Potassium = new Nutrient()
-		{
-			Name = "Potassium",
-			Class = Nutrient.NutrientType.Vitamin ,
-			Units = NutrientUnit.mcg,
-			DailyTarget = 4700
-		};
-		static Nutrient Iron = new Nutrient() {
-			Name = "Iron",
-			Class = Nutrient.NutrientType.Vitamin,
-			Units = NutrientUnit.mg,
-			DailyTarget = 18
-		};
-		static Nutrient Calcium = new Nutrient() {
-			Name = "Calcium",
-			Class = Nutrient.NutrientType.Vitamin,
-			Units = NutrientUnit.mg,
-			DailyTarget = 1000
-		};
-		static Nutrient Vitamin_D = new Nutrient() {
-			Name = "Vitamin D",
-			Class = Nutrient.NutrientType.Vitamin,
-			Units = NutrientUnit.IU,
-			DailyTarget = 600
-		};
-		static Nutrient Folic_Acid = new Nutrient() {
-			Name = "Folic Acid",
-			Class = Nutrient.NutrientType.Vitamin,
-			Units = NutrientUnit.mcg,
-			DailyTarget = 400
-		};
+        static Nutrient Vitamin_A = new Nutrient()
+        {
+            Name = "Vitamin A",
+            Class = Nutrient.NutrientType.Vitamin,
+            Units = NutrientUnit.mg,
+            DailyTarget = 700
+        };
+        static Nutrient Vitamin_B12 = new Nutrient()
+        {
+            Name = "Vitamin B12",
+            Class = Nutrient.NutrientType.Vitamin,
+            Units = NutrientUnit.mcg,
+            DailyTarget = 2.4
+        };
+        static Nutrient Potassium = new Nutrient()
+        {
+            Name = "Potassium",
+            Class = Nutrient.NutrientType.Vitamin,
+            Units = NutrientUnit.mcg,
+            DailyTarget = 4700
+        };
+        static Nutrient Iron = new Nutrient() {
+            Name = "Iron",
+            Class = Nutrient.NutrientType.Vitamin,
+            Units = NutrientUnit.mg,
+            DailyTarget = 18
+        };
+        static Nutrient Calcium = new Nutrient() {
+            Name = "Calcium",
+            Class = Nutrient.NutrientType.Vitamin,
+            Units = NutrientUnit.mg,
+            DailyTarget = 1000
+        };
+        static Nutrient Vitamin_D = new Nutrient() {
+            Name = "Vitamin D",
+            Class = Nutrient.NutrientType.Vitamin,
+            Units = NutrientUnit.IU,
+            DailyTarget = 600
+        };
+        static Nutrient Folic_Acid = new Nutrient() {
+            Name = "Folic Acid",
+            Class = Nutrient.NutrientType.Vitamin,
+            Units = NutrientUnit.mcg,
+            DailyTarget = 400
+        };
 
 
-		List<Nutrient> _nutrients = new List<Nutrient>()
-		{
-			Carbs,
-			Proteins,
-			Fats,
-			Vitamin_A,
-			Vitamin_B12,
-			Calcium,
-			Potassium,
-			Iron,
-			Vitamin_D,
-			Folic_Acid
+        List<Nutrient> _nutrients = new List<Nutrient>()
+        {
+            Carbs,
+            Proteins,
+            Fats,
+            Vitamin_A,
+            Vitamin_B12,
+            Calcium,
+            Potassium,
+            Iron,
+            Vitamin_D,
+            Folic_Acid
 
-		};
+        };
 
         public class EndDayActivity : Activity
         {
             public override void ImpactPlayer(Player target)
             {
                 target.ReadyToEndDay = true;
+                base.ImpactPlayer(target);
+            }
+        }
+
+        public class HardCodedPayActivity : Activity
+        {
+            
+            public override void ImpactPlayer(Player target)
+            {
+                target.Money += Pay;
                 base.ImpactPlayer(target);
             }
         }
@@ -182,11 +192,24 @@ namespace FlorineHardCodedData
                         }
                         else if (gs.CurrentPage.SubType == GameState.PageSubType.Lunch)
                         {
-                            return new Activity()
+                            int nPay = 0;
+                            switch (Day) {
+                                case 1:
+                                    nPay = 3;
+                                    break;
+                                case 2:
+                                    nPay = 5;
+                                    break;
+                                default:
+                                    nPay = r.Next(2, 6);
+                                    break;
+                            }
+                            return new HardCodedPayActivity()
                             {
                                 Impact = new NutrientSet(),
                                 OptionName = "At Work",
                                 Description = gs.Player.Name + " had a productive day. She wrote a blog post about her latest discovery!",
+                                Pay = nPay
                             };
                         }
                         else if (gs.CurrentPage.SubType == GameState.PageSubType.Daily)
@@ -199,7 +222,7 @@ namespace FlorineHardCodedData
                                 {
                                     Impact = new NutrientSet(),
                                     OptionName = "Bed Time",
-                                    Description = gs.Player.Name + " goes to bed at " + (gs.Player.HoursIntoDay - 12) + "pm"
+                                    Description = "After a nice evening at home, " + gs.Player.Name + " feels renewed "
                                 };
                             }
                             gs.Player.Tick(2);
@@ -230,8 +253,7 @@ namespace FlorineHardCodedData
                                     return new EndDayActivity()
                                     {
                                         OptionName = gs.CurrentPage.AppliedOptions[0].SubOptions[0].OptionName,
-                                        Description = "After a nice evening at home, " + gs.Player.Name + " feels renewed " 
-                                        + "and goes to bed at " + (gs.Player.HoursIntoDay - 12) + "pm",
+                                        Description = "After a nice evening at home, " + gs.Player.Name + " feels renewed ",
                                         Impact = new NutrientSet()
                                     };
                                 case "Social":
@@ -435,20 +457,20 @@ namespace FlorineHardCodedData
                 {"Grilled Cheese",    new List<NutrientAmount>() { 5   , 71,   9,     2,385,0,0,0,1.8,0,0,0,1} },
                 {"Pancakes",          new List<NutrientAmount>() { 8.36, 113.3,10.986,1.6,585.514,102.4,0,126.26,9.146,146.19,4.48,725,1} },
                 {"Fruit",             new List<NutrientAmount>() { 1.03, 19.4, 0.3,   2.34,84.33,22.19,0,23.73,0.23,278.3,0,7.51,1} },
-                {"Eggs",              new List<NutrientAmount>() { 22  , 3.54, 24.2,  0,319.96,79.2,3.96,145,2.88,290,1.67,354,1} },
+                {"Eggs",              new List<NutrientAmount>() { 22  , 3.54, 24.2,  0,319.96,79.2,3.96,145,2.88,290,1.67,354,2} },
                 {"Cereal",            new List<NutrientAmount>() { 3.99, 24.2, 2.22,  3.1,132.74,236,1.12,132,10.9,212,2.23,327,1} },
-                {"Toaster Pastry",    new List<NutrientAmount>() { 2.09, 15.1, 2.73,  0.4,93.3,25.6,0,31.2,2.27,36,1.12,181,1 } },
+                {"Toaster Pastry",    new List<NutrientAmount>() { 2.09, 15.1, 2.73,  0.4,93.3,25.6,0,31.2,2.27,36,1.12,181,2 } },
                 {"Wheat Toast",       new List<NutrientAmount>() { 3.11, 13.4, 1.02,  1.13,75.22,20.6,0,39.6,0.982,53.5,0,0,2 } },
                 {"Multigrain Toast",  new List<NutrientAmount>() { 4.79, 15.5, 1.52,  2.67,94.84,23.1,0,36.6,0.898,82.5,0,0,2 } },
                 {"Strawberry Yogurt", new List<NutrientAmount>() { 8.38, 23.5, 2.12,  0,146.6,18.7,1.7,291,.119,372,0.901,73.1,1 } },
                 {"Eggs, Bacon, and Toast",
                     new List<NutrientAmount>() { 29.96, 17.276,28.01,0.725,429.034,105.2,3.992,175.68,3.788,362.7,1.762,354.88,1 } },
                 {"Hamburger",
-                    new List<NutrientAmount>() { 13.3, 29.6, 10.2, 1.8, 263.4, 46, .1, 116, 2.87, 197, 1.2, 3, 1 } },
+                    new List<NutrientAmount>() { 13.3, 29.6, 10.2, 1.8, 263.4, 46, .1, 116, 2.87, 197, 1.2, 3, 2 } },
                 {"Chocolate Ice Cream",
-                    new List<NutrientAmount>() { 2.51, 18.6, 7.26, .792, 149.78, 10.6, 5.28, 71.9, .614, 164, .191, 275, 1 } },
+                    new List<NutrientAmount>() { 2.51, 18.6, 7.26, .792, 149.78, 10.6, 5.28, 71.9, .614, 164, .191, 275, 3} },
                 {"Instant Noodles",
-                    new List<NutrientAmount>() { 3.61, 21.4, 6.24, .932, 156.2, 28, 0, 14, 1.44, 65.2, .093, 0, 1 } },
+                    new List<NutrientAmount>() { 3.61, 21.4, 6.24, .932, 156.2,  28,   0,    14,   1.44, 65.2, .093, 0, 1 } },
                 {"Lamb Chops",
                     new List<NutrientAmount>() { 22.2, 0, 20.4, 0, 272.4, 16, 0.089, 17.8, 1.6, 288, 2.18, 0, 1 } },
                 {"Meatball Sub",
@@ -503,8 +525,17 @@ namespace FlorineHardCodedData
 			public int SelectionLimit { get; set; }
 			public IGameOption Finalizer { get; set; }
 		}
-
-		protected class HardcodedEmptyOption : IGameOption
+        public class NoSelectFoodOption : IGameOption
+        {
+            public NoSelectFoodOption(string name) { OptionName = name; }
+            public IImage Picture { get { return null; } }
+            public String OptionName { get; set; }
+            public void ImpactPlayer(Player target) { }
+            public void AdjustNutrients(NutrientSet nutrients) { }
+            public IGameOptionSet SubOptions { get; set; }
+            public bool Enabled { get; set; } = true;
+        }
+        protected class HardcodedEmptyOption : IGameOption
 		{
 			public HardcodedEmptyOption(string name) { OptionName = name; }
 			public IImage Picture { get { return null; } }
@@ -512,6 +543,7 @@ namespace FlorineHardCodedData
 			public void ImpactPlayer(Player target) { }
 			public void AdjustNutrients(NutrientSet nutrients) { }
 			public IGameOptionSet SubOptions { get; set; }
+            public bool Enabled { get; set; } = true;
 		}
 
 		private static HardcodedEmptyOption _emptyOption(string name)
@@ -560,39 +592,44 @@ namespace FlorineHardCodedData
                     break;
                 case GameState.PageType.Day_Intro:
                     hcPage.Title = "A New Day!";
-                    hcPage.Message = "Welcome to a new day. Let's see what today holds!";
-                    if (Day == 2)
+                    switch (Day)
                     {
-                        hcPage.Message = "You don’t need to eat a lot to feel full - try eating more fiber(with fiber in the same green as on the nutrient bars).";
+                        case 0:
+                            hcPage.Message = "Fiber Color";
+                            //hcPage.Message = "Welcome to a new day. Let's see what today holds!";
+                            break;
+                        case 1:
+                            hcPage.Message = "You don’t need to eat a lot to feel full - try eating more fiber(with fiber in the same green as on the nutrient bars).";
+                            break;
                     }
                     Day++;
-					//hcPage.Background = "Start_Page";
-					hcPage.PrimaryOptions = new HardCodedOptionSet()
-					{
-						Finalizer = _emptyOption("Start Day")
-					};
-					break;
-				case GameState.PageType.Select_Meal:
-					//hcPage.Title = "Load Game";
+                    //hcPage.Background = "Start_Page";
+                    hcPage.PrimaryOptions = new HardCodedOptionSet()
+                    {
+                        Finalizer = _emptyOption("Start Day")
+                    };
+                    break;
+                case GameState.PageType.Select_Meal:
+                    //hcPage.Title = "Load Game";
 
-					HardCodedOptionSet PrimaryOptions = new HardCodedOptionSet()
-					{
-						Finalizer = _emptyOption("Done"),
-						SelectionLimit = 2
-					};
+                    HardCodedOptionSet PrimaryOptions = new HardCodedOptionSet()
+                    {
+                        Finalizer = _emptyOption("Done"),
+                        SelectionLimit = 2
+                    };
                     hcPage.Title = generic.SubType.ToString();
-                    Random r = new Random();
+                    
                     //Background
-                    switch (generic.SubType) {                        
-						case GameState.PageSubType.None:
-							break;
-						case GameState.PageSubType.Setup:
-							break;
-						case GameState.PageSubType.Daily:
+                    switch (generic.SubType) {
+                        case GameState.PageSubType.None:
+                            break;
+                        case GameState.PageSubType.Setup:
+                            break;
+                        case GameState.PageSubType.Daily:
                             hcPage.Title = "Daily Activity";
-							break;
-						case GameState.PageSubType.Breakfast:
-							PrimaryOptions.SelectionLimit = 2;
+                            break;
+                        case GameState.PageSubType.Breakfast:
+                            PrimaryOptions.SelectionLimit = 2;
                             if (Day == 1)
                             {
                                 PrimaryOptions.Add(_foodstuffs[_foodIdx["Cereal"]].GetOption());
@@ -600,7 +637,7 @@ namespace FlorineHardCodedData
                                 PrimaryOptions.Add(_foodstuffs[_foodIdx["Strawberry Yogurt"]].GetOption());
                                 PrimaryOptions.Add(_foodstuffs[_foodIdx["Fruit"]].GetOption());
                                 PrimaryOptions.Add(_foodstuffs[_foodIdx["Pancakes"]].GetOption());
-                                PrimaryOptions.Add(_foodstuffs[_foodIdx["Toaster Pastry"]].GetOption());
+
                             }
                             else if (Day == 2)
                             {
@@ -609,13 +646,13 @@ namespace FlorineHardCodedData
                                 PrimaryOptions.Add(_foodstuffs[_foodIdx["Wheat Toast"]].GetOption());
                                 PrimaryOptions.Add(_foodstuffs[_foodIdx["Pancakes"]].GetOption());
                                 PrimaryOptions.Add(_foodstuffs[_foodIdx["Eggs"]].GetOption());
-                                PrimaryOptions.Add(_foodstuffs[_foodIdx["Toaster Pastry"]].GetOption());
+
                             }
-							break;
-						case GameState.PageSubType.Lunch:
-							PrimaryOptions.SelectionLimit = 3;
+                            break;
+                        case GameState.PageSubType.Lunch:
+                            PrimaryOptions.SelectionLimit = 3;
                             List<string> LunchOptions = new List<string>() {
-                                "Hamburger",                              
+                                "Hamburger",
                                 "Instant Noodles",
                                 "Meatball Sub",
                                 "Peanut Butter & Jelly",
@@ -627,20 +664,20 @@ namespace FlorineHardCodedData
                                 "Tacos",
                                 "Donuts",
                             };
-                            for (int i = 0; i < 6; ++i)
+                            for (int i = 0; i < 5; ++i)
                             {
                                 int lOpt = r.Next(LunchOptions.Count);
                                 PrimaryOptions.Add(_foodstuffs[_foodIdx[LunchOptions[lOpt]]].GetOption());
                                 LunchOptions.RemoveAt(lOpt);
                             }
-							break;
-						case GameState.PageSubType.Dinner:
+                            break;
+                        case GameState.PageSubType.Dinner:
                             List<string> DinnerOptions = new List<string>() {
                                 "Hamburger",
                                 "Chocolate Ice Cream",
                                 "Instant Noodles",
                                 "Lamb Chops",
-                                "Meatball Sub",                                
+                                "Meatball Sub",
                                 "Pepperoni Pizza Slice",
                                 "Vegetable Soup",
                                 "Spaghetti",
@@ -650,23 +687,24 @@ namespace FlorineHardCodedData
                                 "Donuts",
                             };
 
-                            for (int i = 0; i < 6; ++i)
+                            for (int i = 0; i < 5; ++i)
                             {
                                 int lOpt = r.Next(DinnerOptions.Count);
                                 PrimaryOptions.Add(_foodstuffs[_foodIdx[DinnerOptions[lOpt]]].GetOption());
                                 DinnerOptions.RemoveAt(lOpt);
                             }
                             PrimaryOptions.SelectionLimit = 3;
-							break;
-					}
+                            break;
+                    }
                     if (PrimaryOptions.Count == 0)
                     {
-                        for (int idx = 0; idx < _foodstuffs.Count && idx < 6; ++idx)
+                        for (int idx = 0; idx < _foodstuffs.Count && idx < 5; ++idx)
                         {
                             PrimaryOptions.Add(_foodstuffs[idx].GetOption());
                         }
                     }
-					hcPage.Message +=
+                    PrimaryOptions.Add(new NoSelectFoodOption("Nothing Prepared") { Enabled = false });
+                    hcPage.Message +=
 						"Choose Up To " + PrimaryOptions.SelectionLimit.ToString();
 					hcPage.PrimaryOptions = PrimaryOptions;
 					break;
@@ -681,12 +719,24 @@ namespace FlorineHardCodedData
 					break;
 				// TODO: Summarize Meal is actually 2 pages.
 				case GameState.PageType.Select_Activity:
-					hcPage.Title = "Select Activity";
-					hcPage.Message = "TBD";
+					hcPage.Title = "Evening";
+					hcPage.Message = "Select An Activity";
 					hcPage.PrimaryOptions = GetDailyActivities();
 					break;
 				case GameState.PageType.Summarize_Activity:
-                    hcPage.Title = generic.SubType.ToString() + "Summary";
+                    hcPage.Title = generic.SubType.ToString() + " Summary";
+                    switch (generic.SubType)
+                    {
+                        case GameState.PageSubType.Breakfast:
+                            hcPage.Title = "Morning Update";
+                            break;
+                        case GameState.PageSubType.Lunch:
+                            hcPage.Title = "Afternoon Update";
+                            break;
+                        case GameState.PageSubType.Dinner:
+                            hcPage.Title = "Evening Update";
+                            break;
+                    }
                     if (generic.SubType == GameState.PageSubType.Daily)
                     {
                         if (generic.AppliedOptions.Count > 0)
