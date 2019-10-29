@@ -176,6 +176,11 @@ namespace FlorineSkiaSharpForms
                     FlorineSkiaOption showOpt = opt as FlorineSkiaOption;
                     if (null != showOpt)
                     {
+                        string Description = showOpt.Description;
+                        Food fOpt = showOpt.SourceOpt as Food;
+                        if (null != fOpt)
+                        {
+                        }
                         UpdaterHook.DisplayIt(showOpt.Description);
                     }
                     return true;

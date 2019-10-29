@@ -27,7 +27,7 @@ namespace Florine
             _foundry.LoadFood();
             return GetCurrentPage();
         }
-
+        public IPlatformFoundry CurrentFoundry { get { return _foundry; } }
         public GameState CurrentState { get { return _context; } }
 
         public IPage GetCurrentPage() {

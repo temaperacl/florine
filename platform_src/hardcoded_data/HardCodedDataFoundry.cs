@@ -142,17 +142,17 @@ namespace FlorineHardCodedData
 
         List<Nutrient> _nutrients = new List<Nutrient>()
         {
-            Carbs,
             Proteins,
+            Carbs,
             Fats,
-            Vitamin_A,
-            Vitamin_B12,
-            Calcium,
-            Potassium,
-            Iron,
+            Fiber,
+            Folic_Acid,
             Vitamin_D,
-            Folic_Acid
-
+            Calcium,
+            Iron,
+            Potassium,
+            Vitamin_B12,
+            Vitamin_A
         };
 
         public class EndDayActivity : Activity
@@ -594,9 +594,8 @@ namespace FlorineHardCodedData
                     hcPage.Title = "A New Day!";
                     switch (Day)
                     {
-                        case 0:
-                            hcPage.Message = "Fiber Color";
-                            //hcPage.Message = "Welcome to a new day. Let's see what today holds!";
+                        case 0:                            
+                            hcPage.Message = "Welcome to a new day. Let's see what today holds!";
                             break;
                         case 1:
                             hcPage.Message = "You don’t need to eat a lot to feel full - try eating more fiber(with fiber in the same green as on the nutrient bars).";
