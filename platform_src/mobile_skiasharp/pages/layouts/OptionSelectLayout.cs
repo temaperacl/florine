@@ -28,7 +28,7 @@ namespace FlorineSkiaSharpForms
         {
             if (null != Description)
             {
-                grid.Children.Add(Description, 0*12, 29, 16, 28);
+                grid.Children.Add(Description, 12, 29, 17, 27);
             }
             base.PostLayout(IsTall, grid, GameController, GameFoundry, SourcePage);
         }

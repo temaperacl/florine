@@ -75,6 +75,7 @@ namespace FlorineSkiaSharpForms
         }
         Player ActualPlayerBase;
         PlayerAvatar ActualPlayer;
+        
         SKCanvasView PlayerView;
         Dictionary<SKCanvasView, SKColor> ColSel = new Dictionary<SKCanvasView, SKColor>();
         Dictionary<SKCanvasView, AspectImage> _rmI = new Dictionary<SKCanvasView, AspectImage>();
@@ -143,7 +144,7 @@ namespace FlorineSkiaSharpForms
                 SKCanvasView canvas = new SKCanvasView();
                 canvas.PaintSurface += ColorBoxFill;
                 //ai.ConnectCanvasView(canvas);
-                Opy[type].Add(canvas);
+                ColOpy[type].Add(canvas);
                 ColSel[canvas] = Target;
                 _rmT[canvas] = type;
                 FlorineSkiaTapWrap.Associate(canvas, SetColor);
@@ -167,6 +168,15 @@ namespace FlorineSkiaSharpForms
         private string ActiveBodyType = "Box";
         private Dictionary<string, Grid> gridList = new Dictionary<string, Grid>();
         private Dictionary<string, List<SKCanvasView>> Opy = new Dictionary<string, List<SKCanvasView>>()
+        {
+            { "hair", new List<SKCanvasView>() },
+            { "face", new List<SKCanvasView>() },
+            { "clothes", new List<SKCanvasView>() },
+            { "wings", new List<SKCanvasView>() },
+            { "body", new List<SKCanvasView>() },
+            { "misc", new List<SKCanvasView>() },
+        };
+        private Dictionary<string, List<SKCanvasView>> ColOpy = new Dictionary<string, List<SKCanvasView>>()
         {
             { "hair", new List<SKCanvasView>() },
             { "face", new List<SKCanvasView>() },

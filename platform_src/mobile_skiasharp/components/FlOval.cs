@@ -88,7 +88,10 @@ namespace FlorineSkiaSharpForms
 
         protected SKRect RatioBox(SKRect boundingBox)
         {
-
+            if (float.IsNaN(ovalRatio))
+            {
+                return boundingBox;
+            }
             float BoundRatio = boundingBox.Height / boundingBox.Width;
             //float scaler = 1;
             float newWidth = boundingBox.Width;

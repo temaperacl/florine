@@ -31,6 +31,7 @@ namespace FlorineSkiaSharpForms
                    new FlOval() {
                        backgroundColor = new SKPaint() { Color = new SKColor(0,80,190, 230)},
                        Shape = FlOval.OvalType.Rectangle,
+                       ovalRatio = float.NaN,
                        innerHighlight =  new SKColor(100,250,250, 255),
                    }
                 }

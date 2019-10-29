@@ -153,7 +153,11 @@ namespace FlorineSkiaSharpForms
                 grid.Children.Add(_Text("Macronutrients"), 11, 20, 8, 10);
                 grid.Children.Add(_DivBar(MacroNutrients), 20, 30, 8, 10);
 
-                grid.Children.Add(_Text("Energy"), 15, 20, 10, 12);
+
+                int EnergyY = 20;
+                int FocusY = EnergyY + 3;
+                
+                grid.Children.Add(_Text("Energy"), 15, 20, EnergyY, EnergyY + 2);
                 grid.Children.Add(
                     _GradientBar(
                         0.0,
@@ -163,10 +167,10 @@ namespace FlorineSkiaSharpForms
                         false,
                         true
                      ),
-                    20, 30, 10, 12
+                    20, 30, EnergyY, EnergyY + 2
                 );
 
-                grid.Children.Add(_Text("Focus"), 15, 20, 12, 14);
+                grid.Children.Add(_Text("Focus"), 15, 20, FocusY, FocusY + 2);
                 grid.Children.Add(
                     _GradientBar(
                         0.0,
@@ -176,9 +180,8 @@ namespace FlorineSkiaSharpForms
                         false,
                         true
                      ),
-                    20, 30, 12, 14
+                    20, 30, FocusY, FocusY + 2
                 );
-
             }
             base.PostLayout(IsTall, grid, GameController, GameFoundry, CurrentPage);
             return;

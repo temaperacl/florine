@@ -39,7 +39,7 @@ namespace Florine
 		{
 			//Raw Calories.
 			HoursIntoDay += (double)Hours;
-			double target_kcal = 2000.0 * HoursIntoDay/24;
+            double target_kcal = 2000.0; // * HoursIntoDay/24;
 			double current_kcal = 0
 				+ 9 * Nutrients["Fat"]
 				+ 4 * Nutrients["Protein"]
