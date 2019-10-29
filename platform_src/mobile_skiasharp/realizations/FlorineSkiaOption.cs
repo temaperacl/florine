@@ -38,7 +38,7 @@ namespace FlorineSkiaSharpForms
             };
             private SKCanvasView _MainCanvas;
             private string _toDisp;
-            public void DisplayIt(string S)
+            public void DisplayIt(string S, List<String> Details = null)
             {
                 if (null == _MainCanvas) { return; }
                 if (S == string.Empty)
@@ -48,11 +48,16 @@ namespace FlorineSkiaSharpForms
                     return;
                 }
                 _toDisp = S;
+                if (null != Details)
+                {
+                    _toDisp += string.Join("\n", Details);
+                }
                 if (_layers.Layers.Count > 1) { _layers.Layers.RemoveAt(0); }
                 _layers.Layers.Insert(
                     0,
                     new ImageText(_toDisp) {
                     Overflow = ImageText.WrapType.WordWrap,
+                    VAlign = ImageText.VerticalAlignment.Top,
                     FontSize = 36.0f,                   
                 } );
                 if (null != _MainCanvas) { _MainCanvas.IsVisible = true; }
@@ -177,11 +182,34 @@ namespace FlorineSkiaSharpForms
                     if (null != showOpt)
                     {
                         string Description = showOpt.Description;
-                        Food fOpt = showOpt.SourceOpt as Food;
+                        List<string> Details = new List<string>();
+                        Food.FoodOption fOpt = showOpt.SourceOpt as Food.FoodOption;
                         if (null != fOpt)
-                        {
+                        {                            
+                            if (fOpt.Parent.IsKnown)
+                            {
+
+                                StringBuilder SB = new StringBuilder();
+                                SB.Append("Calories").Append(": ").Append(fOpt.Parent.Nutrients.AsCalories()).AppendLine();
+                                Details.Add(SB.ToString());
+                                foreach (KeyValuePair<Nutrient,NutrientAmount> kvp in fOpt.Parent.Nutrients) {
+                                    if (kvp.Value > double.Epsilon)
+                                    {
+                                        if (kvp.Key.Class == Nutrient.NutrientType.Macro)
+                                        {
+                                            Details.Add(kvp.Key.Name + ": " + kvp.Value.ToString("F0") + "g");
+                                        }
+                                        else
+                                        {
+                                            float Ratio = kvp.Key.RatioRDV(kvp.Value);
+                                            string RatioString = Ratio.ToString("P0");
+                                            Details.Add(kvp.Key.Name + ": " + RatioString);
+                                        }
+                                    }
+                                }
+                            }
                         }
-                        UpdaterHook.DisplayIt(showOpt.Description);
+                        UpdaterHook.DisplayIt(Description, Details);
                     }
                     return true;
                 }

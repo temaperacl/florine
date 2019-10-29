@@ -170,7 +170,7 @@ namespace FlorineSkiaSharpForms
                     switch (Shape)
                     {
                         case OvalType.Oval:
-                            path.AddArc(innerBounds, fAngle, ringValue.Item1);
+                            path.AddArc(bounds, fAngle, ringValue.Item1);
                             break;
                         case OvalType.Rectangle:
                             path.AddRoundRect(bounds, 5f, 5f);
@@ -212,10 +212,10 @@ namespace FlorineSkiaSharpForms
             }
 
             SKRect innerRingBound = new SKRect(
-                innerBounds.Left + 2,// + ringWidth / 2,
-                innerBounds.Top + 2,// + ringWidth /2,
-                innerBounds.Right - 2,// - ringWidth /2,
-                innerBounds.Bottom - 2);// - ringWidth / 2);
+                innerBounds.Left ,// + ringWidth / 2,
+                innerBounds.Top ,// + ringWidth /2,
+                innerBounds.Right ,// - ringWidth /2,
+                innerBounds.Bottom );// - ringWidth / 2);
 
 
             SKPaint BackPaint = new SKPaint()

@@ -106,32 +106,60 @@ namespace FlorineSkiaSharpForms
                 grid.Children.Add(CalorieView, 10, 29, 4, 6);
 
                 SortedDictionary<float, SKColor> MicroNutrients = new SortedDictionary<float, SKColor>();
+                SortedDictionary<float, SKColor> MicroPotential = new SortedDictionary<float, SKColor>();
                 SortedDictionary<float, SKColor> MacroNutrients = new SortedDictionary<float, SKColor>();
                 float microNut = 0f;
+                float microPot = 0f;
                 float macroNut = 0f;
                 foreach (KeyValuePair<Nutrient, NutrientAmount> kvp in PC.Nutrients)
                 {
                     FlorineSkiaNutrient AdjNut = new FlorineSkiaNutrient(kvp.Key);
                     float curRatio = kvp.Key.RatioRDV(kvp.Value);
-                    if (curRatio > 2f) { curRatio = 2f; }
-                    if (curRatio <= 0f) { continue; }
 
                     switch (kvp.Key.Class)
                     {
                         case Nutrient.NutrientType.Macro:
+                            if (curRatio > 2f) { curRatio = 2f; }
+                            if (curRatio <= 0f) { continue; }
                             curRatio /= 8f;
                             macroNut += curRatio;
                             MacroNutrients.Add(macroNut, AdjNut.RingColor);
                             break;
                         case Nutrient.NutrientType.Mineral:
                         case Nutrient.NutrientType.Vitamin:
-                            curRatio /= 12f;
-                            microNut += curRatio;
-                            MicroNutrients.Add(microNut, AdjNut.RingColor);
+                            if (curRatio > 1f) { curRatio = 1f; }
+                            float fRestRatio = float.NaN;
+                            if (curRatio < 1f)
+                            {
+                                fRestRatio = 1f - curRatio;
+                                fRestRatio /= 7f;
+                            }
+                            curRatio /= 7f;
+                            microPot += 1f / 7f;
+
+                            if (curRatio > float.Epsilon)
+                            {
+                                microNut += curRatio;
+                                MicroNutrients.Add(microNut, AdjNut.RingColor);
+                            }
+                            if (!float.IsNaN(fRestRatio))
+                            {
+                                microNut += fRestRatio;
+                                MicroNutrients.Add(microNut, SKColors.Transparent);
+                            }
+                            SKColor newCol = new SKColor(
+                                AdjNut.RingColor.Red,
+                                AdjNut.RingColor.Green,
+                                AdjNut.RingColor.Blue,
+                                80
+                                );
+                            MicroPotential.Add(microPot, newCol);
                             break;
                     }
                 }
                 grid.Children.Add(_Text("Vitamins"), 1, 10, 6, 8);
+                //grid.Children.Add(_DivBar(WhiteBar), 20, 29, 6, 8);
+                grid.Children.Add(_DivBar(MicroPotential), 10, 30, 6, 8);
                 grid.Children.Add(_DivBar(MicroNutrients), 10, 30, 6, 8);
 
                 grid.Children.Add(_Text("Nutrients"), 1, 10, 8, 10);
@@ -179,7 +207,7 @@ namespace FlorineSkiaSharpForms
                 });
                 View moneyGrid = MoneyView.RenderView(PC.Money, false);                
                 View HappinessGrid = Happiness.RenderView(PC.Happiness, false);
-                View TotalText = new FlorineSkiaCVWrap(new ImageText("Total"));
+                View TotalText = new FlorineSkiaCVWrap(new ImageText("Total") { FontSize = 48f, Overflow = ImageText.WrapType.None });
                 
 
                 View tdBackView = new FlorineSkiaCVWrap(new FlOval()
@@ -191,17 +219,19 @@ namespace FlorineSkiaSharpForms
                 });
                 View tdmoneyGrid = MoneyView.RenderView(PC.MoneyToDate, false);
                 View tdHappinessGrid = Happiness.RenderView(PC.HappinessToDate, false);
-                View tdTotalText = new FlorineSkiaCVWrap(new ImageText("Today"));
+                View tdTotalText = new FlorineSkiaCVWrap(new ImageText("Today") { FontSize = 48f, Overflow = ImageText.WrapType.None });
 
+                int TotalY = 13;
+                int TodayY = 10;
                 //grid.Children.Add(BackView, 0, 30, 10, 14);
-                grid.Children.Add(TotalText, 2, 9,       11, 13);
-                grid.Children.Add(moneyGrid, 8, 17,      10, 13);
-                grid.Children.Add(HappinessGrid, 18, 28, 10, 13);
+                grid.Children.Add(TotalText, 2, 9,       TotalY + 1, TotalY + 3);
+                grid.Children.Add(moneyGrid, 8, 17, TotalY, TotalY +3 );
+                grid.Children.Add(HappinessGrid, 18, 28, TotalY, TotalY + 3);
 
                 //grid.Children.Add(tdBackView, 0, 30, 14, 18);
-                grid.Children.Add(tdTotalText, 2, 9, 14, 16);
-                grid.Children.Add(tdmoneyGrid, 8, 17, 13, 16);
-                grid.Children.Add(tdHappinessGrid, 18, 28, 13, 16);
+                grid.Children.Add(tdTotalText, 2, 9, TodayY+1, TodayY+3);
+                grid.Children.Add(tdmoneyGrid, 8, 17, TodayY, TodayY + 3);
+                grid.Children.Add(tdHappinessGrid, 18, 28, TodayY, TodayY + 3);
 
 
             }

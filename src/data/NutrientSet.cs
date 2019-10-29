@@ -46,7 +46,12 @@ namespace Florine
         {
             return GetEnumerator();
         }
-
+        public Florine.NutrientAmount AsCalories()
+        {
+            return 9 * Nutrients["Fat"]
+                + 4 * Nutrients["Protein"]
+                + 4 * Nutrients["Carbohydrates"];
+        }
         public void Add(object o)
         {
         }

@@ -132,8 +132,8 @@ namespace FlorineSkiaSharpForms
                 grid.Children.Add(CalorieView, 20, 29, 4, 6);
                 SortedDictionary<float, SKColor> WhiteBar = new SortedDictionary<float, SKColor>()
                 {
-                    { 0f, new SKColor(255,255,255,20) },
-                    { 1f, new SKColor(255,255,255,20) },
+                    { 0f, new SKColor(255,255,255,60)},
+                    { 1f, new SKColor(255,255,255,60) },
                 };
                 SortedDictionary<float, SKColor> MicroNutrients = new SortedDictionary<float, SKColor>();
                 SortedDictionary<float, SKColor> MicroPotential = new SortedDictionary<float, SKColor>();

@@ -594,11 +594,11 @@ namespace FlorineHardCodedData
                     hcPage.Title = "A New Day!";
                     switch (Day)
                     {
-                        case 0:                            
+                        default:                            
                             hcPage.Message = "Welcome to a new day. Let's see what today holds!";
                             break;
                         case 1:
-                            hcPage.Message = "You don’t need to eat a lot to feel full - try eating more fiber(with fiber in the same green as on the nutrient bars).";
+                            hcPage.Message = "You don’t need to eat a lot to feel full - try eating more Fiber.";
                             break;
                     }
                     Day++;

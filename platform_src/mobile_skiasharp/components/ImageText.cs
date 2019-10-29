@@ -14,6 +14,12 @@ namespace FlorineSkiaSharpForms
         public ImageText(String text) { Text = text; }
         public bool AutoBackground { get; set; } = false;
         public float FontSize = 64.0f;
+        public enum VerticalAlignment
+        {
+            Top, 
+            Center
+        }
+        public VerticalAlignment VAlign { get; set; } = VerticalAlignment.Center;
         public enum WrapType
         {
             None,
@@ -72,7 +78,7 @@ namespace FlorineSkiaSharpForms
             }
 
             SKFontMetrics FM = paint.FontMetrics;
-            float lineStart = FM.Leading - FM.Top + 5;
+            float lineStart = FM.Leading - FM.Top + FM.Bottom + 25f;
             float lineSpacing = FM.Leading - FM.Top + FM.Bottom;
 
 
@@ -84,7 +90,7 @@ namespace FlorineSkiaSharpForms
             }
             if (Overflow == WrapType.WordWrap || Overflow == WrapType.DiamondWrap)
             {
-                string[] words = Text.Trim().Split(new char[] { ' ' });
+                string[] firstWords = Text.Trim().Split(new char[] { ' ' });
                 StringBuilder curLine = new StringBuilder();
                 float LineLength = 0;
                 float maxLineLength = boundingBox.Width * .75f;
@@ -97,12 +103,30 @@ namespace FlorineSkiaSharpForms
                         lineSpacing * 2f
                     );
                 }
+                List<string> words = new List<string>();
+                foreach (string word in firstWords)
+                {
+                    if (word.Contains("\n"))
+                    {
+                        string[] subWords = word.Split(new char[] { '\n' });
+                        for (int i = 0; i < subWords.Length; ++i)
+                        {
+                            if (i > 0) { words.Add("\n"); }
+                            words.Add(subWords[i]);
+                        }
+                        
+                    }
+                    else
+                    {
+                        words.Add(word);
+                    }
+                }
                 foreach (string word in words)
                 {
-                    if (word.Length == 0) { continue; }
+                    if (word.Length == 0) { continue; }                    
                     float wordLen = paint.MeasureText(word);
-                    if (LineLength + wordLen > maxLineLength)
-                    {
+                    if (LineLength + wordLen > maxLineLength || word == "\n")
+                    {                        
                         lines.Add(curLine.ToString());
                         curLine.Clear();
                         LineLength = 0;
@@ -116,12 +140,18 @@ namespace FlorineSkiaSharpForms
                             );
                         }
                     }
-                    curLine.Append(" ").Append(word);
-                    LineLength += wordLen;
+                    if (word != "\n")
+                    {
+                        curLine.Append(" ").Append(word);
+                        LineLength += wordLen;
+                    }
                 }
                 lines.Add(curLine.ToString());
                 // ...
-                lineStart = boundingBox.Height / 2 - lineSpacing * lines.Count / 2 + lineSpacing * .75f;
+                if (VAlign == VerticalAlignment.Center)
+                {
+                    lineStart = boundingBox.Height / 2 - lineSpacing * lines.Count / 2 + lineSpacing * .75f;
+                }
             }
 
             //canvas.DrawRect(0f, boundingBox.Top + lineStart, boundingBox.Width, lineSpacing * lines.Count, new SKPaint() { Color = new SKColor(0, 122, 122) });            
@@ -143,6 +173,7 @@ namespace FlorineSkiaSharpForms
                     boundingBox.Top + lineStart + lineSpacing * lines.Count
                     ));
             }
+
             for (int i = 0; i < lines.Count; ++i)
             {
                 float boundingMidX = boundingBox.Left + boundingBox.Width / 2;
