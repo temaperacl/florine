@@ -30,6 +30,7 @@ namespace FlorineSkiaSharpForms
                 Opy[type].Insert(0, y);
                 gridList[type].Children.Remove(x);
                 gridList[type].Children.Add(Opy[type][0], 1, 4, 0, 1);
+                SetChosenItem(Opy[type][0]);
             }
         }
         private void NextClothes(object sender, FlorineSkiaTapWrap.TapEventArgs e)
@@ -43,29 +44,34 @@ namespace FlorineSkiaSharpForms
                 Opy[type].Add(x);
                 gridList[type].Children.Remove(x);
                 gridList[type].Children.Add(Opy[type][0], 1, 4, 0, 1);
+                SetChosenItem(Opy[type][0]);
             }
+            
         }
 
-        
+
         private void SetComponentImage(object sender, FlorineSkiaTapWrap.TapEventArgs e)
         {
             FlorineSkiaTapWrap fstw = sender as FlorineSkiaTapWrap;
-            if ( null != fstw && null != PlayerView  && null != ActualPlayer )
+            if (null != fstw && null != PlayerView && null != ActualPlayer)
             {
-                SKCanvasView scv = fstw.Tie;
-                AspectImage ai;
-                if (_rmI.TryGetValue(scv, out ai))
-                {
-                    switch (_rmT[scv]) {
-                        case "clothes": ActualPlayer.Clothes = ai.baseImage; break;
-                        case "hair": ActualPlayer.Hair = ai.baseImage; break;
-                        case "wings": ActualPlayer.Wings = ai.baseImage; break;
-                        case "face": ActualPlayer.Face = ai.baseImage; break;                        
-                    }
-                    
-                    PlayerView.InvalidateSurface();
-                }
+                SetChosenItem(fstw.Tie);
             }
+        }
+        private void SetChosenItem(SKCanvasView scv)
+        {    
+            AspectImage ai;
+            if (_rmI.TryGetValue(scv, out ai))
+            {
+                switch (_rmT[scv]) {
+                    case "clothes": ActualPlayer.Clothes = ai.baseImage; break;
+                    case "hair": ActualPlayer.Hair = ai.baseImage; break;
+                    case "wings": ActualPlayer.Wings = ai.baseImage; break;
+                    case "face": ActualPlayer.Face = ai.baseImage; break;                        
+                }
+                    
+                PlayerView.InvalidateSurface();
+            }   
         }
         
         //public class ComponentSelector
@@ -226,6 +232,10 @@ namespace FlorineSkiaSharpForms
             { "body", new List<SKCanvasView>() },
             { "misc", new List<SKCanvasView>() },
         };
+
+
+        Dictionary<string, Dictionary<string, SKImage>> srk = new Dictionary<string, Dictionary<string, SKImage>>();
+
         private View SetupSelector(string type)
         {
             
@@ -233,7 +243,9 @@ namespace FlorineSkiaSharpForms
             switch (type) {
                 case "hair": Target = "01_hair/100%"; break;
                 case "face": Target = "02_faces/100"; break;
-                case "clothes": Target = "03_clothes/" + ActiveBodyType + "/100%"; break;
+                case "clothes":
+                    Target = "03_clothes/" + ActiveBodyType + "/100%";
+                    break;
                 case "wings": Target = "05_wings/100%"; break;
             }
             Dictionary<string, SKImage> clothes = ResourceLoader.ImageList("customization/" + Target);
