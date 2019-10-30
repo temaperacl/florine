@@ -80,6 +80,12 @@ namespace FlorineSkiaSharpForms
         Dictionary<SKCanvasView, SKColor> ColSel = new Dictionary<SKCanvasView, SKColor>();
         Dictionary<SKCanvasView, AspectImage> _rmI = new Dictionary<SKCanvasView, AspectImage>();
         Dictionary<SKCanvasView, string> _rmT = new Dictionary<SKCanvasView, string>();
+        Dictionary<string, List<AspectImage>> _lookups = new Dictionary<string, List<AspectImage>>();
+        Dictionary<string, SKColor> _colCheck = new Dictionary<string, SKColor>()
+        {
+            { "hair", new SKColor(255,240,225) }
+        };
+
         private void SetColor (object sender, FlorineSkiaTapWrap.TapEventArgs e)
         {
             FlorineSkiaTapWrap fstw = sender as FlorineSkiaTapWrap;
@@ -113,14 +119,49 @@ namespace FlorineSkiaSharpForms
                             0,     0,     0,     1, 0
                         })
                     };
-                    switch (_rmT[scv])
-                    {                        
-                        case "hair": ActualPlayer.HairPaint = newPaint; break;
-                        case "wings": ActualPlayer.WingPaint = newPaint; break;
-                        case "body": ActualPlayer.BodyPaint = newPaint; break;
-                    }
+                    
+                    _colCheck[_rmT[scv]] = ai;
+                    UpdateRefColor(_rmT[scv], newPaint);
                     PlayerView.InvalidateSurface();
+                    if (Opy.ContainsKey(_rmT[scv]) && Opy[_rmT[scv]].Count > 0)
+                    {
+                        Opy[_rmT[scv]][0].InvalidateSurface();
+                    }
                 }
+            }
+        }
+        private SKPaint PaintFor(SKColor ai)
+        {
+            float fR = ((float)ai.Red) / 255f;
+            float fG = ((float)ai.Green) / 255f;
+            float fB = ((float)ai.Blue) / 255f;
+            return new SKPaint()
+            {
+                ColorFilter =
+                SKColorFilter.CreateColorMatrix(new float[]
+                {
+                            fR*0.21f, fR*0.72f, fR*0.07f, 0, 0,
+                            fG*0.21f, fG*0.72f, fG*0.07f, 0, 0,
+                            fB*0.21f, fB*0.72f, fB*0.07f, 0, 0,
+                            0,     0,     0,     1, 0
+                })
+            };
+        }
+        private void UpdateRefColor(string ItemType, SKPaint paint)
+        {
+            //_colCheck[ItemType]
+            if (_lookups.ContainsKey(ItemType))
+            {
+                foreach (AspectImage ai in _lookups[ItemType])
+                {
+                    ai.OverlayPaint = paint;
+                }
+            }
+            switch (ItemType)
+            {
+                case "hair": ActualPlayer.HairPaint = paint; break;
+                case "wings": ActualPlayer.WingPaint = paint; break;
+                case "body": ActualPlayer.BodyPaint = paint; break;
             }
         }
         private View ColorSelector(string type, SKColor[] Targets)
@@ -197,7 +238,8 @@ namespace FlorineSkiaSharpForms
             }
             Dictionary<string, SKImage> clothes = ResourceLoader.ImageList("customization/" + Target);
             //int i = 0;            
-
+            
+            _lookups[type] = new List<AspectImage>();
             foreach (KeyValuePair<string, SKImage> kvp in clothes)
             {
                 SKCanvasView canvas = new SKCanvasView();
@@ -205,6 +247,7 @@ namespace FlorineSkiaSharpForms
                 ai.ConnectCanvasView(canvas);
                 _rmI[canvas] = ai;
                 _rmT[canvas] = type;
+                _lookups[type].Add(ai);
                 Opy[type].Add(canvas);
 
                 //                 
@@ -227,20 +270,45 @@ namespace FlorineSkiaSharpForms
                 FlorineSkiaTapWrap.Associate(Right, NextClothes);
                 subGrid.Children.Add(Left, 0, 2, 0, 1);
                 subGrid.Children.Add(Right, 3, 5, 0, 1);
-                gridList[type] = subGrid;
-                
-
-
-                /*int Coverage = 5;
-                int X = (i % 6) * Coverage;
-                int Y = (i / 6) * Coverage + 17;
-                grid.Children.Add(canvas, X, X + Coverage, Y, Y + Coverage);
-                i++;*/
+                gridList[type] = subGrid;            
             }
             gridList[type].Children.Add(Opy[type][0], 1, 4, 0, 1);
+            switch (type)
+            {
+                case "hair":
+                    LeftShift(type, Opy[type], 1);
+                    ActualPlayer.Hair = _rmI[Opy["hair"][0]].baseImage;
+                    break;
+                case "wings":
+                    LeftShift(type, Opy[type], 0);
+                    ActualPlayer.Wings = _rmI[Opy["wings"][0]].baseImage;
+                    break;
+                case "body":                    
+                    ActualPlayer.Body = _rmI[Opy["body"][0]].baseImage;
+                    break;
+                case "clothes":
+                    LeftShift(type, Opy[type], 3);
+                    ActualPlayer.Clothes = _rmI[Opy["clothes"][0]].baseImage;
+                    break;
+                case "face":
+                    LeftShift(type, Opy[type], 3);
+                    ActualPlayer.Face = _rmI[Opy["face"][0]].baseImage;
+                    break;
+
+            }
 
             return gridList[type];
         }
+        private void LeftShift(string type, List<SKCanvasView> list, int amount) {
+            for (int i = 0; i < amount; ++i)
+            {
+                list.Add(list[0]);
+                gridList[type].Children.Remove(list[0]);                
+                list.RemoveAt(0);
+                gridList[type].Children.Add(list[0], 1, 4, 0, 1);
+            }
+        }
+
         protected override void LayoutComponentWide(Grid grid, PageComponentType t, View v, int CurrentOption, int OptionCount)
         {
             base.LayoutComponentWide(grid, t, v, CurrentOption, OptionCount);
@@ -331,6 +399,10 @@ namespace FlorineSkiaSharpForms
             
             NameEntry.TextChanged += NameEntry_TextChanged;
             grid.Children.Add(NameEntry, 0, 30, 0, 4);
+            SKPointI ClothesStart = new SKPointI(5,22);
+            SKPointI WingStart = new SKPointI(15,16);
+            SKPointI HairStart = new SKPointI(5,16);
+            SKPointI FaceStart = new SKPointI(15,22);
 
             grid.Children.Add(Oval(0, 0, 200, 120,  2f),  0, 10, 2, 15);
             grid.Children.Add(Oval(0, 0, 200, 120,  2f), 10, 20, 2, 15);
@@ -345,27 +417,43 @@ namespace FlorineSkiaSharpForms
                 new SKColor(113,50,20),   // 6
             }), 4, 26, 14, 16);
             
-            grid.Children.Add(Oval(0, 0, 200, 120, 1f), 0, 10, 16, 22);
-            grid.Children.Add(Oval(0, 0, 200, 120, 1f), 10, 20, 16, 22);
-            grid.Children.Add(Oval(0, 0, 200, 120, 1f), 20, 30, 16, 22);
+            grid.Children.Add(Oval(0, 0, 200, 120, 1f), ClothesStart.X, ClothesStart.X + 10, ClothesStart.Y, ClothesStart.Y+6);
+            grid.Children.Add(Oval(0, 0, 200, 120, 1f), WingStart.X, WingStart.X + 10, WingStart.Y, WingStart.Y + 6);
+            grid.Children.Add(Oval(0, 0, 200, 120, 1f), HairStart.X, HairStart.X + 10, HairStart.Y, HairStart.Y + 6);
             
-            grid.Children.Add(SetupSelector("clothes"), 0, 10, 16, 22);
-            grid.Children.Add(SetupSelector("wings"), 10, 20, 16, 22);
-            grid.Children.Add(SetupSelector("hair"), 20, 30, 16, 22);
+            grid.Children.Add(SetupSelector("clothes"), ClothesStart.X, ClothesStart.X + 10, ClothesStart.Y, ClothesStart.Y + 6);
+            grid.Children.Add(SetupSelector("wings"), WingStart.X, WingStart.X + 10, WingStart.Y, WingStart.Y + 6);
+            grid.Children.Add(SetupSelector("hair"), HairStart.X, HairStart.X + 10, HairStart.Y, HairStart.Y + 6);
             grid.Children.Add(ColorSelector("hair", new SKColor[] {
                 new SKColor(202,191,177),
-                new SKColor(255,240,225),
-                new SKColor(230,206,168),
-                new SKColor(222,188,153),
-                new SKColor(181,82,57)
-            }), 21, 29, 22, 23);
+                new SKColor(255,208,115,120),
+                new SKColor(255,240,225),                
+            }), 1, 6, HairStart.Y+1, HairStart.Y + 2);//21, 29, 22, 23);
             grid.Children.Add(ColorSelector("hair", new SKColor[] {
+                new SKColor(230,206,168),
+                new SKColor(222,188,153),                
                 new SKColor(143,70,29),
+            }), 1, 6, HairStart.Y+2 , HairStart.Y + 3);//21, 29, 22, 23);
+
+            grid.Children.Add(ColorSelector("hair", new SKColor[] {
                 new SKColor(106,78,66),                
                 new SKColor(83,61,53),
-                new SKColor(9,8,6),
-                new SKColor(145,75,67)
-            }), 21, 29, 23, 24);
+                new SKColor(9,8,6),                
+            }), 1, 6, HairStart.Y + 3, HairStart.Y + 4);//21, 29, 22, 23);
+
+            grid.Children.Add(ColorSelector("hair", new SKColor[] {
+                new SKColor(145,75,67),
+                new SKColor(181,82,57),                
+                new SKColor(205,75,67)
+            }), 1, 6, HairStart.Y + 4, HairStart.Y + 5);//21, 29, 22, 23);
+
+
+            grid.Children.Add(Oval(0, 0, 200, 120, 1f), FaceStart.X, FaceStart.X + 10, FaceStart.Y, FaceStart.Y + 6);
+            grid.Children.Add(SetupSelector("face"), FaceStart.X, FaceStart.X + 10, FaceStart.Y, FaceStart.Y + 6);
+
+            UpdateRefColor("hair", PaintFor(new SKColor(230, 206, 168)));            
+            //
+
             grid.Children.Add(PlayerView, 11, 19, 3, 14);            
         }
 

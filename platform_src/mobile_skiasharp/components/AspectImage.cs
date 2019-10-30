@@ -22,7 +22,7 @@ namespace FlorineSkiaSharpForms
         }
         protected virtual bool NeedImage { get { return true; } }
         public int ImageKey { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-
+        public SKPaint OverlayPaint { get; set; } = null;
         private SKImage _image = null;
         private float imageRatio = 1f;
 
@@ -92,6 +92,7 @@ namespace FlorineSkiaSharpForms
         public void Draw(SKCanvas canvas, SKRect boundingBox, SKPaint paint = null)
         {
             if (_image == null && NeedImage) { return; }
+            if(paint == null && OverlayPaint != null) { paint = OverlayPaint; }
             DrawImage(canvas, RatioBox(boundingBox), paint);
             return;
         }

@@ -37,10 +37,27 @@ namespace Florine
         // Just Derive?        
         public IEnumerator<KeyValuePair<Nutrient, NutrientAmount>> GetEnumerator()
         {
-            foreach (KeyValuePair<string, NutrientAmount> kvp in Nutrients)
+            List<string> NutrientRainbowOrder = new List<string>()
             {
-                yield return new KeyValuePair<Nutrient, NutrientAmount>(_LastNutrients[kvp.Key], kvp.Value);
-            }            
+                "Calcium",
+                "Potassium",
+                "Vitamin D",
+                "Folic Acid",
+                "Vitamin B12",
+                "Vitamin A",
+                "Iron",
+                "Protein",
+                "Carbohydrates",
+                "Fat",
+                "Fiber"
+            };
+            foreach (string s in NutrientRainbowOrder)
+            {
+                if (Nutrients.ContainsKey(s))
+                {
+                    yield return new KeyValuePair<Nutrient, NutrientAmount>(_LastNutrients[s], Nutrients[s]);
+                }
+            }
         }
         System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
         {
