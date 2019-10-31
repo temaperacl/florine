@@ -23,6 +23,15 @@ namespace FlorineHardCodedData
                 List<NutrientAmount> l = kvp.Value;
                 _foodIdx[kvp.Key] = _foodIdx.Count;
                 NutrientAmount n = l[12];
+                string nDesc = kvp.Key;
+                switch (kvp.Key) {
+                    case "White Toast":
+                        nDesc = "White Toast\n\n A couple slices of plain white toast";
+                        break;
+                    case "Wheat Toast":
+                        nDesc = "Wheat Toast\n\n Two slices of wheat toast";
+                        break;
+                }
                 _foodstuffs.Add(new Food() {
                     Name = kvp.Key,
                     Nutrients = new NutrientSet() {
@@ -38,7 +47,7 @@ namespace FlorineHardCodedData
                         {Vitamin_B12,l[10] * n},
                         {Vitamin_A,  l[11] * n}
                     },
-                    Description = kvp.Key // Food Description
+                    Description = nDesc // Food Description
                 });
             }
 
@@ -129,8 +138,10 @@ namespace FlorineHardCodedData
         static Nutrient Vitamin_D = new Nutrient() {
             Name = "Vitamin D",
             Class = Nutrient.NutrientType.Vitamin,
-            Units = NutrientUnit.IU,
-            DailyTarget = 600
+            //Units = NutrientUnit.IU,
+            //DailyTarget = 600
+            Units = NutrientUnit.mcg,
+            DailyTarget=600 * .025
         };
         static Nutrient Folic_Acid = new Nutrient() {
             Name = "Folic Acid",
@@ -183,16 +194,41 @@ namespace FlorineHardCodedData
                     case GameState.PageType.Summarize_Activity:
                         if (gs.CurrentPage.SubType == GameState.PageSubType.Breakfast)
                         {
-                            return new Activity()
+                            if (Day == 1)
                             {
-                                Impact = new NutrientSet(),
-                                OptionName = "At Work",
-                                Description = gs.Player.Name + " is doing well at work this morning. She completed 27 measurements!",
-                            };
+                                return new Activity()
+                                {
+                                    Impact = new NutrientSet(),
+                                    OptionName = "At Work",
+                                    Description = gs.Player.Name + " is doing well at work this morning. She completed 27 measurements!",
+                                };
+                            }
+                            else
+                            {
+                                return new Activity()
+                                {
+                                    Impact = new NutrientSet(),
+                                    OptionName = "At Work",
+                                    Description = gs.Player.Name + " had a wonderful morning! She did a great job training a new coworker.",
+                                };
+                            }
                         }
                         else if (gs.CurrentPage.SubType == GameState.PageSubType.Lunch)
                         {
                             int nPay = 0;
+                            string WorkDesc = gs.Player.Name + " worked today";
+                            switch(Day) {
+                                case 1:
+                                    gs.Player.Energy = 30;
+                                    gs.Player.Focus = 20;
+                                    WorkDesc = gs.Player.Name + " really just wanted a nap this afternoon.";
+                                    break;
+                                case 2:
+                                    WorkDesc = gs.Player.Name + " was on fire today! She wrangled six dragonflies.";
+                                    gs.Player.Energy = 60;
+                                    gs.Player.Focus = 80;
+                                    break;
+                            } 
                             switch (Day) {
                                 case 1:
                                     nPay = 3;
@@ -208,7 +244,7 @@ namespace FlorineHardCodedData
                             {
                                 Impact = new NutrientSet(),
                                 OptionName = "At Work",
-                                Description = gs.Player.Name + " had a productive day. She wrote a blog post about her latest discovery!",
+                                Description = WorkDesc,
                                 Pay = nPay
                             };
                         }
@@ -599,7 +635,13 @@ namespace FlorineHardCodedData
                             hcPage.Message = "Welcome to a new day. Let's see what today holds!";
                             break;
                         case 1:
-                            hcPage.Message = "You don’t need to eat a lot to feel full - try eating more Fiber.";
+                            hcPage.Message = _state.Player.Name + " doesn’t need to eat a lot to feel full - try eating more Fiber.";
+                            break;
+                        case 2:
+                            hcPage.Message = "Tip:\n" + _state.Player.Name + " will earn more happiness points if her Calories finish in the green.";
+                            break;
+                        case 3:
+                            hcPage.Message = "Tip:\n If " + _state.Player.Name + " is having trouble getting enough Folic Acid, try eating more greens.";
                             break;
                     }
                     Day++;
@@ -632,16 +674,16 @@ namespace FlorineHardCodedData
                             PrimaryOptions.SelectionLimit = 2;
                             if (Day == 1)
                             {
-                                PrimaryOptions.Add(_foodstuffs[_foodIdx["Cereal"]].GetOption());
+                                PrimaryOptions.Add(_foodstuffs[_foodIdx["Eggs, Bacon, and Toast"]].GetOption());
                                 PrimaryOptions.Add(_foodstuffs[_foodIdx["White Toast"]].GetOption());
-                                PrimaryOptions.Add(_foodstuffs[_foodIdx["Strawberry Yogurt"]].GetOption());
+                                PrimaryOptions.Add(_foodstuffs[_foodIdx["Toaster Pastry"]].GetOption());
                                 PrimaryOptions.Add(_foodstuffs[_foodIdx["Fruit"]].GetOption());
                                 PrimaryOptions.Add(_foodstuffs[_foodIdx["Pancakes"]].GetOption());
 
                             }
                             else if (Day == 2)
                             {
-                                PrimaryOptions.Add(_foodstuffs[_foodIdx["Eggs, Bacon, and Toast"]].GetOption());
+                                PrimaryOptions.Add(_foodstuffs[_foodIdx["Cereal"]].GetOption());
                                 PrimaryOptions.Add(_foodstuffs[_foodIdx["Fruit"]].GetOption());
                                 PrimaryOptions.Add(_foodstuffs[_foodIdx["Wheat Toast"]].GetOption());
                                 PrimaryOptions.Add(_foodstuffs[_foodIdx["Pancakes"]].GetOption());
@@ -734,7 +776,7 @@ namespace FlorineHardCodedData
                             hcPage.Title = "Afternoon Update";
                             break;
                         case GameState.PageSubType.Dinner:
-                            hcPage.Title = "Evening Update";
+                            hcPage.Title = "Daily Summary";
                             break;
                     }
                     if (generic.SubType == GameState.PageSubType.Daily)

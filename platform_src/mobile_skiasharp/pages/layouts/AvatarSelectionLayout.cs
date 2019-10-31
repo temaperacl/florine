@@ -288,18 +288,18 @@ namespace FlorineSkiaSharpForms
             switch (type)
             {
                 case "hair":
-                    LeftShift(type, Opy[type], 1);
+                    LeftShift(type, Opy[type], 37);
                     ActualPlayer.Hair = _rmI[Opy["hair"][0]].baseImage;
                     break;
                 case "wings":
-                    LeftShift(type, Opy[type], 0);
+                    LeftShift(type, Opy[type], 2);
                     ActualPlayer.Wings = _rmI[Opy["wings"][0]].baseImage;
                     break;
                 case "body":                    
                     ActualPlayer.Body = _rmI[Opy["body"][0]].baseImage;
                     break;
                 case "clothes":
-                    LeftShift(type, Opy[type], 3);
+                    LeftShift(type, Opy[type], 5);
                     ActualPlayer.Clothes = _rmI[Opy["clothes"][0]].baseImage;
                     break;
                 case "face":
@@ -462,8 +462,8 @@ namespace FlorineSkiaSharpForms
 
             grid.Children.Add(Oval(0, 0, 200, 120, 1f), FaceStart.X, FaceStart.X + 10, FaceStart.Y, FaceStart.Y + 6);
             grid.Children.Add(SetupSelector("face"), FaceStart.X, FaceStart.X + 10, FaceStart.Y, FaceStart.Y + 6);
-
-            UpdateRefColor("hair", PaintFor(new SKColor(230, 206, 168)));            
+            UpdateRefColor("body", PaintFor(new SKColor(217, 118, 76)));
+            UpdateRefColor("hair", PaintFor(new SKColor(83, 61, 53)));            
             //
 
             grid.Children.Add(PlayerView, 11, 19, 3, 14);            

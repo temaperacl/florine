@@ -71,12 +71,14 @@ namespace FlorineSkiaSharpForms
             //return BarCanvas;
         }
         private SKCanvasView _DivBar(
-            SortedDictionary<float, SKColor> Items
+            SortedDictionary<float, SKColor> Items,
+            SKPaint Override = null
         )
         {
             ImageGradient IG = new ImageGradient()
             {
-                Style = ImageGradient.GradientType.RelativeSharp
+                Style = ImageGradient.GradientType.RelativeSharp,
+                CorePaint = Override
             };
             foreach (KeyValuePair<float, SKColor> kvp in Items)
             {
@@ -159,11 +161,33 @@ namespace FlorineSkiaSharpForms
                 }
                 grid.Children.Add(_Text("Vitamins"), 1, 10, 6, 8);
                 //grid.Children.Add(_DivBar(WhiteBar), 20, 29, 6, 8);
-                grid.Children.Add(_DivBar(MicroPotential), 10, 30, 6, 8);
-                grid.Children.Add(_DivBar(MicroNutrients), 10, 30, 6, 8);
+                grid.Children.Add(_DivBar(MicroPotential), 10, 29, 6, 8);
+                float gridSize = 5;
+                grid.Children.Add(_DivBar(MicroPotential,
+                    new SKPaint()
+                    {
+                        PathEffect = SKPathEffect.Create2DLine(1,
+                            MatrixMultiply(SKMatrix.MakeScale(gridSize, gridSize),
+                            SKMatrix.MakeRotationDegrees(45))),
+                        Style = SKPaintStyle.Stroke,
+                        StrokeWidth = 1,
+                        Color = new SKColor(0, 0, 0, 20)
+                    }), 10, 29, 6, 8);
+
+                grid.Children.Add(_DivBar(MicroPotential,
+                    new SKPaint()
+                    {
+                        PathEffect = SKPathEffect.Create2DLine(1,
+                            MatrixMultiply(SKMatrix.MakeScale(gridSize, gridSize),
+                            SKMatrix.MakeRotationDegrees(-45))),
+                        Style = SKPaintStyle.Stroke,
+                        StrokeWidth = 1,
+                        Color = new SKColor(0, 0, 0, 20)
+                    }), 10, 29, 6, 8);
+                grid.Children.Add(_DivBar(MicroNutrients), 10, 29, 6, 8);
 
                 grid.Children.Add(_Text("Nutrients"), 1, 10, 8, 10);
-                grid.Children.Add(_DivBar(MacroNutrients), 10, 30, 8, 10);
+                grid.Children.Add(_DivBar(MacroNutrients), 10, 29, 8, 10);
             }
 
             if (GameController.GetCurrentPage().SubType == GameState.PageSubType.Lunch)
@@ -266,8 +290,13 @@ namespace FlorineSkiaSharpForms
             
             base.PostLayout(IsTall, grid, GameController, GameFoundry, SourcePage);
         }
+        static SKMatrix MatrixMultiply(SKMatrix first, SKMatrix second)
+        {
+            SKMatrix target = SKMatrix.MakeIdentity();
+            SKMatrix.Concat(ref target, first, second);
+            return target;
+        }
 
-        
 
         public override void PreLayout(bool IsTall, Grid grid, Controller GameController, IPlatformFoundry GameFoundry, IPage SourcePage)
         {

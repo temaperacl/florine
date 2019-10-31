@@ -13,6 +13,7 @@ namespace FlorineSkiaSharpForms
         public bool Horizontal { get; set; }
         public SKColor BackgroundColor { get; set;}
         public float BorderSize { get; set; }
+        public SKPaint CorePaint { get; set; }
         public float IndicatorLineLoc { get; set; }
         public float BarWidth { get; set; }
         public enum GradientType
@@ -42,13 +43,21 @@ namespace FlorineSkiaSharpForms
         }
 
         public void Draw(SKCanvas canvas, SKRect boundingBox, SKPaint paint)
-        {            
+        {
             // Figure out paint
-            if(paint == null) 
-            {
-                paint = new SKPaint();
-            } else {
+            if (null != paint) {
                 paint = paint.Clone();
+            }            
+            if (paint == null) 
+            {
+                if (null != CorePaint)
+                {
+                    paint = CorePaint.Clone();
+                }
+                else
+                {
+                    paint = new SKPaint();
+                }   
             }
 
             if (Style == GradientType.Smooth)
@@ -66,7 +75,7 @@ namespace FlorineSkiaSharpForms
                 SKPaint BackgroundPaint = new SKPaint()
                 {
                     Color = BackgroundColor,
-                    StrokeWidth = BorderSize
+                    StrokeWidth = BorderSize,
                 };
                 float borderHeight = BorderSize; // boundingBox.Height * BorderSize;
                 float borderWidth = BorderSize;  // boundingBox.Width * BorderSize;
@@ -114,10 +123,24 @@ namespace FlorineSkiaSharpForms
                 float curLen = boundingBox.Left;
                 foreach (KeyValuePair<float, SKColor> kvp in Details) {
                     float ItemLen = TotalLength * kvp.Key;
-                    canvas.DrawRect(
-                        new SKRect(curLen, boundingBox.Top, ItemLen, boundingBox.Bottom),
-                        new SKPaint() { Color = kvp.Value }
-                    );
+                    if (null == CorePaint)
+                    {
+                        canvas.DrawRect(
+                            new SKRect(curLen, boundingBox.Top, ItemLen, boundingBox.Bottom),
+                            new SKPaint() { Color = kvp.Value }
+                        );
+                    }
+                    else
+                    {
+                        using (SKPath xPath = new SKPath())
+                        {
+                            xPath.AddRect(new SKRect(curLen, boundingBox.Top, ItemLen, boundingBox.Bottom));
+                            canvas.DrawPath(
+                                xPath,
+                                paint
+                            );
+                        }
+                    }
                     curLen = ItemLen;                    
                 }
             }

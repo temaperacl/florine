@@ -32,10 +32,11 @@ namespace FlorineSkiaSharpForms
             double Max,
             double Current,
             bool CanHaveTooMuch,
-            bool MaskExcess
+            bool MaskExcess,
+            SKPaint PaintOverride = null
         )
         {
-            ImageGradient IG = new ImageGradient();
+            ImageGradient IG = new ImageGradient() { CorePaint = PaintOverride };
             float Center = (float)((Target - Min) / (Max - Min));
             float CurPoint = (float)((Current - Min) / (Max - Min));
             if (CurPoint > 1) { CurPoint = 1; }
@@ -78,11 +79,12 @@ namespace FlorineSkiaSharpForms
             //return BarCanvas;
         }
         private SKCanvasView _DivBar(
-            SortedDictionary<float, SKColor> Items            
+            SortedDictionary<float, SKColor> Items,
+            SKPaint PaintOverride = null
         )
         {
-            ImageGradient IG = new ImageGradient()
-            {
+            ImageGradient IG = new ImageGradient() {
+                CorePaint = PaintOverride,        
                 Style = ImageGradient.GradientType.RelativeSharp
             };
             foreach (KeyValuePair<float, SKColor> kvp in Items)
@@ -192,6 +194,29 @@ namespace FlorineSkiaSharpForms
 
                 grid.Children.Add(_DivBar(WhiteBar), 20, 29, 6, 8);
                 grid.Children.Add(_DivBar(MicroPotential), 20, 29, 6, 8);
+                float gridSize = 5;
+                grid.Children.Add(_DivBar(MicroPotential,
+                    new SKPaint()
+                    {
+                        PathEffect = SKPathEffect.Create2DLine(1,
+                            MatrixMultiply(SKMatrix.MakeScale(gridSize, gridSize),
+                            SKMatrix.MakeRotationDegrees(45))),
+                        Style = SKPaintStyle.Stroke,
+                        StrokeWidth = 1,
+                        Color = new SKColor(0,0,0,20)
+                    }), 20, 29, 6, 8);
+                   
+                grid.Children.Add(_DivBar(MicroPotential,
+                    new SKPaint()
+                    {
+                        PathEffect = SKPathEffect.Create2DLine(1,
+                            MatrixMultiply(SKMatrix.MakeScale(gridSize, gridSize),
+                            SKMatrix.MakeRotationDegrees(-45))),
+                        Style = SKPaintStyle.Stroke,
+                        StrokeWidth = 1,
+                        Color = new SKColor(0, 0, 0, 20)
+                    }), 20, 29, 6, 8);
+                    
                 grid.Children.Add(_DivBar(MicroNutrients), 20, 29, 6, 8);
                 
 
@@ -230,23 +255,28 @@ namespace FlorineSkiaSharpForms
             base.PostLayout(IsTall, grid, GameController, GameFoundry, CurrentPage);
             return;
         }
-
-
-       /* public override SKRectI GetResolution(
-            Dictionary<PageComponentType, int> ComponentCounts,
-            bool IsTall
-        )
+        static SKMatrix MatrixMultiply(SKMatrix first, SKMatrix second)
         {
-            if (IsTall)
-            {
-                return new SKRectI(0, 0, 20, 20);
-            }
-            else
-            {
-                return new SKRectI(0, 0, 20, 20);
-            }
+            SKMatrix target = SKMatrix.MakeIdentity();
+            SKMatrix.Concat(ref target, first, second);
+            return target;
         }
-        */
+
+        /* public override SKRectI GetResolution(
+             Dictionary<PageComponentType, int> ComponentCounts,
+             bool IsTall
+         )
+         {
+             if (IsTall)
+             {
+                 return new SKRectI(0, 0, 20, 20);
+             }
+             else
+             {
+                 return new SKRectI(0, 0, 20, 20);
+             }
+         }
+         */
 
         //TBD: Wide
         protected override void LayoutComponentTall(Grid grid, PageComponentType t, View v, int CurrentOption, int OptionCount)
