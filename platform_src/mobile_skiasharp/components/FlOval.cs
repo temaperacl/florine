@@ -28,6 +28,8 @@ namespace FlorineSkiaSharpForms
         {
             set
             {
+                innerRight.Clear();
+                innerLeft.Clear();
                 innerRight.Add(new Tuple<float, SKColor>(180f, value));
                 innerLeft.Add(new Tuple<float, SKColor>(180f, value));
             }

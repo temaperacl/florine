@@ -18,6 +18,10 @@ namespace FlorineSkiaSharpForms
             return new SKRectI(0, 0, 30, 30);
         }
         */
+        public AvatarSelectionLayout()
+        {   
+        }
+
         private void PrevClothes(object sender, FlorineSkiaTapWrap.TapEventArgs e)
         {
             FlorineSkiaTapWrap fstw = sender as FlorineSkiaTapWrap;
@@ -63,26 +67,43 @@ namespace FlorineSkiaSharpForms
             AspectImage ai;
             if (_rmI.TryGetValue(scv, out ai))
             {
-                switch (_rmT[scv]) {
-                    case "clothes": ActualPlayer.Clothes = ai.baseImage; break;
-                    case "hair": ActualPlayer.Hair = ai.baseImage; break;
-                    case "wings": ActualPlayer.Wings = ai.baseImage; break;
-                    case "face": ActualPlayer.Face = ai.baseImage; break;                        
+                foreach (KeyValuePair<string, PlayerAvatar> kvp in BodyLookups)
+                {
+                    switch (_rmT[scv])
+                    {
+                        case "clothes":
+
+                            //ActualPlayer.Clothes = ai.baseImage;
+                            kvp.Value.Clothes = _ClothesLookup[kvp.Key][ai].baseImage;
+
+                            break;
+                        case "hair": kvp.Value.Hair = ai.baseImage; break;
+                        case "wings": kvp.Value.Wings = ai.baseImage; break;
+                        case "face": kvp.Value.Face = ai.baseImage; break;
+                    }
                 }
-                    
-                PlayerView.InvalidateSurface();
+
+                foreach (SKCanvasView bvSCV in BodyViews) { bvSCV.InvalidateSurface(); }                
             }   
         }
         
         //public class ComponentSelector
         public override void PreLayout(bool IsTall, Grid grid, Controller GameController, IPlatformFoundry GameFoundry, IPage SourcePage)
-        {               
+        {            
+            BodyLookups[ActiveBodyType] = GameController.CurrentState.Player.Avatar.Picture as PlayerAvatar;            
             base.PostLayout(IsTall, grid, GameController, GameFoundry, SourcePage);
         }
         Player ActualPlayerBase;
         PlayerAvatar ActualPlayer;
         
         SKCanvasView PlayerView;
+        List<SKCanvasView> BodyViews = new List<SKCanvasView>();
+        Dictionary<string, Dictionary<AspectImage, AspectImage>> _ClothesLookup = new Dictionary<string, Dictionary<AspectImage, AspectImage>>()
+        {
+            {"Box", new Dictionary<AspectImage, AspectImage>() },
+            {"Pear", new Dictionary<AspectImage, AspectImage>() },
+            {"Round", new Dictionary<AspectImage, AspectImage>() }
+        };
         Dictionary<SKCanvasView, SKColor> ColSel = new Dictionary<SKCanvasView, SKColor>();
         Dictionary<SKCanvasView, AspectImage> _rmI = new Dictionary<SKCanvasView, AspectImage>();
         Dictionary<SKCanvasView, string> _rmT = new Dictionary<SKCanvasView, string>();
@@ -128,7 +149,7 @@ namespace FlorineSkiaSharpForms
                     
                     _colCheck[_rmT[scv]] = ai;
                     UpdateRefColor(_rmT[scv], newPaint);
-                    PlayerView.InvalidateSurface();
+                    foreach (SKCanvasView bvSCV in BodyViews) { bvSCV.InvalidateSurface(); }
                     if (Opy.ContainsKey(_rmT[scv]) && Opy[_rmT[scv]].Count > 0)
                     {
                         Opy[_rmT[scv]][0].InvalidateSurface();
@@ -163,11 +184,14 @@ namespace FlorineSkiaSharpForms
                     ai.OverlayPaint = paint;
                 }
             }
-            switch (ItemType)
+            foreach (PlayerAvatar pa in BodyLookups.Values)
             {
-                case "hair": ActualPlayer.HairPaint = paint; break;
-                case "wings": ActualPlayer.WingPaint = paint; break;
-                case "body": ActualPlayer.BodyPaint = paint; break;
+                switch (ItemType)
+                {
+                    case "hair": pa.HairPaint = paint; break;
+                    case "wings": pa.WingPaint = paint; break;
+                    case "body": pa.BodyPaint = paint; break;
+                }
             }
         }
         private View ColorSelector(string type, SKColor[] Targets)
@@ -200,7 +224,15 @@ namespace FlorineSkiaSharpForms
             }
             return subGrid;
         }
-
+        private class FlorineSkiaCVWrap : SKCanvasView
+        {
+            public IFlorineSkiaConnectable FlorineObj { get; set; }
+            public FlorineSkiaCVWrap(IFlorineSkiaConnectable Conn) : base()
+            {
+                FlorineObj = Conn;
+                FlorineObj.ConnectCanvasView(this);
+            }
+        }
         private void ColorBoxFill(object sender, SKPaintSurfaceEventArgs e)
         {
             SKCanvasView scv = sender as SKCanvasView;
@@ -211,7 +243,16 @@ namespace FlorineSkiaSharpForms
                 e.Surface.Canvas.Clear(ai);
             }
         }
-
+        private Dictionary<string, PlayerAvatar> BodyLookups = new Dictionary<string, PlayerAvatar>()
+        {
+            { "Box", new PlayerAvatar(null) },
+            { "Pear", new PlayerAvatar(null) {
+                Body = ResourceLoader.LoadImage("Images/customization/04_bodyshapes/50%/pearshape_50.png")
+            } },
+            { "Round", new PlayerAvatar(null) {
+                Body = ResourceLoader.LoadImage("Images/customization/04_bodyshapes/50%/roundshape_50.png")
+            } },
+        };
         private string ActiveBodyType = "Box";
         private Dictionary<string, Grid> gridList = new Dictionary<string, Grid>();
         private Dictionary<string, List<SKCanvasView>> Opy = new Dictionary<string, List<SKCanvasView>>()
@@ -235,7 +276,7 @@ namespace FlorineSkiaSharpForms
 
 
         Dictionary<string, Dictionary<string, SKImage>> srk = new Dictionary<string, Dictionary<string, SKImage>>();
-
+        
         private View SetupSelector(string type)
         {
             
@@ -261,7 +302,26 @@ namespace FlorineSkiaSharpForms
                 _rmT[canvas] = type;
                 _lookups[type].Add(ai);
                 Opy[type].Add(canvas);
+                if (type == "clothes")
+                {
+                    foreach (string s in BodyLookups.Keys) {
+                        AspectImage bodyAI = null;
+                        if (s == ActiveBodyType)
+                        {
+                            bodyAI = ai;
+                        }
+                        else
+                        {
+                            string altlookup = kvp.Key
+                                .Replace(ActiveBodyType, s).Replace(ActiveBodyType.ToLower(), s.ToLower());                            
+                            bodyAI = new AspectImage() { baseImage = ResourceLoader.LoadImage(altlookup.Replace("Image/","")) };
 
+
+                        }
+
+                        _ClothesLookup[s][ai] = bodyAI;                            
+                    }
+                }                
                 //                 
                 FlorineSkiaTapWrap.Associate(canvas, SetComponentImage);
                 
@@ -289,26 +349,36 @@ namespace FlorineSkiaSharpForms
             {
                 case "hair":
                     LeftShift(type, Opy[type], 37);
-                    ActualPlayer.Hair = _rmI[Opy["hair"][0]].baseImage;
+                    foreach(KeyValuePair<string, PlayerAvatar> kpa in BodyLookups) {
+                        kpa.Value.Hair = _rmI[Opy["hair"][0]].baseImage;
+                    }
                     break;
                 case "wings":
                     LeftShift(type, Opy[type], 2);
-                    ActualPlayer.Wings = _rmI[Opy["wings"][0]].baseImage;
+                    foreach (KeyValuePair<string, PlayerAvatar> kpa in BodyLookups)
+                    {
+                        kpa.Value.Wings = _rmI[Opy["wings"][0]].baseImage;
+                    }
                     break;
                 case "body":                    
                     ActualPlayer.Body = _rmI[Opy["body"][0]].baseImage;
                     break;
                 case "clothes":
                     LeftShift(type, Opy[type], 5);
-                    ActualPlayer.Clothes = _rmI[Opy["clothes"][0]].baseImage;
+                    foreach (KeyValuePair<string, PlayerAvatar> kpa in BodyLookups)
+                    {                        
+                        kpa.Value.Clothes = _ClothesLookup[kpa.Key][_rmI[Opy["clothes"][0]]].baseImage;
+                    }
                     break;
                 case "face":
                     LeftShift(type, Opy[type], 3);
-                    ActualPlayer.Face = _rmI[Opy["face"][0]].baseImage;
+                    foreach (KeyValuePair<string, PlayerAvatar> kpa in BodyLookups)
+                    {
+                        kpa.Value.Face = _rmI[Opy["face"][0]].baseImage;
+                    }
                     break;
-
             }
-
+                        
             return gridList[type];
         }
         private void LeftShift(string type, List<SKCanvasView> list, int amount) {
@@ -392,6 +462,18 @@ namespace FlorineSkiaSharpForms
             Background.ConnectCanvasView(v);
             return v;
         }
+        private Tuple<SKCanvasView,FlOval> OvalT(byte r, byte g, byte b, byte a, float Ratio)
+        {
+            SKCanvasView v = new SKCanvasView();
+            FlOval Background = new FlOval()
+            {
+                backgroundColor = new SKPaint() { Color = new SKColor(r, g, b, a) },
+                ovalRatio = Ratio
+            };
+            Background.ConnectCanvasView(v);
+            return new Tuple<SKCanvasView, FlOval>(v, Background);
+        }
+        Dictionary<string, Tuple<SKCanvasView, FlOval>> OvalLookup = new Dictionary<string, Tuple<SKCanvasView, FlOval>>();
         public override void PostLayout(bool IsTall, Grid grid, Controller GameController, IPlatformFoundry GameFoundry, IPage SourcePage)
         {
             ActualPlayerBase = GameController.CurrentState.Player;
@@ -415,10 +497,13 @@ namespace FlorineSkiaSharpForms
             SKPointI WingStart = new SKPointI(15,16);
             SKPointI HairStart = new SKPointI(5,16);
             SKPointI FaceStart = new SKPointI(15,22);
-
-            grid.Children.Add(Oval(0, 0, 200, 120,  2f),  0, 10, 2, 15);
-            grid.Children.Add(Oval(0, 0, 200, 120,  2f), 10, 20, 2, 15);
-            grid.Children.Add(Oval(0, 0, 200, 120,  2f), 20, 30, 2, 15);
+            OvalLookup["Box"] = OvalT(0, 0, 200, 120, 2f);
+            OvalLookup["Box"].Item2.innerHighlight = new SKColor(100, 250, 250, 255);            
+            OvalLookup["Pear"] = OvalT(0, 0, 200, 120, 2f);
+            OvalLookup["Round"] = OvalT(0, 0, 200, 120, 2f);
+            grid.Children.Add(OvalLookup["Pear"].Item1,  0, 10, 2, 15);
+            grid.Children.Add(OvalLookup["Box"].Item1, 10, 20, 2, 15);
+            grid.Children.Add(OvalLookup["Round"].Item1, 20, 30, 2, 15);
             grid.Children.Add(ColorSelector("body", new SKColor[] {
                 new SKColor(253,196,179), // 1
                 new SKColor(245,185,158), // 2
@@ -463,11 +548,51 @@ namespace FlorineSkiaSharpForms
             grid.Children.Add(Oval(0, 0, 200, 120, 1f), FaceStart.X, FaceStart.X + 10, FaceStart.Y, FaceStart.Y + 6);
             grid.Children.Add(SetupSelector("face"), FaceStart.X, FaceStart.X + 10, FaceStart.Y, FaceStart.Y + 6);
             UpdateRefColor("body", PaintFor(new SKColor(217, 118, 76)));
-            UpdateRefColor("hair", PaintFor(new SKColor(83, 61, 53)));            
+            UpdateRefColor("hair", PaintFor(new SKColor(83, 61, 53)));
             //
+            FlorineSkiaCVWrap PearView = new FlorineSkiaCVWrap(BodyLookups["Pear"]);
+            FlorineSkiaCVWrap RoundView = new FlorineSkiaCVWrap(BodyLookups["Round"]);
+            BodyViews.Add(PlayerView);
+            BodyViews.Add(PearView);
+            BodyViews.Add(RoundView);
 
-            grid.Children.Add(PlayerView, 11, 19, 3, 14);            
+            //innerHighlight = new SKColor(100, 250, 250, 255),
+            
+            grid.Children.Add(PlayerView, 11, 19, 3, 14);
+            grid.Children.Add(PearView, 1, 9, 3, 14);
+            grid.Children.Add(RoundView, 21, 29, 3, 14);
+
+            FlorineSkiaTapWrap.Associate(PlayerView, BoxSelect);
+            FlorineSkiaTapWrap.Associate(PearView, PearSelect);
+            FlorineSkiaTapWrap.Associate(RoundView, RoundSelect);
+            //FlorineSkiaTapWrap.Associate(OvalLookup["Box"].Item1, BoxSelect);
+            //FlorineSkiaTapWrap.Associate(OvalLookup["Pear"].Item1, PearSelect);
+            //FlorineSkiaTapWrap.Associate(OvalLookup["Round"].Item1, RoundSelect);
+
         }
+
+        private void BoxSelect(object sender, FlorineSkiaTapWrap.TapEventArgs e) { InvalidateBodies("Box"); }
+        private void PearSelect(object sender, FlorineSkiaTapWrap.TapEventArgs e) { InvalidateBodies("Pear"); }
+        private void RoundSelect(object sender, FlorineSkiaTapWrap.TapEventArgs e) { InvalidateBodies("Round"); }
+        private void InvalidateBodies(string SelectType)
+        {
+
+            foreach (KeyValuePair<string, Tuple<SKCanvasView, FlOval>> kvp in OvalLookup)
+            {
+                if (SelectType == kvp.Key)
+                {
+                    kvp.Value.Item2.innerHighlight = new SKColor(100, 250, 250, 255);                    
+                }
+                else
+                {
+                    kvp.Value.Item2.innerHighlight = SKColors.Transparent;
+                }
+                kvp.Value.Item1.InvalidateSurface();
+                ActualPlayerBase.Avatar.Picture = BodyLookups[SelectType];
+                
+            }
+        }
+
 
         private void NameEntry_TextChanged(object sender, TextChangedEventArgs e)
         {
