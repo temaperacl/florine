@@ -272,7 +272,20 @@ namespace FlorineSkiaSharpForms
                         tokenName = "tacos"; break;
                     case "Donuts":
                         tokenName = "donuts"; break;
+                    case "Cinnamon Roll":
+                        tokenName = "cinnamonroll"; break;
+                    case "Hamburger Combo":
+                        tokenName = "hamburgercombo"; break;
+                    case "Turkey Sandwich":
+                        tokenName = "sandwich"; break;
+                    case "Turkey Sandwich with Chips":
+                        tokenName = "sandwichwchips"; break;
+                    case "Salad":
+                        tokenName = "salad"; break;
+                    case "Fruit Smoothie":
+                        tokenName = "fruitsmoothie"; break;
                 }
+                    
                 SKImage ResultImage = ResourceLoader.LoadImage("Images/" + pathType + "/" + tokenName + ".png");
                 if (opt is FlorineHardCodedData.HardCodedDataFoundry.NoSelectFoodOption)
                 {

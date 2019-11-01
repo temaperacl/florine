@@ -348,7 +348,7 @@ namespace FlorineSkiaSharpForms
             switch (type)
             {
                 case "hair":
-                    LeftShift(type, Opy[type], 37);
+                    LeftShift(type, Opy[type], 31);
                     foreach(KeyValuePair<string, PlayerAvatar> kpa in BodyLookups) {
                         kpa.Value.Hair = _rmI[Opy["hair"][0]].baseImage;
                     }
@@ -364,14 +364,14 @@ namespace FlorineSkiaSharpForms
                     ActualPlayer.Body = _rmI[Opy["body"][0]].baseImage;
                     break;
                 case "clothes":
-                    LeftShift(type, Opy[type], 5);
+                    LeftShift(type, Opy[type], 9);
                     foreach (KeyValuePair<string, PlayerAvatar> kpa in BodyLookups)
                     {                        
                         kpa.Value.Clothes = _ClothesLookup[kpa.Key][_rmI[Opy["clothes"][0]]].baseImage;
                     }
                     break;
                 case "face":
-                    LeftShift(type, Opy[type], 3);
+                    LeftShift(type, Opy[type], 8);
                     foreach (KeyValuePair<string, PlayerAvatar> kpa in BodyLookups)
                     {
                         kpa.Value.Face = _rmI[Opy["face"][0]].baseImage;

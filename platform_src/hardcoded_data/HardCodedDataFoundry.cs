@@ -502,8 +502,7 @@ namespace FlorineHardCodedData
                 {"Strawberry Yogurt", new List<NutrientAmount>() { 8.38, 23.5, 2.12,  0,146.6,18.7,1.7,291,.119,372,0.901,73.1,1 } },
                 {"Eggs, Bacon, and Toast",
                     new List<NutrientAmount>() { 29.96, 17.276,28.01,0.725,429.034,105.2,3.992,175.68,3.788,362.7,1.762,354.88,1 } },
-                {"Hamburger",
-                    new List<NutrientAmount>() { 13.3, 29.6, 10.2, 1.8, 263.4, 46, .1, 116, 2.87, 197, 1.2, 3, 2 } },
+
                 {"Chocolate Ice Cream",
                     new List<NutrientAmount>() { 2.51, 18.6, 7.26, .792, 149.78, 10.6, 5.28, 71.9, .614, 164, .191, 275, 3} },
                 {"Instant Noodles",
@@ -527,11 +526,24 @@ namespace FlorineHardCodedData
                 {"Tacos",
                     new List<NutrientAmount>() { 12, 22.2, 16.5, 3.1, 285.3, 28.8, 0, 117, 1.63, 316, 0.8282, 52.9, 2 } },
                 {"Donuts",
-                    new List<NutrientAmount>() { 7.78, 48.4, 31.1, 1.355, 504.62, 80.2, 0, 48.2, 2, 113.9, 0.227, 38.5, 1 } },                
+                    new List<NutrientAmount>() { 7.78, 48.4, 31.1, 1.355, 504.62, 80.2, 0, 48.2, 2, 113.9, 0.227, 38.5, 1 } },
 
+                {"Hamburger",
+                    new List<NutrientAmount>() {  29,39.7,28.3,2.79,529.5,101,0,287,4.18,436,251,278,1 } },
+                {"Cinnamon Roll",
+                    new List<NutrientAmount>() { 4,43.7,23.9,1.08,405.9,64.8,0,165,1.23,91.8,.114,0,1 } },
+                {"Hamburger Combo",
+                    new List<NutrientAmount>() { 32.78,138,44.18,6.18,1080.74,101,0,312.02,5.136,1007.6,2.51,278.5,1 } },
+                {"Turkey Sandwich",
+                    new List<NutrientAmount>() { 19.4,36.5,18.7,2.4,391.9,76.8,.24,120,3.17,487,.864,21.6,1 } },
+                {"Turkey Sandwich with Chips",
+                    new List<NutrientAmount>() { 21.39,60.3,33.9,3.65,631.86,84.97,.24,127.31,3.514,761,.864,21.6,1 } },
+                {"Salad",
+                    new List<NutrientAmount>() { .896,3.74,.165,1.39,20.029,49.6,0,20.9,.565,191,0,952,1 } },
+                {"Fruit Smoothie",
+                    new List<NutrientAmount>() { 19.8,111,8.38,10.4,598.62,86.4,4.32,657,1.9,1470,2.16,156,1 } },
         };
-
-		List<Food> _foodstuffs = new List<Food>();
+        List<Food> _foodstuffs = new List<Food>();
         Dictionary<string, int> _foodIdx = new Dictionary<string, int>();
 
 		private class HardCodedPage : IPage
@@ -693,7 +705,29 @@ namespace FlorineHardCodedData
                             break;
                         case GameState.PageSubType.Lunch:
                             PrimaryOptions.SelectionLimit = 3;
-                            List<string> LunchOptions = new List<string>() {
+                            if (Day == 1)
+                            {
+                                PrimaryOptions.Add(_foodstuffs[_foodIdx["Cinnamon Roll"]].GetOption());
+                                PrimaryOptions.Add(_foodstuffs[_foodIdx["Hamburger Combo"]].GetOption());
+                                PrimaryOptions.Add(_foodstuffs[_foodIdx["Instant Noodles"]].GetOption());
+                                PrimaryOptions.Add(_foodstuffs[_foodIdx["Turkey Sandwich"]].GetOption());
+                                PrimaryOptions.Add(_foodstuffs[_foodIdx["Tacos"]].GetOption());
+
+                            }
+                            else if (Day == 2)
+                            {
+                                PrimaryOptions.Add(_foodstuffs[_foodIdx["Turkey Sandwich with Chips"]].GetOption());
+                                PrimaryOptions.Add(_foodstuffs[_foodIdx["Hamburger"]].GetOption());
+                                PrimaryOptions.Add(_foodstuffs[_foodIdx["Salad"]].GetOption());
+                                PrimaryOptions.Add(_foodstuffs[_foodIdx["Fruit Smoothie"]].GetOption());
+                                PrimaryOptions.Add(_foodstuffs[_foodIdx["Tacos"]].GetOption());
+
+                            }
+                            else
+                            {
+
+
+                                List<string> LunchOptions = new List<string>() {
                                 "Hamburger",
                                 "Instant Noodles",
                                 "Meatball Sub",
@@ -706,11 +740,12 @@ namespace FlorineHardCodedData
                                 "Tacos",
                                 "Donuts",
                             };
-                            for (int i = 0; i < 5; ++i)
-                            {
-                                int lOpt = r.Next(LunchOptions.Count);
-                                PrimaryOptions.Add(_foodstuffs[_foodIdx[LunchOptions[lOpt]]].GetOption());
-                                LunchOptions.RemoveAt(lOpt);
+                                for (int i = 0; i < 5; ++i)
+                                {
+                                    int lOpt = r.Next(LunchOptions.Count);
+                                    PrimaryOptions.Add(_foodstuffs[_foodIdx[LunchOptions[lOpt]]].GetOption());
+                                    LunchOptions.RemoveAt(lOpt);
+                                }
                             }
                             break;
                         case GameState.PageSubType.Dinner:
