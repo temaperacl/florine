@@ -266,7 +266,7 @@ namespace FlorineSkiaSharpForms
                         tokenName = "spaghetti"; break;
                     case "Spaghetti w/ Meatballs":
                         tokenName = "spaghettiwmeatball"; break;
-                    case "Sushi Roll, Tuna":
+                    case "Sushi Serving":
                         tokenName = "sushi"; break;
                     case "Tacos":
                         tokenName = "tacos"; break;
@@ -278,7 +278,7 @@ namespace FlorineSkiaSharpForms
                         tokenName = "hamburgercombo"; break;
                     case "Turkey Sandwich":
                         tokenName = "sandwich"; break;
-                    case "Turkey Sandwich with Chips":
+                    case "Sandwich with Chips":
                         tokenName = "sandwichwchips"; break;
                     case "Salad":
                         tokenName = "salad"; break;

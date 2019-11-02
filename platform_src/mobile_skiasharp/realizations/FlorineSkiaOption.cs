@@ -186,7 +186,7 @@ namespace FlorineSkiaSharpForms
                         Food.FoodOption fOpt = showOpt.SourceOpt as Food.FoodOption;
                         if (null != fOpt)
                         {                            
-                            if (fOpt.Parent.IsKnown)
+                            if (fOpt.Parent.IsKnown && !fOpt.Parent.IsKnown)
                             {
 
                                 StringBuilder SB = new StringBuilder();

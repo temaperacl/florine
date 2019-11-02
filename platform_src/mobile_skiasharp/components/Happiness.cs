@@ -54,7 +54,7 @@ namespace FlorineSkiaSharpForms
                     0,
                     moneyGrid.RowDefinitions.Count);
             }
-            moneyGrid.Children.Add(MoneyRing, 3, 8, 0, 10);
+            moneyGrid.Children.Add(MoneyRing, 1, 6, 0, 10);
             moneyGrid.Children.Add(new FlorineSkiaCVWrap(MoneyText), 6, 14, 0, 8);
             return moneyGrid;
         }

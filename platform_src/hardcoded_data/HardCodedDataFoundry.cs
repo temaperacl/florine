@@ -26,11 +26,32 @@ namespace FlorineHardCodedData
                 string nDesc = kvp.Key;
                 switch (kvp.Key) {
                     case "White Toast":
-                        nDesc = "White Toast\n\n A couple slices of plain white toast";
+                        nDesc += "\n\nA couple slices of plain white toast";
                         break;
                     case "Wheat Toast":
-                        nDesc = "Wheat Toast\n\n Two slices of wheat toast";
+                        nDesc += "\n\nTwo slices of wheat toast";
                         break;
+                    case "Fruit": nDesc += "\n\nAssorted fresh fruit: a banana, an orange, and a cup of grapes"; break;
+                    case "Pancakes": nDesc += "\n\nA stack of four buttery, syrupy pancakes"; break;
+                    case "Meatball Sub": nDesc += "\n\nA 6\" sub loaded with meatballs and tomato sauce "; break;
+                    case "Hamburger": nDesc += "\n\nA quarter-pound cheeseburger with lots of toppings"; break;
+                    case "Instant Noodles": nDesc += "\n\nA cup of instant noodles"; break;
+                    case "Pepperoni Pizza Slice ": nDesc += "\n\nA single slice from a medium pepperoni pizza"; break;
+                    case "Vegetable Soup": nDesc += "\n\nA small bowl of soup, loaded with veggies"; break;
+                    case "Spaghetti": nDesc += "\n\nA plate of spaghetti with vegetarian tomato sauce"; break;
+                    case "Spaghetti w/ Meatballs": nDesc += "\n\nA plate of spaghetti with chunky tomato sauce and meatballs"; break;
+                    case "Sushi Serving": nDesc += "\n\nSeaweed wrapped around white rice and raw tuna"; break;
+                    case "Taco w/ meat": nDesc += "\n\nA medium, meat-filled taco"; break;
+                    case "Tacos": nDesc += "\n\nA couple of cruchy tacos loaded with meat"; break;
+                    case "Chocolate Ice Cream": nDesc += "\n\nThree scoops of chocolate ice cream. No toppings!"; break;
+                    case "Donuts": nDesc += "\n\nA couple of fancy donuts"; break;
+                    case "Cinnamon Roll": nDesc += "\n\nA warm, medium-sized glazed cinnamon roll"; break;
+                    case "Hamburger Combo": nDesc += "\n\nA medium burger, fries, and soda"; break;
+                    case "Turkey Sandwich": nDesc += "\n\nA simple turkey sandwich with lettuce, tomato, and mayo"; break;
+                    case "Sandwich with Chips": nDesc += "\n\nA simple turkey sandwich with lettuce, tomato, and mayo. Comes with a side of chips!"; break;
+                    case "Salad": nDesc += "\n\nA plain mixed greens salad with tomatoes and carrots"; break;
+                    case "Fruit Smoothie": nDesc += "\n\nA medium yogurt-based smoothie with lots of different fruits"; break;
+
                 }
                 _foodstuffs.Add(new Food() {
                     Name = kvp.Key,
@@ -191,6 +212,24 @@ namespace FlorineHardCodedData
             {
                 switch (gs.CurrentPage.MainType)
                 {
+                    case GameState.PageType.Summarize_Meal:
+                        switch (gs.CurrentPage.SubType) {
+                            case GameState.PageSubType.Lunch:
+                                if (Day == 1)
+                                {
+                                    gs.Player.Happiness = 378;
+                                    gs.Player.Energy = 60;
+                                    gs.Player.Focus = 70;
+                                }
+                                else if (Day == 2)
+                                {
+                                    gs.Player.Happiness += 802;
+                                    gs.Player.Energy = 100;
+                                    gs.Player.Focus = 100;
+                                }
+                                break;
+                        }
+                        break;
                     case GameState.PageType.Summarize_Activity:
                         if (gs.CurrentPage.SubType == GameState.PageSubType.Breakfast)
                         {
@@ -518,10 +557,10 @@ namespace FlorineHardCodedData
                 {"Vegetable Soup",
                     new List<NutrientAmount>() { 4.26, 14.6, 2.04, 2.81, 93.8, 30.4, 0, 32.8, 1.12, 424, 0.094, 86.6, 1 } },
                 {"Spaghetti",
-                    new List<NutrientAmount>() { 8.93, 47.5, 7.14, 4.46, 289.98, 107, 0, 39.7, 2.48, 434, 0, 37.2, 1 } },
+                    new List<NutrientAmount>() { 8.93, 47.5, 7.14, 4.46, 289.98, 107, 0, 39.7, 2.48, 434, 0, 37.2, 3} },
                 {"Spaghetti w/ Meatballs",
-                    new List<NutrientAmount>() { 14.3, 42.7, 11.1, 3.97, 327.9, 96.7, 0, 42.2, 2.7, 471, 2.7, 471, .372, 34.7, 1 } },
-                {"Sushi Roll, Tuna",
+                    new List<NutrientAmount>() { 14.3, 42.7, 11.1, 3.97, 327.9, 96.7, 0, 42.2, 2.7, 471, 2.7, 471, .372, 34.7, 3 } },
+                {"Sushi Serving",
                     new List<NutrientAmount>() { 2.22, 4.59, 0.075, .21, 27.915, .9, .12, 1.2, .093, 35.7, .153, 2.4, 6 } },
                 {"Tacos",
                     new List<NutrientAmount>() { 12, 22.2, 16.5, 3.1, 285.3, 28.8, 0, 117, 1.63, 316, 0.8282, 52.9, 2 } },
@@ -529,14 +568,14 @@ namespace FlorineHardCodedData
                     new List<NutrientAmount>() { 7.78, 48.4, 31.1, 1.355, 504.62, 80.2, 0, 48.2, 2, 113.9, 0.227, 38.5, 1 } },
 
                 {"Hamburger",
-                    new List<NutrientAmount>() {  29,39.7,28.3,2.79,529.5,101,0,287,4.18,436,251,278,1 } },
+                    new List<NutrientAmount>() { 29, 39.7,28.3,2.79,529.5,101,.362,287,4.18,436,2.51,278.5,1 } },
                 {"Cinnamon Roll",
                     new List<NutrientAmount>() { 4,43.7,23.9,1.08,405.9,64.8,0,165,1.23,91.8,.114,0,1 } },
                 {"Hamburger Combo",
                     new List<NutrientAmount>() { 32.78,138,44.18,6.18,1080.74,101,0,312.02,5.136,1007.6,2.51,278.5,1 } },
                 {"Turkey Sandwich",
                     new List<NutrientAmount>() { 19.4,36.5,18.7,2.4,391.9,76.8,.24,120,3.17,487,.864,21.6,1 } },
-                {"Turkey Sandwich with Chips",
+                {"Sandwich with Chips",
                     new List<NutrientAmount>() { 21.39,60.3,33.9,3.65,631.86,84.97,.24,127.31,3.514,761,.864,21.6,1 } },
                 {"Salad",
                     new List<NutrientAmount>() { .896,3.74,.165,1.39,20.029,49.6,0,20.9,.565,191,0,952,1 } },
@@ -716,7 +755,7 @@ namespace FlorineHardCodedData
                             }
                             else if (Day == 2)
                             {
-                                PrimaryOptions.Add(_foodstuffs[_foodIdx["Turkey Sandwich with Chips"]].GetOption());
+                                PrimaryOptions.Add(_foodstuffs[_foodIdx["Sandwich with Chips"]].GetOption());
                                 PrimaryOptions.Add(_foodstuffs[_foodIdx["Hamburger"]].GetOption());
                                 PrimaryOptions.Add(_foodstuffs[_foodIdx["Salad"]].GetOption());
                                 PrimaryOptions.Add(_foodstuffs[_foodIdx["Fruit Smoothie"]].GetOption());
@@ -736,7 +775,7 @@ namespace FlorineHardCodedData
                                 "Vegetable Soup",
                                 "Spaghetti",
                                 "Spaghetti w/ Meatballs",
-                                "Sushi Roll, Tuna",
+                                "Sushi Serving",
                                 "Tacos",
                                 "Donuts",
                             };
@@ -751,25 +790,37 @@ namespace FlorineHardCodedData
                         case GameState.PageSubType.Dinner:
                             List<string> DinnerOptions = new List<string>() {
                                 "Hamburger",
-                                "Chocolate Ice Cream",
+                               
                                 "Instant Noodles",
                                 "Lamb Chops",
-                                "Meatball Sub",
+                                
                                 "Pepperoni Pizza Slice",
                                 "Vegetable Soup",
                                 "Spaghetti",
                                 "Spaghetti w/ Meatballs",
-                                "Sushi Roll, Tuna",
+                                "Sushi Serving",
                                 "Tacos",
                                 "Donuts",
                             };
 
                             for (int i = 0; i < 5; ++i)
                             {
-                                int lOpt = r.Next(DinnerOptions.Count);
-                                PrimaryOptions.Add(_foodstuffs[_foodIdx[DinnerOptions[lOpt]]].GetOption());
-                                DinnerOptions.RemoveAt(lOpt);
+                                if (i == 1 && Day == 2)
+                                {
+                                    PrimaryOptions.Add(_foodstuffs[_foodIdx["Chocolate Ice Cream"]].GetOption());
+                                }
+                                else if (i == 3 && Day == 2)
+                                {
+                                    PrimaryOptions.Add(_foodstuffs[_foodIdx["Meatball Sub"]].GetOption());
+                                }
+                                else
+                                {
+                                    int lOpt = r.Next(DinnerOptions.Count);
+                                    PrimaryOptions.Add(_foodstuffs[_foodIdx[DinnerOptions[lOpt]]].GetOption());
+                                    DinnerOptions.RemoveAt(lOpt);
+                                }
                             }
+
                             PrimaryOptions.SelectionLimit = 3;
                             break;
                     }

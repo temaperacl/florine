@@ -250,12 +250,12 @@ namespace FlorineSkiaSharpForms
                 //grid.Children.Add(BackView, 0, 30, 10, 14);
                 grid.Children.Add(TotalText, 2, 9,       TotalY + 1, TotalY + 3);
                 grid.Children.Add(moneyGrid, 8, 17, TotalY, TotalY +3 );
-                grid.Children.Add(HappinessGrid, 18, 28, TotalY, TotalY + 3);
+                grid.Children.Add(HappinessGrid, 17, 28, TotalY, TotalY + 3);
 
                 //grid.Children.Add(tdBackView, 0, 30, 14, 18);
                 grid.Children.Add(tdTotalText, 2, 9, TodayY+1, TodayY+3);
                 grid.Children.Add(tdmoneyGrid, 8, 17, TodayY, TodayY + 3);
-                grid.Children.Add(tdHappinessGrid, 18, 28, TodayY, TodayY + 3);
+                grid.Children.Add(tdHappinessGrid, 17, 28, TodayY, TodayY + 3);
 
 
             }
