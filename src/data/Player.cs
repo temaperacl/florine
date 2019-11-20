@@ -9,6 +9,20 @@ namespace Florine
             Avatar = new Avatar();
             Nutrients = new NutrientSet();
         }
+        Player _Yesterday;
+        public Player Yesterday
+        {
+            get
+            {
+                if (null == _Yesterday) { _Yesterday = new Player(); }
+                return _Yesterday;
+            }
+            set
+            {
+                _Yesterday = value;
+            }
+        }
+        
         public String Name { get; set; } = "Faerina";
         public Avatar Avatar { get; set; }
         public NutrientSet Nutrients { get; set; }
@@ -103,6 +117,15 @@ namespace Florine
 			Nutrients["Protein"] = 0.0;
 			Nutrients["Fiber"] = 0.0;		
 			*/
+            Yesterday = new Player();
+            Yesterday.MoneyToDate = MoneyToDate;
+            Yesterday.HappinessToDate = HappinessToDate;
+            Yesterday.Nutrients = Nutrients;
+            Yesterday.Calories = Calories;
+            Yesterday.Hunger = Hunger;
+            Yesterday.Energy = Energy;
+            Yesterday.TargetCalories = 2000;
+
             MoneyToDate = 0;
             HappinessToDate = 0;
 			Nutrients = new NutrientSet();

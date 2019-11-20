@@ -36,10 +36,10 @@ namespace FlorineHardCodedData
                     case "Meatball Sub": nDesc += "\n\nA 6\" sub loaded with meatballs and tomato sauce "; break;
                     case "Hamburger": nDesc += "\n\nA quarter-pound cheeseburger with lots of toppings"; break;
                     case "Instant Noodles": nDesc += "\n\nA cup of instant noodles"; break;
-                    case "Pepperoni Pizza Slice ": nDesc += "\n\nA single slice from a medium pepperoni pizza"; break;
+                    case "Pepperoni Pizza Slice": nDesc += "\n\nA single slice from a medium pepperoni pizza"; break;
                     case "Vegetable Soup": nDesc += "\n\nA small bowl of soup, loaded with veggies"; break;
-                    case "Spaghetti": nDesc += "\n\nA plate of spaghetti with vegetarian tomato sauce"; break;
-                    case "Spaghetti w/ Meatballs": nDesc += "\n\nA plate of spaghetti with chunky tomato sauce and meatballs"; break;
+                    case "Spaghetti": nDesc += "\n\nA big plate of spaghetti with vegetarian tomato sauce"; break;
+                    case "Spaghetti w/ Meatballs": nDesc += "\n\nA big plate of spaghetti with chunky tomato sauce and meatballs"; break;
                     case "Sushi Serving": nDesc += "\n\nSeaweed wrapped around white rice and raw tuna"; break;
                     case "Taco w/ meat": nDesc += "\n\nA medium, meat-filled taco"; break;
                     case "Tacos": nDesc += "\n\nA couple of cruchy tacos loaded with meat"; break;
@@ -381,7 +381,7 @@ namespace FlorineHardCodedData
                 {
                     Impact = new NutrientSet(),
                     OptionName = "Cooking",
-                    Description = "Cook Tasty Stuff",
+                    Description = "Cooking\n\nPrepare a meal for tomorrow",
                 }
             );            
             /*
@@ -399,7 +399,7 @@ namespace FlorineHardCodedData
                 {
                     Impact = new NutrientSet(),
                     OptionName = "Gym",
-                    Description = "Working out at the gym",
+                    Description = "Gym\n\nWorking out at the gym",
                 }
             );
             activities.Add(
@@ -407,7 +407,7 @@ namespace FlorineHardCodedData
                 {
                     Impact = new NutrientSet(),
                     OptionName = "Home",
-                    Description = "A quiet night at home",
+                    Description = "Stay Home\n\nEat dinner and end the day",
                 }
             );
             activities.Add(
@@ -415,7 +415,7 @@ namespace FlorineHardCodedData
                 {
                     Impact = new NutrientSet(),
                     OptionName = "Social",
-                    Description = "Talking and meeting up with friends",
+                    Description = "Socialize\n\nTalking and meeting up with friends",
                 }
             );
             activities.Add(
@@ -423,7 +423,7 @@ namespace FlorineHardCodedData
                 {
                     Impact = new NutrientSet(),
                     OptionName = "Studying",
-                    Description = "Learn and grow!",
+                    Description = "Study\n\nLearn and grow",
                 }
             );            
             activities.Add(
@@ -431,7 +431,7 @@ namespace FlorineHardCodedData
                 {
                     Impact = new NutrientSet(),
                     OptionName = "Shopping",
-                    Description = "Find new Items to shop",
+                    Description = "Shopping\n\nCheck out the latest fashions and recipes",
                 }
             );
 
@@ -483,8 +483,18 @@ namespace FlorineHardCodedData
                     //}
                     return true;
 				case GameState.PageType.Select_Activity:
-					nextType = GameState.PageType.Summarize_Activity;
-					nextSubType = GameState.PageSubType.Daily;
+                    if (selectedOpt == null 
+                        || selectedOpt.SubOptions.Count == 0
+                        || selectedOpt.SubOptions[0].OptionName == "Home")
+                    {
+                        nextType = GameState.PageType.Select_Meal;
+                        nextSubType = GameState.PageSubType.Dinner;
+                    }
+                    else
+                    {
+                        nextType = GameState.PageType.Summarize_Activity;
+                        nextSubType = GameState.PageSubType.Daily;
+                    }
 					return true;
 				case GameState.PageType.Summarize_Activity:
 					switch(CurrentState.CurrentPage.SubType) {
@@ -537,15 +547,16 @@ namespace FlorineHardCodedData
                 {"Cereal",            new List<NutrientAmount>() { 3.99, 24.2, 2.22,  3.1,132.74,236,1.12,132,10.9,212,2.23,327,1} },
                 {"Toaster Pastry",    new List<NutrientAmount>() { 2.09, 15.1, 2.73,  0.4,93.3,25.6,0,31.2,2.27,36,1.12,181,2 } },
                 {"Wheat Toast",       new List<NutrientAmount>() { 3.11, 13.4, 1.02,  1.13,75.22,20.6,0,39.6,0.982,53.5,0,0,2 } },
-                {"Multigrain Toast",  new List<NutrientAmount>() { 4.79, 15.5, 1.52,  2.67,94.84,23.1,0,36.6,0.898,82.5,0,0,2 } },
+                {"Multigrain Toast",  new List<NutrientAmount>() { 4.79, 15.5, 1.52,  2.67,94.84, 23.1,0, 36.6,0.898, 82.5,0,   0,2 } },
+                {"Mexican Rice",      new List<NutrientAmount>() { 7.85,41.09,14.42,  4.55,325.6,61.56,0,23.46, 1.37,475.1,0,51.7,1 } },
                 {"Strawberry Yogurt", new List<NutrientAmount>() { 8.38, 23.5, 2.12,  0,146.6,18.7,1.7,291,.119,372,0.901,73.1,1 } },
                 {"Eggs, Bacon, and Toast",
                     new List<NutrientAmount>() { 29.96, 17.276,28.01,0.725,429.034,105.2,3.992,175.68,3.788,362.7,1.762,354.88,1 } },
 
                 {"Chocolate Ice Cream",
-                    new List<NutrientAmount>() { 2.51, 18.6, 7.26, .792, 149.78, 10.6, 5.28, 71.9, .614, 164, .191, 275, 3} },
+                    new List<NutrientAmount>() { 2.51, 18.6, 7.26, .792, 149.78, 10.6, .132, 71.9, .614, 164, .191, 275, 3} },
                 {"Instant Noodles",
-                    new List<NutrientAmount>() { 3.61, 21.4, 6.24, .932, 156.2,  28,   0,    14,   1.44, 65.2, .093, 0, 1 } },
+                    new List<NutrientAmount>() { 7,41,11,3,291,0,0,19.8,2.7,0,0,135,1 } },
                 {"Lamb Chops",
                     new List<NutrientAmount>() { 22.2, 0, 20.4, 0, 272.4, 16, 0.089, 17.8, 1.6, 288, 2.18, 0, 1 } },
                 {"Meatball Sub",
@@ -559,7 +570,7 @@ namespace FlorineHardCodedData
                 {"Spaghetti",
                     new List<NutrientAmount>() { 8.93, 47.5, 7.14, 4.46, 289.98, 107, 0, 39.7, 2.48, 434, 0, 37.2, 3} },
                 {"Spaghetti w/ Meatballs",
-                    new List<NutrientAmount>() { 14.3, 42.7, 11.1, 3.97, 327.9, 96.7, 0, 42.2, 2.7, 471, 2.7, 471, .372, 34.7, 3 } },
+                    new List<NutrientAmount>() { 14.3, 42.7, 11.1, 3.97, 327.9, 96.7, 0, 42.2, 2.7, 471, .372, 34.7, 3 } },
                 {"Sushi Serving",
                     new List<NutrientAmount>() { 2.22, 4.59, 0.075, .21, 27.915, .9, .12, 1.2, .093, 35.7, .153, 2.4, 6 } },
                 {"Tacos",
@@ -680,20 +691,40 @@ namespace FlorineHardCodedData
                     break;
                 case GameState.PageType.Day_Intro:
                     hcPage.Title = "A New Day!";
-                    switch (Day)
+                    if (Day == 0)
                     {
-                        default:                            
-                            hcPage.Message = "Welcome to a new day. Let's see what today holds!";
-                            break;
-                        case 1:
-                            hcPage.Message = _state.Player.Name + " doesn’t need to eat a lot to feel full - try eating more Fiber.";
-                            break;
-                        case 2:
-                            hcPage.Message = "Tip:\n" + _state.Player.Name + " will earn more happiness points if her Calories finish in the green.";
-                            break;
-                        case 3:
-                            hcPage.Message = "Tip:\n If " + _state.Player.Name + " is having trouble getting enough Folic Acid, try eating more greens.";
-                            break;
+                        hcPage.Message = "Welcome to a new day. Let's see what today holds!";
+                    }
+                    else  if (_state.Player.Yesterday.Calories > _state.Player.TargetCalories * 1.3)
+                    {
+                        hcPage.Message = "Tip:\n" + _state.Player.Name + " will earn more happiness points if her Calories finish in the green.";
+                    }
+                    else if (Iron.RatioRDV(_state.Player.Yesterday.Nutrients["Iron"]) < .5)
+                    {
+                        hcPage.Message = "Tip:\n" + _state.Player.Name + " can get Iron from meat, peas, and fortified grains.";
+                    }
+                    else if (Folic_Acid.RatioRDV(_state.Player.Yesterday.Nutrients["Folic Acid"]) < .5)
+                    {
+                        hcPage.Message = "Tip:\n If " + _state.Player.Name + " is having trouble getting enough Folic Acid, try eating more greens.";
+                    } else {
+                        switch (Day)
+                        {
+                            default:
+                                hcPage.Message = "Welcome to a new day. Let's see what today holds!";
+                                break;
+                            //case 2:
+                            //    hcPage.Message = _state.Player.Name + " doesn’t need to eat a lot to feel full - try eating more Fiber.";
+                            //    break;
+                            case 1:
+                                hcPage.Message = "Tip:\n" + _state.Player.Name + " will earn more happiness points if her Calories finish in the green.";
+                                break;
+                            case 2:
+                                hcPage.Message = "Tip:\n" + _state.Player.Name + " can get Iron from meat, peas, and fortified grains.";
+                                break;
+                                //case 3:
+                                //    hcPage.Message = "Tip:\n If " + _state.Player.Name + " is having trouble getting enough Folic Acid, try eating more greens.";
+                                //    break;
+                        }
                     }
                     Day++;
                     //hcPage.Background = "Start_Page";

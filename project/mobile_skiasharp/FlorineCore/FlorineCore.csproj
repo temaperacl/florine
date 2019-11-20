@@ -1,0 +1,18 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="SkiaSharp" Version="1.68.0" />
+    <PackageReference Include="SkiaSharp.Views.Forms" Version="1.68.0" />
+    <PackageReference Include="Xamarin.Forms" Version="4.2.0.709249" />
+  </ItemGroup>
+
+  <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
+    <Exec Command="xcopy /Y /E /I ..\..\..\src  .\repo\src&#xD;&#xA;xcopy /Y /E /I ..\..\..\platform_src\hardcoded_data .\repo\platform_src\hardcoded_data&#xD;&#xA;xcopy /Y /E /I ..\..\..\platform_src\mobile_skiasharp .\repo\platform_src\mobile_skiasharp" />
+  </Target>
+
+</Project>

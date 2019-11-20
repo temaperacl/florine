@@ -27,66 +27,7 @@ namespace FlorineSkiaSharpForms
         {
             return new FlorineSkiaCVWrap(new ImageText(Message));
         }
-        private SKCanvasView _GradientBar(
-            double Min,
-            double Target,
-            double Max,
-            double Current,
-            bool CanHaveTooMuch,
-            bool MaskExcess
-        )
-        {
-            ImageGradient IG = new ImageGradient();
-            float Center = (float)((Target - Min) / (Max - Min));
-            float CurPoint = (float)((Current - Min) / (Max - Min));
-            if (CurPoint > 1) { CurPoint = 1; }
-            if (CurPoint < 0) { CurPoint = 0; }
-
-            if (CanHaveTooMuch)
-            {
-                IG.Details[0f] = new SKColor(250, 0, 0);
-                IG.Details[.35f] = SKColors.Yellow;
-                IG.Details[.5f] = new SKColor(0, 250, 0);
-                IG.Details[.65f] = SKColors.Yellow;
-                IG.Details[1f] = new SKColor(250, 0, 0);
-            }
-            else
-            {
-                IG.Details[(float)Min] = new SKColor(250, 0, 0);
-                //IG.Details[Center] = new SKColor(125, 125, 0);
-                IG.Details[(float)Max] = new SKColor(0, 250, 0);
-            }
-
-            if (MaskExcess)
-            {
-                IG.BarWidth = CurPoint;
-            }
-            else
-            {
-                IG.IndicatorLineLoc = CurPoint;
-            }
-            IG.BorderSize = 5;
-
-            return new FlorineSkiaCVWrap(IG);
-            //return BarCanvas;
-        }
-        private SKCanvasView _DivBar(
-            SortedDictionary<float, SKColor> Items,
-            SKPaint Override = null
-        )
-        {
-            ImageGradient IG = new ImageGradient()
-            {
-                Style = ImageGradient.GradientType.RelativeSharp,
-                CorePaint = Override
-            };
-            foreach (KeyValuePair<float, SKColor> kvp in Items)
-            {
-                IG.Details.Add(kvp.Key, kvp.Value);
-            }
-            return new FlorineSkiaCVWrap(IG);
-            //return BarCanvas;
-        }
+        
         /* ******************************************************** */
         View XBG = null;
         public override void PostLayout(bool IsTall, Grid grid, Controller GameController, IPlatformFoundry GameFoundry, IPage SourcePage)
@@ -96,7 +37,7 @@ namespace FlorineSkiaSharpForms
             if (GameController.GetCurrentPage().SubType == GameState.PageSubType.Dinner)
             {
                 grid.Children.Add(_Text("Calories"), 1, 10, 4, 6);
-                View CalorieView = _GradientBar(
+                View CalorieView = ImageGradient.AsView(
                      0,
                      PC.TargetCalories,
                      PC.TargetCalories * 2,
@@ -160,10 +101,10 @@ namespace FlorineSkiaSharpForms
                     }
                 }
                 grid.Children.Add(_Text("Vitamins"), 1, 10, 6, 8);
-                //grid.Children.Add(_DivBar(WhiteBar), 20, 29, 6, 8);
-                grid.Children.Add(_DivBar(MicroPotential), 10, 29, 6, 8);
+                //grid.Children.Add(ImageGradient.AsDivBar(WhiteBar), 20, 29, 6, 8);
+                grid.Children.Add(ImageGradient.AsDivBar(MicroPotential), 10, 29, 6, 8);
                 float gridSize = 5;
-                grid.Children.Add(_DivBar(MicroPotential,
+                grid.Children.Add(ImageGradient.AsDivBar(MicroPotential,
                     new SKPaint()
                     {
                         PathEffect = SKPathEffect.Create2DLine(1,
@@ -174,7 +115,7 @@ namespace FlorineSkiaSharpForms
                         Color = new SKColor(0, 0, 0, 20)
                     }), 10, 29, 6, 8);
 
-                grid.Children.Add(_DivBar(MicroPotential,
+                grid.Children.Add(ImageGradient.AsDivBar(MicroPotential,
                     new SKPaint()
                     {
                         PathEffect = SKPathEffect.Create2DLine(1,
@@ -184,10 +125,10 @@ namespace FlorineSkiaSharpForms
                         StrokeWidth = 1,
                         Color = new SKColor(0, 0, 0, 20)
                     }), 10, 29, 6, 8);
-                grid.Children.Add(_DivBar(MicroNutrients), 10, 29, 6, 8);
+                grid.Children.Add(ImageGradient.AsDivBar(MicroNutrients), 10, 29, 6, 8);
 
                 grid.Children.Add(_Text("Nutrients"), 1, 10, 8, 10);
-                grid.Children.Add(_DivBar(MacroNutrients), 10, 29, 8, 10);
+                grid.Children.Add(ImageGradient.AsDivBar(MacroNutrients), 10, 29, 8, 10);
             }
 
             if (GameController.GetCurrentPage().SubType == GameState.PageSubType.Lunch)
@@ -264,7 +205,7 @@ namespace FlorineSkiaSharpForms
             int FocusY = EnergyY + 3;
             grid.Children.Add(_Text("Energy"), 15, 20, EnergyY, EnergyY+2);
             grid.Children.Add(
-                _GradientBar(
+                ImageGradient.AsView(
                     0.0,
                     100.0,
                     100.0,
@@ -277,7 +218,7 @@ namespace FlorineSkiaSharpForms
 
             grid.Children.Add(_Text("Focus"), 15, 20, FocusY, FocusY+2);
             grid.Children.Add(
-                _GradientBar(
+                ImageGradient.AsView(
                     0.0,
                     100.0,
                     100.0,

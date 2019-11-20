@@ -16,9 +16,22 @@ namespace FlorineSkiaSharpForms
         public float FontSize = 64.0f;
         public enum VerticalAlignment
         {
-            Top, 
+            Top,
             Center
         }
+        public enum HorizontalAlignment
+        {
+            Left, Center, Right
+        }
+
+        public static SKCanvasView AsView(
+            string Message, 
+            float FS = 64f, 
+            WrapType WT = WrapType.WordWrap,
+            HorizontalAlignment hAlignment = HorizontalAlignment.Center) {
+            return new FlorineSkiaCVWrap(new ImageText(Message) { FontSize = FS, Overflow = WT, HAlign = hAlignment });
+        }
+        public HorizontalAlignment HAlign { get; set; } = HorizontalAlignment.Center;
         public VerticalAlignment VAlign { get; set; } = VerticalAlignment.Center;
         public enum WrapType
         {
@@ -176,7 +189,7 @@ namespace FlorineSkiaSharpForms
 
             for (int i = 0; i < lines.Count; ++i)
             {
-                float boundingMidX = boundingBox.Left + boundingBox.Width / 2;
+                float boundingMidX = GetXCoord(lines[i], boundingBox.Left, boundingBox.Width, paint);/// boundingBox.Left + boundingBox.Width / 2;
                 float boundingMidY = boundingBox.Top + lineStart + (lineSpacing * (i));
                 canvas.DrawText(
                                     lines[i],
@@ -192,7 +205,7 @@ namespace FlorineSkiaSharpForms
             {
                 canvas.DrawText(
                             lines[i],
-                            boundingBox.Left + boundingBox.Width / 2,
+                            GetXCoord(lines[i], boundingBox.Left, boundingBox.Width, paint),
                             boundingBox.Top + lineStart + (lineSpacing * (i)),
                             paint
                 );
@@ -202,7 +215,7 @@ namespace FlorineSkiaSharpForms
             /* Filters */
             for (int i = 0; i < lines.Count; ++i)
             {
-                float boundingMidX = boundingBox.Left + boundingBox.Width / 2;
+                float boundingMidX = GetXCoord(lines[i], boundingBox.Left, boundingBox.Width, paint);
                 float boundingMidY = boundingBox.Top + lineStart + (lineSpacing * (i));
                 List<TextFragment> Filters = FilterLine(lines[i], paint, boundingMidX, boundingMidY);
                 foreach (TextFragment TF in Filters)
@@ -212,7 +225,19 @@ namespace FlorineSkiaSharpForms
             }
             return;
         }
-
+        private float GetXCoord(string s, float bbL, float bbW, SKPaint p)
+        {
+            if (s.Length == 0) { return 0f; }
+            switch (HAlign) {
+                case HorizontalAlignment.Center:
+                    return bbL + bbW / 2;
+                case HorizontalAlignment.Left:
+                    return bbL + p.MeasureText(s) / 2;
+                case HorizontalAlignment.Right:
+                    return bbL + bbW - p.MeasureText(s) / 2;
+            }
+            return 0f;
+        }
         private List<TextFragment> FilterLine(
             string line,
             SKPaint paint,

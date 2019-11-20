@@ -46,10 +46,14 @@ namespace FlorineSkiaSharpForms
                         }
                         break;
                     case GameState.PageType.Summarize_Meal:
-                        
+                        if (GameState.PageSubType.Lunch != SubType)
+                        {
+                            location = "kitchen";
+                        }
                         break;
                     case GameState.PageType.Summarize_Activity:
                         location = "work";
+                        
                         if (GameState.PageSubType.Daily == SubType) {
                             location = "busstop";
                         }

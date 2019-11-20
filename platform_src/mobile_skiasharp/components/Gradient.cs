@@ -11,7 +11,7 @@ namespace FlorineSkiaSharpForms
         private SortedDictionary<float, SKColor> _details = new SortedDictionary<float, SKColor>();
         public SortedDictionary<float, SKColor> Details { get { return _details; } }
         public bool Horizontal { get; set; }
-        public SKColor BackgroundColor { get; set;}
+        public SKColor BackgroundColor { get; set; }
         public float BorderSize { get; set; }
         public SKPaint CorePaint { get; set; }
         public float IndicatorLineLoc { get; set; }
@@ -22,16 +22,19 @@ namespace FlorineSkiaSharpForms
             RelativeSharp
         }
         public GradientType Style { get; set; } = GradientType.Smooth;
-        public ImageGradient() {
+        public ImageGradient()
+        {
             Horizontal = true;
             BorderSize = .05f;
             BarWidth = 1;
-            BackgroundColor = new SKColor(0,0,0);
+            BackgroundColor = new SKColor(0, 0, 0);
         }
         public int ImageKey { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
-        public virtual void ConnectCanvasView(SKCanvasView CV) {
-            CV.PaintSurface += (sender, e) => {
+        public virtual void ConnectCanvasView(SKCanvasView CV)
+        {
+            CV.PaintSurface += (sender, e) =>
+            {
                 Draw(
                     e.Surface.Canvas,
                     new SKRect(
@@ -45,10 +48,11 @@ namespace FlorineSkiaSharpForms
         public void Draw(SKCanvas canvas, SKRect boundingBox, SKPaint paint)
         {
             // Figure out paint
-            if (null != paint) {
+            if (null != paint)
+            {
                 paint = paint.Clone();
-            }            
-            if (paint == null) 
+            }
+            if (paint == null)
             {
                 if (null != CorePaint)
                 {
@@ -57,7 +61,7 @@ namespace FlorineSkiaSharpForms
                 else
                 {
                     paint = new SKPaint();
-                }   
+                }
             }
 
             if (Style == GradientType.Smooth)
@@ -121,7 +125,8 @@ namespace FlorineSkiaSharpForms
             {
                 float TotalLength = boundingBox.Width;
                 float curLen = boundingBox.Left;
-                foreach (KeyValuePair<float, SKColor> kvp in Details) {
+                foreach (KeyValuePair<float, SKColor> kvp in Details)
+                {
                     float ItemLen = TotalLength * kvp.Key;
                     if (null == CorePaint)
                     {
@@ -141,12 +146,12 @@ namespace FlorineSkiaSharpForms
                             );
                         }
                     }
-                    curLen = ItemLen;                    
+                    curLen = ItemLen;
                 }
             }
-            
 
-            
+
+
             // Draw
             // And IndicatorLine
             // And BarWidth
@@ -159,6 +164,77 @@ namespace FlorineSkiaSharpForms
             );
             */
             return;
+        }
+
+        /* Utility */
+        public static SKCanvasView AsView(
+          double Min,
+          double Target,
+          double Max,
+          double Current,
+          bool CanHaveTooMuch,
+          bool MaskExcess,
+          SKPaint PaintOverride = null
+      )
+        {
+            ImageGradient IG = new ImageGradient() { CorePaint = PaintOverride };
+            float Center = (float)((Target - Min) / (Max - Min));
+            float CurPoint = (float)((Current - Min) / (Max - Min));
+            if (CurPoint > 1) { CurPoint = 1; }
+            if (CurPoint < 0) { CurPoint = 0; }
+
+            if (CanHaveTooMuch)
+            {
+
+                IG.Details[0f] = new SKColor(250, 0, 0);
+                IG.Details[.35f] = SKColors.Yellow;
+                IG.Details[.5f] = new SKColor(0, 250, 0);
+                IG.Details[.65f] = SKColors.Yellow;
+                IG.Details[1f] = new SKColor(250, 0, 0);
+                /*
+                IG.Details[(float)Min] = new SKColor(250, 0, 0);
+                IG.Details[(float)((Center - Min) / 2 + Min)] = SKColors.Yellow;
+                IG.Details[Center] = new SKColor(0, 250, 0);
+                IG.Details[(float)((Max - Center) / 2 + Center)] = SKColors.Yellow;
+                IG.Details[(float)Max] = new SKColor(250, 0, 0);
+                */
+            }
+            else
+            {
+                IG.Details[(float)Min] = new SKColor(250, 0, 0);
+                //IG.Details[Center] = new SKColor(125, 125, 0);
+                IG.Details[(float)Max] = new SKColor(0, 250, 0);
+            }
+
+            if (MaskExcess)
+            {
+                IG.BarWidth = CurPoint;
+            }
+            else
+            {
+                IG.IndicatorLineLoc = CurPoint;
+            }
+            IG.BorderSize = 5;
+
+            return new FlorineSkiaCVWrap(IG);
+            //return BarCanvas;
+        }
+        public static SKCanvasView AsDivBar(
+            SortedDictionary<float, SKColor> Items,
+            SKPaint PaintOverride = null
+        )
+        {
+            ImageGradient IG = new ImageGradient()
+            {
+                CorePaint = PaintOverride,
+                Style = ImageGradient.GradientType.RelativeSharp
+            };
+            foreach (KeyValuePair<float, SKColor> kvp in Items)
+            {
+                IG.Details.Add(kvp.Key, kvp.Value);
+            }
+            return new FlorineSkiaCVWrap(IG);
+            //return BarCanvas;
         }
     }
 }

@@ -34,6 +34,18 @@ namespace FlorineSkiaSharpForms
                 innerLeft.Add(new Tuple<float, SKColor>(180f, value));
             }
         }
+        public static SKCanvasView AsView( OvalType OT = OvalType.Rectangle, float OR = float.NaN)
+        {
+            FlOval ff = new FlOval()
+            {
+                backgroundColor = new SKPaint() { Color = new SKColor(0, 80, 190, 230) },
+                Shape = OT,
+                ovalRatio = OR,
+                innerHighlight = new SKColor(100, 250, 250, 255),
+            };
+            return new FlorineSkiaCVWrap(ff);
+            
+        }
         public SKImage mainImage { get { return coreImage.baseImage; } set { coreImage.baseImage = value; } }
         private AspectImage coreImage = new AspectImage();
         private float ringWidth = 10;

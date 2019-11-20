@@ -269,6 +269,7 @@ namespace FlorineSkiaSharpForms
                 case GameState.PageType.Select_Activity:
                 case GameState.PageType.Select_Meal:
                     ActiveLayout = new LayoutOptionSelect();
+                    //ActiveLayout = new RecipeCard();
                     break;
                 case GameState.PageType.Summarize_Meal:
                     ActiveLayout = new MealResultLayout();
